@@ -63,7 +63,7 @@ public class EntityArrow extends EntityProjectile {
 
     protected boolean isCritical;
 
-    public particleType = 0;
+    public int particleType = 0;
 
     public int[] rgba = new int[4];
 
