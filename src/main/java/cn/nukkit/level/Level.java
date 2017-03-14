@@ -2809,6 +2809,133 @@ public class Level implements ChunkManager, Metadatable {
         Long index = Level.chunkHash(chunkX, chunkZ);
         if (!this.playerMoveToSend.containsKey(index)) {
             this.playerMoveToSend.put(index, new HashMap<>());
+<<<<<<< HEAD
+=======
+        }
+
+        MovePlayerPacket pk = new MovePlayerPacket();
+        pk.eid = 0;
+        pk.x = (float) x;
+        pk.y = (float) y;
+        pk.z = (float) z;
+        pk.yaw = (float) yaw;
+        pk.headYaw = (float) yaw;
+        pk.pitch = (float) pitch;
+        pk.onGround = onGround;
+        this.playerMoveToSend.get(index).put(entityId, pk);
+    }
+
+    public boolean isRaining() {
+        return this.raining;
+    }
+
+    public boolean setRaining(boolean raining) {
+        WeatherChangeEvent ev = new WeatherChangeEvent(this, raining);
+        this.getServer().getPluginManager().callEvent(ev);
+
+        if (ev.isCancelled()) {
+            return false;
+        }
+
+        this.raining = raining;
+
+        LevelEventPacket pk = new LevelEventPacket();
+        // These numbers are from Minecraft
+
+        if (raining) {
+            pk.evid = LevelEventPacket.EVENT_START_RAIN;
+            pk.data = rand.nextInt(50000) + 10000;
+            setRainTime(rand.nextInt(12000) + 12000);
+        } else {
+            pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
+            setRainTime(rand.nextInt(168000) + 12000);
+        }
+
+        Server.broadcastPacket(this.getPlayers().values(), pk);
+
+        return true;
+    }
+
+    public int getRainTime() {
+        return this.rainTime;
+    }
+
+    public void setRainTime(int rainTime) {
+        this.rainTime = rainTime;
+    }
+
+    public boolean isThundering() {
+        return isRaining() && this.thundering;
+    }
+
+    public boolean setThundering(boolean thundering) {
+        ThunderChangeEvent ev = new ThunderChangeEvent(this, thundering);
+        this.getServer().getPluginManager().callEvent(ev);
+
+        if (ev.isCancelled()) {
+            return false;
+        }
+
+        if (thundering && !isRaining()) {
+            setRaining(true);
+        }
+
+        this.thundering = thundering;
+
+        LevelEventPacket pk = new LevelEventPacket();
+        // These numbers are from Minecraft
+        if (thundering) {
+            pk.evid = LevelEventPacket.EVENT_START_THUNDER;
+            pk.data = rand.nextInt(50000) + 10000;
+            setThunderTime(rand.nextInt(12000) + 3600);
+        } else {
+            pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
+            setThunderTime(rand.nextInt(168000) + 12000);
+        }
+
+        Server.broadcastPacket(this.getPlayers().values(), pk);
+
+        return true;
+    }
+
+    public int getThunderTime() {
+        return this.thunderTime;
+    }
+
+    public void setThunderTime(int thunderTime) {
+        this.thunderTime = thunderTime;
+    }
+
+    public void sendWeather(Player[] players) {
+        if (players == null) {
+            players = this.getPlayers().values().stream().toArray(Player[]::new);
+        }
+
+        LevelEventPacket pk = new LevelEventPacket();
+
+        if (this.isRaining()) {
+            pk.evid = LevelEventPacket.EVENT_START_RAIN;
+            pk.data = rand.nextInt(50000) + 10000;
+        } else {
+            pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
+        }
+
+        Server.broadcastPacket(players, pk);
+
+        if (this.isThundering()) {
+            pk.evid = LevelEventPacket.EVENT_START_THUNDER;
+            pk.data = rand.nextInt(50000) + 10000;
+        } else {
+            pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
+        }
+
+        Server.broadcastPacket(players, pk);
+    }
+
+    public void sendWeather(Player player) {
+        if (player != null) {
+            this.sendWeather(new Player[]{player});
+>>>>>>> parent of 449fd101... Remove methods utilizing MovePlayerPacket for player movement
         }
 
         MovePlayerPacket pk = new MovePlayerPacket();
