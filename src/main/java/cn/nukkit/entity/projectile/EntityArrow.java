@@ -5,7 +5,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.CriticalParticle;
 import cn.nukkit.level.particle.DustParticle;
-import cn.nukkit.level.particle.SpellParticle;
+import cn.nukkit.level.particle.AmbientSpellParticle;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
