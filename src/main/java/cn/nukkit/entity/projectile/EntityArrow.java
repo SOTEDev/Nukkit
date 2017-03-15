@@ -103,8 +103,16 @@ public class EntityArrow extends EntityProjectile {
             this.isCritical = false;
         }
         if(this.particleType == 1){
+            Vector3 pos = this.add(
+                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
+                    this.getHeight() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
+                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500);
             this.level.addParticle(new DustParticle(pos, rgba[0], rgba[1], rgba[2], rgba[3]));
         }else if(this.particleType == 2){
+            Vector3 pos = this.add(
+                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
+                    this.getHeight() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
+                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500);
             this.level.addParticle(new SpellParticle(pos, rgba[0], rgba[1], rgba[2], rgba[3]));
         }
 
