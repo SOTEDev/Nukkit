@@ -5,7 +5,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.CriticalParticle;
 import cn.nukkit.level.particle.DustParticle;
-import cn.nukkit.level.particle.AmbientSpellParticle;
+import cn.nukkit.level.particle.MobSpellInstantaneousParticle;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
@@ -115,7 +115,7 @@ public class EntityArrow extends EntityProjectile {
                     this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
                     this.getHeight() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
                     this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500);
-            this.level.addParticle(new AmbientSpellParticle(pos, rgba[0], rgba[1], rgba[2], rgba[3]));
+            this.level.addParticle(new MobSpellInstantaneousParticle(pos, rgba[0], rgba[1], rgba[2], rgba[3]));
         }
 
         if (this.age > 1200) {
