@@ -115,7 +115,7 @@ public class EntityArrow extends EntityProjectile {
                     this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
                     this.getHeight() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
                     this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500);
-            this.level.addParticle(new SpellParticle(pos, rgba[0], rgba[1], rgba[2]));
+            this.level.addParticle(new AmbientSpellParticle(pos, rgba[0], rgba[1], rgba[2], rgba[3]));
         }
 
         if (this.age > 1200) {
