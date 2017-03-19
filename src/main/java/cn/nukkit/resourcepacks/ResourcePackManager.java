@@ -43,8 +43,9 @@ public class ResourcePackManager {
                     this.resourcePacksById.put(resourcePack.getPackId(), resourcePack);
                 }
             } catch (IllegalArgumentException e) {
-                Server.getInstance().getLogger().warning(Server.getInstance().getLanguage()
-                        .translateString("nukkit.resources.fail", pack.getName(), e.getMessage()));
+                //Server.getInstance().getLogger().warning(Server.getInstance().getLanguage()
+                //        .translateString("nukkit.resources.fail", pack.getName(), e.getMessage()));
+                Server.getInstance().getLogger().warning(pack.getName()+"\n"+e.getMessage());
             }
         }
 
