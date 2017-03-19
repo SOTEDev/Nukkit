@@ -2028,6 +2028,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 case ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET:
                     ResourcePackClientResponsePacket responsePacket = (ResourcePackClientResponsePacket) packet;
+                    System.out.println(responsePacket.responseStatus);
                     switch (responsePacket.responseStatus) {
                         case ResourcePackClientResponsePacket.STATUS_REFUSED:
                             this.close("", "disconnectionScreen.noReason");
