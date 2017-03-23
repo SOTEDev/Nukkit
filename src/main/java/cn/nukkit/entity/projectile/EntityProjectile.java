@@ -2,6 +2,7 @@ package cn.nukkit.entity.projectile;
 
 import java.util.Random;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
