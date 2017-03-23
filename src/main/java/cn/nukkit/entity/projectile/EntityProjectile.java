@@ -120,6 +120,9 @@ public abstract class EntityProjectile extends Entity {
                 double distance = this.distanceSquared(ob.hitVector);
 
                 if (distance < nearDistance) {
+                    if(shootingEntity instanceof Player && entity instanceof Player){
+                        if(!((Player)shootingEntity).canSee((Player) entity)) continue;
+                    }
                     nearDistance = distance;
                     nearEntity = entity;
                 }
