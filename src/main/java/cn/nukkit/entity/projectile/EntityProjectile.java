@@ -111,7 +111,7 @@ public abstract class EntityProjectile extends Entity {
                     continue;
                 }
 
-                AxisAlignedBB axisalignedbb = entity.boundingBox.grow(1, 1, 1);
+                AxisAlignedBB axisalignedbb = entity.boundingBox.grow(0.2, 0.2, 0.2);
                 MovingObjectPosition ob = axisalignedbb.calculateIntercept(this, moveVector);
 
                 if (ob == null) {
