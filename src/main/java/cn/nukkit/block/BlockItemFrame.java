@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import java.util.Random;
+
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
@@ -12,8 +14,6 @@ import cn.nukkit.level.sound.ItemFrameRemovedSound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
-
-import java.util.Random;
 
 /**
  * Created by Pub4Game on 03.07.2016.
@@ -47,21 +47,13 @@ public class BlockItemFrame extends BlockTransparent {
     public boolean onActivate(Item item, Player player) {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
         BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntity;
-        /*if(!(itemFrame instanceof BlockEntityItemFram)){
-            CompoundTag nbt = new CompoundTag()
-                    .putString("id", BlockEntity.ITEM_FRAME)
-                    .putInt("x", (int) block.x)
-                    .putInt("y", (int) block.y)
-                    .putInt("z", (int) block.z)
-                    .putByte("ItemRotation", 0)
-                    .putFloat("ItemDropChance", 1.0f);
-            new BlockEntityItemFrame(this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-        }*/
         if (itemFrame.getItem().getId() == Item.AIR) {
-            //itemFrame.setItem(Item.get(item.getId(), item.getDamage(), 1));
-            Item itemOnFrame = item.clone();
-            itemOnFrame.setCount(1);
-            itemFrame.setItem(itemOnFrame);
+            // We can't use Item.get(item.getId(), item.getDamage(), 1) because
+            // we need to keep the item's NBT tags
+            Item itemOnFrame = item.clone(); // So we clone the item
+            itemOnFrame.setCount(1); // Change it to only one item (if we keep +1, visual glitches will happen)
+            itemFrame.setItem(itemOnFrame); // And then we set it on the item frame
+            // The item will be removed from the player's hand a few lines ahead
             this.getLevel().addSound(new ItemFrameItemAddedSound(this));
             if (player != null && player.isSurvival()) {
                 int count = item.getCount();
@@ -147,4 +139,8 @@ public class BlockItemFrame extends BlockTransparent {
         }
     }
 
+    @Override
+    public boolean canPassThrough() {
+        return true;
+    }
 }

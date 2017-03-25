@@ -81,6 +81,7 @@ import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.event.player.PlayerJoinEvent;
 import cn.nukkit.event.player.PlayerKickEvent;
 import cn.nukkit.event.player.PlayerLoginEvent;
+import cn.nukkit.event.player.PlayerMapInfoRequestEvent;
 import cn.nukkit.event.player.PlayerMouseOverEntityEvent;
 import cn.nukkit.event.player.PlayerMoveEvent;
 import cn.nukkit.event.player.PlayerPreLoginEvent;
@@ -112,6 +113,7 @@ import cn.nukkit.item.ItemArrow;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemBucket;
 import cn.nukkit.item.ItemGlassBottle;
+import cn.nukkit.item.ItemMap;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.item.food.Food;
 import cn.nukkit.lang.TextContainer;
@@ -158,6 +160,7 @@ import cn.nukkit.network.protocol.FullChunkDataPacket;
 import cn.nukkit.network.protocol.InteractPacket;
 import cn.nukkit.network.protocol.ItemFrameDropItemPacket;
 import cn.nukkit.network.protocol.LoginPacket;
+import cn.nukkit.network.protocol.MapInfoRequestPacket;
 import cn.nukkit.network.protocol.MobEquipmentPacket;
 import cn.nukkit.network.protocol.MovePlayerPacket;
 import cn.nukkit.network.protocol.PlayStatusPacket;
@@ -3599,6 +3602,38 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
                     break;
+                case ProtocolInfo.MAP_INFO_REQUEST_PACKET:
+                	MapInfoRequestPacket pk = (MapInfoRequestPacket) packet;
+                	Item mapItem = null;
+
+                	for (Item item1 : this.inventory.getContents().values()) {
+                		if (item1 instanceof ItemMap && ((ItemMap) item1).getMapId() == pk.mapId) {
+                			mapItem = item1;
+                		}
+                	}
+
+                	if (mapItem == null) {
+                		for (BlockEntity be : this.level.getBlockEntities().values()) {
+                			if (be instanceof BlockEntityItemFrame) {
+                				BlockEntityItemFrame itemFrame1 = (BlockEntityItemFrame) be;
+
+                				if (itemFrame1.getItem() instanceof ItemMap && ((ItemMap) itemFrame1.getItem()).getMapId() == pk.mapId) {
+                					((ItemMap) itemFrame1.getItem()).sendImage(this);
+                					break;
+                				}
+                			}
+                		}
+                	}
+
+                	if (mapItem != null) {
+                		PlayerMapInfoRequestEvent event;
+                		getServer().getPluginManager().callEvent(event = new PlayerMapInfoRequestEvent(this, mapItem));
+
+                		if (!event.isCancelled()) {
+                			((ItemMap) mapItem).sendImage(this);
+                		}
+                	}
+                	break;
                 default:
                     break;
                 }

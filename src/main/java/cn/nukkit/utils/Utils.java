@@ -1,6 +1,18 @@
 package cn.nukkit.utils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.nio.channels.FileChannel;
@@ -143,4 +155,28 @@ public class Utils {
         return UUID.nameUUIDFromBytes(stream.toByteArray());
     }
 
+    public static String rtrim(String s, char character) {
+        int i = s.length() - 1;
+        while (i >= 0 && (s.charAt(i)) == character) {
+            i--;
+        }
+        return s.substring(0, i + 1);
+    }
+
+    public static boolean isByteArrayEmpty(final byte[] array) {
+        for (byte b : array) {
+            if (b != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static long toRGB(byte r, byte g, byte b, byte a) {
+        long result = (int) r & 0xff;
+        result |= ((int) g & 0xff) << 8;
+        result |= ((int) b & 0xff) << 16;
+        result |= ((int) a & 0xff) << 24;
+        return result & 0xFFFFFFFFL;
+    }
 }
