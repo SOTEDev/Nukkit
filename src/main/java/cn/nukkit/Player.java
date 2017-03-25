@@ -139,6 +139,7 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.SourceInterface;
+<<<<<<< HEAD
 import cn.nukkit.network.protocol.AdventureSettingsPacket;
 import cn.nukkit.network.protocol.AnimatePacket;
 import cn.nukkit.network.protocol.BatchPacket;
@@ -181,6 +182,9 @@ import cn.nukkit.network.protocol.TransferPacket;
 import cn.nukkit.network.protocol.UpdateAttributesPacket;
 import cn.nukkit.network.protocol.UpdateBlockPacket;
 import cn.nukkit.network.protocol.UseItemPacket;
+=======
+import cn.nukkit.network.protocol.*;
+>>>>>>> origin/master
 import cn.nukkit.permission.PermissibleBase;
 import cn.nukkit.permission.Permission;
 import cn.nukkit.permission.PermissionAttachment;
@@ -2082,6 +2086,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     this.close("", "disconnectionScreen.resourcePack");
                                     break;
                                 }
+<<<<<<< HEAD
 
                                 ResourcePackDataInfoPacket dataInfoPacket = new ResourcePackDataInfoPacket();
                                 dataInfoPacket.packId = resourcePack.getPackId();
@@ -2111,6 +2116,37 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
+=======
+
+                                ResourcePackDataInfoPacket dataInfoPacket = new ResourcePackDataInfoPacket();
+                                dataInfoPacket.packId = resourcePack.getPackId();
+                                dataInfoPacket.maxChunkSize = 1048576; //megabyte
+                                dataInfoPacket.chunkCount = resourcePack.getPackSize() / dataInfoPacket.maxChunkSize;
+                                dataInfoPacket.compressedPackSize = resourcePack.getPackSize();
+                                dataInfoPacket.sha256 = resourcePack.getSha256();
+                                this.dataPacket(dataInfoPacket);
+                            }
+                            break;
+                        case ResourcePackClientResponsePacket.STATUS_HAVE_ALL_PACKS:
+                            ResourcePackStackPacket stackPacket = new ResourcePackStackPacket();
+                            stackPacket.mustAccept = this.server.getForceResources();
+                            stackPacket.resourcePackStack = this.server.getResourcePackManager().getResourceStack();
+                            this.dataPacket(stackPacket);
+                            break;
+                        case ResourcePackClientResponsePacket.STATUS_COMPLETED:
+                            this.processLogin();
+                            break;
+                    }
+                    break;
+                case ProtocolInfo.RESOURCE_PACK_CHUNK_REQUEST_PACKET:
+                    ResourcePackChunkRequestPacket requestPacket = (ResourcePackChunkRequestPacket) packet;
+                    ResourcePack resourcePack = this.server.getResourcePackManager().getPackById(requestPacket.packId);
+                    if (resourcePack == null) {
+                        this.close("", "disconnectionScreen.resourcePack");
+                        break;
+                    }
+
+>>>>>>> origin/master
                     ResourcePackChunkDataPacket dataPacket = new ResourcePackChunkDataPacket();
                     dataPacket.packId = resourcePack.getPackId();
                     dataPacket.chunkIndex = requestPacket.chunkIndex;
