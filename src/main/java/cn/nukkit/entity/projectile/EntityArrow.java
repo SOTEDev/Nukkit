@@ -5,7 +5,6 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.CriticalParticle;
 import cn.nukkit.level.particle.DustParticle;
-import cn.nukkit.level.particle.MobSpellInstantaneousParticle;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
@@ -63,7 +62,7 @@ public class EntityArrow extends EntityProjectile {
 
     protected boolean isCritical;
 
-    public int particleType = 0;
+    public boolean hasColor = false;
 
     public int[] rgba = new int[4];
 
@@ -96,26 +95,13 @@ public class EntityArrow extends EntityProjectile {
                     this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
                     this.getHeight() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
                     this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500);
-            if(this.particleType == 0){
+            if(!this.hasColor){
                 this.level.addParticle(new CriticalParticle(pos));
+            }else{
+                this.level.addParticle(new DustParticle(pos, rgba[0], rgba[1], rgba[2], rgba[3]));
             }
         } else if (this.onGround) {
             this.isCritical = false;
-        }
-        if(this.particleType == 1){
-            NukkitRandom random = new NukkitRandom();
-            Vector3 pos = this.add(
-                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
-                    this.getHeight() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
-                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500);
-            this.level.addParticle(new DustParticle(pos, rgba[0], rgba[1], rgba[2], rgba[3]));
-        }else if(this.particleType == 2){
-            NukkitRandom random = new NukkitRandom();
-            Vector3 pos = this.add(
-                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
-                    this.getHeight() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
-                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500);
-            this.level.addParticle(new MobSpellInstantaneousParticle(pos, rgba[0], rgba[1], rgba[2], rgba[3]));
         }
 
         if (this.age > 1200) {
@@ -128,8 +114,8 @@ public class EntityArrow extends EntityProjectile {
         return hasUpdate;
     }
 
-    public void setParticleColor(int r, int g, int b, int a, int type){
-        this.particleType = type;
+    public void setParticleColor(int r, int g, int b, int a){
+        this.hasColor = true;
         this.rgba = new int[]{r,g,b,a};
     }
 

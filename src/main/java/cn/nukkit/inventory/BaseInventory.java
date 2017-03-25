@@ -1,14 +1,5 @@
 package cn.nukkit.inventory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.BlockAir;
@@ -19,6 +10,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.network.protocol.ContainerSetContentPacket;
 import cn.nukkit.network.protocol.ContainerSetSlotPacket;
+
+import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -329,7 +322,7 @@ public abstract class BaseInventory implements Inventory {
             }
         }
 
-        for (int i = 0; i < this.size; ++i) {
+        for (int i = 0; i < this.getSize(); ++i) {
             Item item = this.getItem(i);
             if (item.getId() == Item.AIR || item.getCount() <= 0) {
                 continue;

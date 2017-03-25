@@ -117,7 +117,6 @@ import cn.nukkit.plugin.service.NKServiceManager;
 import cn.nukkit.plugin.service.ServiceManager;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
-import cn.nukkit.resourcepacks.ResourcePackManager;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.Binary;
@@ -179,8 +178,6 @@ public class Server {
     private SimpleCommandMap commandMap;
 
     private CraftingManager craftingManager;
-
-    private ResourcePackManager resourcePackManager;
 
     private ConsoleCommandSender consoleSender;
 
@@ -326,7 +323,6 @@ public class Server {
                 put("level-type", "DEFAULT");
                 put("enable-query", true);
                 put("auto-save", true);
-                put("force-resources", false);
             }
         });
 
@@ -415,7 +411,6 @@ public class Server {
         Attribute.init();
 
         this.craftingManager = new CraftingManager();
-        this.resourcePackManager = new ResourcePackManager(new File(Nukkit.DATA_PATH, "resource_packs"));
 
         this.pluginManager = new PluginManager(this, this.commandMap);
         this.pluginManager.subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this.consoleSender);
@@ -932,9 +927,9 @@ public class Server {
 
     private void checkTickUpdates(int currentTick, long tickTime) {
         for (Player p : new ArrayList<>(this.players.values())) {
-            /*if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMOUT)) {
+            if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMOUT)) {
                 continue;
-            }*/
+            }
             if (this.alwaysTickPlayers) {
                 p.onUpdate(currentTick);
             }
@@ -1302,10 +1297,6 @@ public class Server {
         return this.getPropertyString("motd", "Nukkit Server For Minecraft: PE");
     }
 
-    public boolean getForceResources() {
-        return this.getPropertyBoolean("force-resources", false);
-    }
-
     public MainLogger getLogger() {
         return this.logger;
     }
@@ -1328,10 +1319,6 @@ public class Server {
 
     public CraftingManager getCraftingManager() {
         return craftingManager;
-    }
-
-    public ResourcePackManager getResourcePackManager() {
-        return resourcePackManager;
     }
 
     public ServerScheduler getScheduler() {
