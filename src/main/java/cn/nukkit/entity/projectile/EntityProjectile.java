@@ -2,6 +2,7 @@ package cn.nukkit.entity.projectile;
 
 import java.util.Random;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
@@ -110,7 +111,7 @@ public abstract class EntityProjectile extends Entity {
                     continue;
                 }
 
-                AxisAlignedBB axisalignedbb = entity.boundingBox.grow(1, 1, 1);
+                AxisAlignedBB axisalignedbb = entity.boundingBox.grow(0.2, 0.2, 0.2);
                 MovingObjectPosition ob = axisalignedbb.calculateIntercept(this, moveVector);
 
                 if (ob == null) {
@@ -120,6 +121,9 @@ public abstract class EntityProjectile extends Entity {
                 double distance = this.distanceSquared(ob.hitVector);
 
                 if (distance < nearDistance) {
+                    if(shootingEntity instanceof Player && entity instanceof Player){
+                        if(!((Player)shootingEntity).canSee((Player) entity)) continue;
+                    }
                     nearDistance = distance;
                     nearEntity = entity;
                 }

@@ -165,7 +165,11 @@ import cn.nukkit.network.protocol.PlayerActionPacket;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.network.protocol.RemoveBlockPacket;
 import cn.nukkit.network.protocol.RequestChunkRadiusPacket;
+import cn.nukkit.network.protocol.ResourcePackChunkDataPacket;
+import cn.nukkit.network.protocol.ResourcePackChunkRequestPacket;
 import cn.nukkit.network.protocol.ResourcePackClientResponsePacket;
+import cn.nukkit.network.protocol.ResourcePackDataInfoPacket;
+import cn.nukkit.network.protocol.ResourcePackStackPacket;
 import cn.nukkit.network.protocol.ResourcePacksInfoPacket;
 import cn.nukkit.network.protocol.RespawnPacket;
 import cn.nukkit.network.protocol.SetCommandsEnabledPacket;
@@ -4168,6 +4172,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     CriticalParticle par = new CriticalParticle(new Vector3(this.x + random.nextRange(-15, 15) / 10, this.y + random.nextRange(0, 20) / 10, this.z + random.nextRange(-15, 15) / 10));
                     this.getLevel().addParticle(par);
                 }
+
                 add = true;
             }
             if (add) source.setDamage((float) (source.getDamage() * 1.5));*/
