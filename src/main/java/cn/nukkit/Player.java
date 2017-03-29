@@ -181,6 +181,7 @@ import cn.nukkit.network.protocol.SetEntityMotionPacket;
 import cn.nukkit.network.protocol.SetPlayerGameTypePacket;
 import cn.nukkit.network.protocol.SetSpawnPositionPacket;
 import cn.nukkit.network.protocol.SetTimePacket;
+import cn.nukkit.network.protocol.SetTitlePacket;
 import cn.nukkit.network.protocol.StartGamePacket;
 import cn.nukkit.network.protocol.TakeItemEntityPacket;
 import cn.nukkit.network.protocol.TextPacket;
@@ -3749,6 +3750,44 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pk.type = TextPacket.TYPE_TIP;
         pk.message = message;
         this.dataPacket(pk);
+    }
+
+    public void sendTitle(String title){
+    	this.sendTitle(title, "", 1, 1);
+    }
+
+    public void sendTitle(String title, String subtitle){
+    	this.sendTitle(title, subtitle, 1, 1);
+    }
+
+    public void sendTitle(String title, String subtitle, int fadein, int fadeout){
+    	SetTitlePacket pk = new SetTitlePacket();
+    	pk.type = SetTitlePacket.TYPE_TITLE;
+    	pk.title = title;
+    	pk.fadeInDuration = fadein;
+    	pk.fadeOutDuration = fadeout;
+    	this.dataPacket(pk);
+    	if(subtitle != ""){
+    		pk = new SetTitlePacket();
+        	pk.type = SetTitlePacket.TYPE_SUB_TITLE;
+        	pk.title = subtitle;
+        	pk.fadeInDuration = fadein;
+        	pk.fadeOutDuration = fadeout;
+        	this.dataPacket(pk);
+    	}
+    }
+
+    public void sendActionBar(String title){
+    	this.sendActionBar(title, 1, 1);
+    }
+
+    public void sendActionBar(String title, int fadein, int fadeout){
+    	SetTitlePacket pk = new SetTitlePacket();
+    	pk.type = SetTitlePacket.TYPE_ACTION_BAR;
+    	pk.title = title;
+    	pk.fadeInDuration = fadein;
+    	pk.fadeOutDuration = fadeout;
+    	this.dataPacket(pk);
     }
 
     @Override

@@ -76,6 +76,7 @@ import cn.nukkit.network.protocol.SetHealthPacket;
 import cn.nukkit.network.protocol.SetPlayerGameTypePacket;
 import cn.nukkit.network.protocol.SetSpawnPositionPacket;
 import cn.nukkit.network.protocol.SetTimePacket;
+import cn.nukkit.network.protocol.SetTitlePacket;
 import cn.nukkit.network.protocol.ShowCreditsPacket;
 import cn.nukkit.network.protocol.SpawnExperienceOrbPacket;
 import cn.nukkit.network.protocol.StartGamePacket;
@@ -363,6 +364,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.SET_PLAYER_GAME_TYPE_PACKET, SetPlayerGameTypePacket.class);
         this.registerPacket(ProtocolInfo.SET_SPAWN_POSITION_PACKET, SetSpawnPositionPacket.class);
         this.registerPacket(ProtocolInfo.SET_TIME_PACKET, SetTimePacket.class);
+        this.registerPacket(ProtocolInfo.SET_TITLE_PACKET, SetTitlePacket.class);
         this.registerPacket(ProtocolInfo.SPAWN_EXPERIENCE_ORB_PACKET, SpawnExperienceOrbPacket.class);
         this.registerPacket(ProtocolInfo.START_GAME_PACKET, StartGamePacket.class);
         this.registerPacket(ProtocolInfo.TAKE_ITEM_ENTITY_PACKET, TakeItemEntityPacket.class);
