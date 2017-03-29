@@ -3697,8 +3697,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (!"".equals(m)) {
                 TextPacket pk = new TextPacket();
                 pk.type = TextPacket.TYPE_RAW;
-                pk.message = m;
-                this.dataPacket(pk);
+                pk.message = m;                this.dataPacket(pk);
             }
         }*/
     }
@@ -3708,8 +3707,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (message instanceof TranslationContainer) {
             this.sendTranslation(message.getText(), ((TranslationContainer) message).getParameters());
             return;
-        }
-        this.sendMessage(message.getText());
+        }        this.sendMessage(message.getText());
     }
 
     public void sendTranslation(String message) {
@@ -3719,8 +3717,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void sendTranslation(String message, String[] parameters) {
         TextPacket pk = new TextPacket();
         if (!this.server.isLanguageForced()) {
-            pk.type = TextPacket.TYPE_TRANSLATION;
-            pk.message = this.server.getLanguage().translateString(message, parameters, "nukkit.");
+            pk.type = TextPacket.TYPE_TRANSLATION;            pk.message = this.server.getLanguage().translateString(message, parameters, "nukkit.");
             for (int i = 0; i < parameters.length; i++) {
                 parameters[i] = this.server.getLanguage().translateString(parameters[i], parameters, "nukkit.");
 
@@ -3730,8 +3727,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             pk.type = TextPacket.TYPE_RAW;
             pk.message = this.server.getLanguage().translateString(message, parameters);
         }
-        this.dataPacket(pk);
-    }
+        this.dataPacket(pk);    }
 
     public void sendPopup(String message) {
         this.sendPopup(message, "");
@@ -3770,13 +3766,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             pk.duration = duration;
             this.dataPacket(pk);
         }
-    	pk = new SetTitlePacket();
-    	pk.type = SetTitlePacket.TYPE_TITLE;
-    	pk.title = title;
-    	pk.fadeInDuration = fadein;
-    	pk.fadeOutDuration = fadeout;
-    	pk.duration = duration;
-    	this.dataPacket(pk);
+    	SetTitlePacket pk2 = new SetTitlePacket();
+    	pk2.type = SetTitlePacket.TYPE_TITLE;
+    	pk2.title = title;
+    	pk2.fadeInDuration = fadein;
+    	pk2.fadeOutDuration = fadeout;
+    	pk2.duration = duration;
+    	this.dataPacket(pk2);
     }
 
     public void sendActionBar(String title){
