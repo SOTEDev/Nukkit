@@ -24,7 +24,7 @@ public class SetTitlePacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.type = (byte) getByte();
+        this.type = this.getVarInt();
         this.title = this.getString();
         this.fadeInDuration = this.getVarInt();
         this.fadeOutDuration = this.getVarInt();
@@ -34,7 +34,7 @@ public class SetTitlePacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.type);
+        this.putVarInt(this.type);
         this.putString(this.title);
         this.putVarInt(this.fadeInDuration);
         this.putVarInt(this.fadeOutDuration);
