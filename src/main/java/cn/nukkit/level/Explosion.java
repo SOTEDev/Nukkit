@@ -1,5 +1,10 @@
 package cn.nukkit.level;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.entity.Entity;
@@ -12,17 +17,16 @@ import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
+import cn.nukkit.level.sound.ExplodeSound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.tag.*;
-import cn.nukkit.network.protocol.ExplodePacket;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+import cn.nukkit.nbt.tag.ByteTag;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.DoubleTag;
+import cn.nukkit.nbt.tag.FloatTag;
+import cn.nukkit.nbt.tag.ListTag;
 
 /**
  * author: Angelic47
@@ -215,14 +219,15 @@ public class Explosion {
             send.add(new Vector3(block.x - source.x, block.y - source.y, block.z - source.z));
         }
 
-        ExplodePacket pk = new ExplodePacket();
+        /*ExplodePacket pk = new ExplodePacket();
         pk.x = (float) this.source.x;
         pk.y = (float) this.source.y;
         pk.z = (float) this.source.z;
         pk.radius = (float) this.size;
         pk.records = send.stream().toArray(Vector3[]::new);
 
-        this.level.addChunkPacket((int) source.x >> 4, (int) source.z >> 4, pk);
+        this.level.addChunkPacket((int) source.x >> 4, (int) source.z >> 4, pk);*/
+        this.level.addSound(new ExplodeSound(this.source));
         this.level.addParticle(new HugeExplodeSeedParticle(this.source));
 
         return true;
