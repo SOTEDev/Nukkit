@@ -3728,7 +3728,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             pk.parameters = parameters;
         } else {
             pk.type = TextPacket.TYPE_RAW;
-s            pk.message = this.server.getLanguage().translateString(message, parameters);
+            pk.message = this.server.getLanguage().translateString(message, parameters);
         }
         this.dataPacket(pk);
     }
