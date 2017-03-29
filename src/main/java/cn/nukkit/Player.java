@@ -3728,7 +3728,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             pk.parameters = parameters;
         } else {
             pk.type = TextPacket.TYPE_RAW;
-            pk.message = this.server.getLanguage().translateString(message, parameters);
+s            pk.message = this.server.getLanguage().translateString(message, parameters);
         }
         this.dataPacket(pk);
     }
@@ -3768,7 +3768,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     	pk.fadeOutDuration = fadeout;
     	pk.duration = duration;
     	this.dataPacket(pk);
-    	if(!subtitle.equal("")){
+    	if(!subtitle.equals("")){
     	    pk = new SetTitlePacket();
             pk.type = SetTitlePacket.TYPE_SUB_TITLE;
             pk.title = subtitle;
