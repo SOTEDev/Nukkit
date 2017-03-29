@@ -16,7 +16,7 @@ public class SetTitlePacket extends DataPacket {
     public static final byte TYPE_ACTION_BAR = 4;
     public static final byte TYPE_TIMES = 5;
 
-    public byte type;
+    public int type;
     public String title = "";
     public int fadeInDuration  = 0;
     public int fadeOutDuration = 0;
