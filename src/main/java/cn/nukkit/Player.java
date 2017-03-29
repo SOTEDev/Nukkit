@@ -3753,19 +3753,20 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void sendTitle(String title){
-    	this.sendTitle(title, "", 1, 1);
+    	this.sendTitle(title, "", 20, 20, 5);
     }
 
     public void sendTitle(String title, String subtitle){
-    	this.sendTitle(title, subtitle, 1, 1);
+    	this.sendTitle(title, subtitle, 20, 20, 5);
     }
 
-    public void sendTitle(String title, String subtitle, int fadein, int fadeout){
+    public void sendTitle(String title, String subtitle, int fadein, int fadeout, int duration){
     	SetTitlePacket pk = new SetTitlePacket();
     	pk.type = SetTitlePacket.TYPE_TITLE;
     	pk.title = title;
     	pk.fadeInDuration = fadein;
     	pk.fadeOutDuration = fadeout;
+    	pk.duration = duration;
     	this.dataPacket(pk);
     	if(subtitle != ""){
     		pk = new SetTitlePacket();
@@ -3773,6 +3774,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         	pk.title = subtitle;
         	pk.fadeInDuration = fadein;
         	pk.fadeOutDuration = fadeout;
+        	pk.duration = duration;
         	this.dataPacket(pk);
     	}
     }
