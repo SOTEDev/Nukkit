@@ -3776,14 +3776,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void sendActionBar(String title){
-    	this.sendActionBar(title, 1, 1);
+    	this.sendActionBar(title, 1, 0, 1);
     }
 
-    public void sendActionBar(String title, int fadein, int fadeout){
+    public void sendActionBar(String title, int fadein, int duration, int fadeout){
     	SetTitlePacket pk = new SetTitlePacket();
     	pk.type = SetTitlePacket.TYPE_ACTION_BAR;
     	pk.title = title;
     	pk.fadeInDuration = fadein;
+    	pk.duration = duration;
     	pk.fadeOutDuration = fadeout;
     	this.dataPacket(pk);
     }
