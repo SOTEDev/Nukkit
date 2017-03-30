@@ -19,16 +19,16 @@ public class SetTitlePacket extends DataPacket {
     public int type;
     public String title = "";
     public int fadeInDuration  = 0;
-    public int fadeOutDuration = 0;
     public int duration = 0;
+    public int fadeOutDuration = 0;
 
     @Override
     public void decode() {
         this.type = this.getVarInt();
         this.title = this.getString();
         this.fadeInDuration = this.getVarInt();
-        this.fadeOutDuration = this.getVarInt();
         this.duration = this.getVarInt();
+        this.fadeOutDuration = this.getVarInt();
     }
 
     @Override
@@ -37,8 +37,8 @@ public class SetTitlePacket extends DataPacket {
         this.putVarInt(this.type);
         this.putString(this.title);
         this.putVarInt(this.fadeInDuration);
-        this.putVarInt(this.fadeOutDuration);
         this.putVarInt(this.duration);
+        this.putVarInt(this.fadeOutDuration);
     }
 
 }
