@@ -4425,7 +4425,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.newPosition = null;
 
             //Update time
-            this.getLevel().sendTime(this);
+            //this.getLevel().sendTime(this);
         }
     }
 
