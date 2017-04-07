@@ -30,6 +30,8 @@ public class EnchantInventory extends ContainerInventory {
     private int[] levels = null;
     private EnchantmentEntry[] entries = null;
 
+    public int setting = 0;//0: Default  1: SkyWars
+
     public EnchantInventory(Position position) {
         super(null, InventoryType.ENCHANT_TABLE);
         this.holder = new FakeBlockMenu(this, position);
@@ -96,7 +98,15 @@ public class EnchantInventory extends ContainerInventory {
                                 for (int enchLevel = enchantment.getMinLevel(); enchLevel < enchantment.getMaxLevel(); enchLevel++) {
                                     if (modifiedLevel >= enchantment.getMinEnchantAbility(enchLevel) && modifiedLevel <= enchantment.getMaxEnchantAbility(enchLevel)) {
                                         enchantment.setLevel(enchLevel);
-                                        possible.add(enchantment);
+                                        if(this.setting == 1){
+                                            int enid = enchantment.getId();
+                                            if(enid != ID_THORNS && enid != ID_WATER_BREATHING && enid != ID_WATER_WORKER && enid != ID_WATER_WALKER &&
+                                               enid != ID_DAMAGE_SMITE && enid != ID_DAMAGE_ARTHROPODS &&
+                                               enid != ID_BOW_KNOCKBACK && enid != ID_BOW_INFINITY) 
+                                            possible.add(enchantment);
+                                        }else{
+                                            possible.add(enchantment);
+                                        }
                                     }
                                 }
 
@@ -207,8 +217,10 @@ public class EnchantInventory extends ContainerInventory {
                     if (lapis.getId() == Item.DYE && lapis.getDamage() == DyeColor.BLUE.getDyeData() && lapis.getCount() > i && level >= cost) {
                         result.addEnchantment(enchantments);
                         this.setItem(0, result);
-                        lapis.setCount(lapis.getCount() - i - 1);
-                        this.setItem(1, lapis);
+                        if(this.setting != 1){
+                            lapis.setCount(lapis.getCount() - i - 1);
+                            this.setItem(1, lapis);
+                        }
                         who.setExperience(exp, level - cost);
                         break;
                     }
