@@ -34,7 +34,7 @@ public abstract class Enchantment implements Cloneable {
     public static final int ID_PROTECTION_PROJECTILE = 4;
     public static final int ID_THORNS = 5;
     public static final int ID_WATER_BREATHING = 6;
-    public static final int UD_WATER_WORKER = 7;
+    public static final int ID_WATER_WORKER = 7;
     public static final int ID_WATER_WALKER = 8;
     public static final int ID_DAMAGE_ALL = 9;
     public static final int ID_DAMAGE_SMITE = 10;
@@ -63,7 +63,7 @@ public abstract class Enchantment implements Cloneable {
         enchantments[ID_PROTECTION_PROJECTILE] = new EnchantmentProtectionProjectile();
         enchantments[ID_THORNS] = new EnchantmentThorns();
         enchantments[ID_WATER_BREATHING] = new EnchantmentWaterBreath();
-        enchantments[UD_WATER_WORKER] = new EnchantmentWaterWorker();
+        enchantments[ID_WATER_WORKER] = new EnchantmentWaterWorker();
         enchantments[ID_WATER_WALKER] = new EnchantmentWaterWalker();
         enchantments[ID_DAMAGE_ALL] = new EnchantmentDamageAll();
         enchantments[ID_DAMAGE_SMITE] = new EnchantmentDamageSmite();
