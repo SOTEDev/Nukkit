@@ -100,9 +100,9 @@ public class EnchantInventory extends ContainerInventory {
                                         enchantment.setLevel(enchLevel);
                                         if(this.setting == 1){
                                             int enid = enchantment.getId();
-                                            if(enid != ID_THORNS && enid != ID_WATER_BREATHING && enid != ID_WATER_WORKER && enid != ID_WATER_WALKER &&
-                                               enid != ID_DAMAGE_SMITE && enid != ID_DAMAGE_ARTHROPODS &&
-                                               enid != ID_BOW_KNOCKBACK && enid != ID_BOW_INFINITY) 
+                                            if(enid != Enchantment.ID_THORNS && enid != Enchantment.ID_WATER_BREATHING && enid != Enchantment.ID_WATER_WORKER && enid != Enchantment.ID_WATER_WALKER &&
+                                               enid != Enchantment.ID_DAMAGE_SMITE && enid != Enchantment.ID_DAMAGE_ARTHROPODS &&
+                                               enid != Enchantment.ID_BOW_KNOCKBACK && enid != Enchantment.ID_BOW_INFINITY) 
                                             possible.add(enchantment);
                                         }else{
                                             possible.add(enchantment);
