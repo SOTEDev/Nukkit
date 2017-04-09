@@ -152,6 +152,7 @@ public class EnchantInventory extends ContainerInventory {
                                 }
 
                                 weights = new int[possible.size()];
+
                                 total = 0;
 
                                 for (int j = 0; j < weights.length; j++) {
@@ -192,7 +193,9 @@ public class EnchantInventory extends ContainerInventory {
     public void onClose(Player who) {
         super.onClose(who);
 
-        for (int i = 0; i < 2; ++i) {
+        int c = 2;
+        if(this.setting == 1) c = 1;
+        for (int i = 0; i < c; ++i) {
             this.getHolder().getLevel().dropItem(this.getHolder().add(0.5, 0.5, 0.5), this.getItem(i));
             this.clear(i);
         }
