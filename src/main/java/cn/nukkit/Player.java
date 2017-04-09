@@ -375,7 +375,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public boolean linkHookToPlayer(EntityFishingHook entity){
         if(entity.isAlive()){
-            this.setFishingHook(entity);
             EntityEventPacket pk = new EntityEventPacket();
             pk.eid = this.getFishingHook().getId();
             pk.event = EntityEventPacket.FISH_HOOK_POSITION;
