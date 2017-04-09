@@ -327,7 +327,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private final AtomicReference<Locale> locale = new AtomicReference<>(null);
 
     private int hash;
-
     private String buttonText = "Button";
 
     protected boolean enableClientCommand = true;
@@ -338,7 +337,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public LinkedHashMap<Integer, String> messageQueue = new LinkedHashMap<Integer, String>();
 
     public int ADRole;
-
     public int CurrentInputMode;
     public int DefaultInputMode;
 
@@ -350,12 +348,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public int GuiScale;
 
     public String serverAddress;
-
     public String TenantId;
 
     public int UIProfile = LoginPacket.GUI_POCKET;
 
-    public EntityFshingHook fishingHook;
+    public EntityFishingHook fishingHook;
 
     public boolean isFishing(){
         return (this.fishingHook instanceof EntityFishingHook);
@@ -382,7 +379,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             EntityEventPacket pk = new EntityEventPacket();
             pk.eid = this.getFishingHook().getId();
             pk.event = EntityEventPacket.FISH_HOOK_POSITION;
-            this.server.broadcastPacket(this.level.getPlayers(), pk);
+            Server.broadcastPacket(this.getViewers().values(), pk);
             return true;
         }
         return false;
@@ -392,8 +389,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if(this.fishingHook instanceof EntityFishingHook){
             EntityEventPacket pk = new EntityEventPacket(); 
             pk.eid = this.fishingHook.getId();
-            pk.event = EntityEVentPacket.FISH_HOOK_TEASE;
-            this.server.broadcastPacket(this.leve.getPlayers(), pk);
+            pk.event = EntityEventPacket.FISH_HOOK_TEASE;
+            Server.broadcastPacket(this.getViewers().values(), pk);
             return true;
         }
         return false;
@@ -2510,9 +2507,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                                 .add(new FloatTag("", (float) pitch)));
                                 double f = 0.6;
                                 Entity hook = new EntityFishingHook(this.chunk, nbt, this);
-                                hook.setMotion(bottle.getMotion().multiply(f));
+                                hook.setMotion(hook.getMotion().multiply(f));
                                 hook.spawnToAll();
-                                this.setFishingHook(hook);
+                                this.setFishingHook((EntityFishingHook)hook);
                             }
                         } else if (item.getId() == Item.SPLASH_POTION) {
                             CompoundTag nbt = new CompoundTag()
