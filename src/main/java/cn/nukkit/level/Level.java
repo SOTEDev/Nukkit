@@ -1744,7 +1744,7 @@ public class Level implements ChunkManager, Metadatable {
             item = new ItemBlock(new BlockAir(), 0, 0);
         }
 
-        int dropExp = target.getDropExp();
+        /*int dropExp = target.getDropExp();
         if (player != null) {
             player.addExperience(dropExp);
             if (player.isSurvival()) {
@@ -1752,7 +1752,7 @@ public class Level implements ChunkManager, Metadatable {
                     this.dropExpOrb(target, 1);
                 }
             }
-        }
+        }*/
 
         if (player == null || player.isSurvival()) {
             for (Item drop : drops) {
