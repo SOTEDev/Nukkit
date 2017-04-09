@@ -53,6 +53,7 @@ import cn.nukkit.entity.item.EntityVehicle;
 import cn.nukkit.entity.item.EntityXPOrb;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityEgg;
+import cn.nukkit.entity.projectile.EntityFishingHook;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.entity.projectile.EntitySnowball;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
@@ -353,6 +354,50 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public String TenantId;
 
     public int UIProfile = LoginPacket.GUI_POCKET;
+
+    public EntityFshingHook fishingHook;
+
+    public boolean isFishing(){
+        return (this.fishingHook instanceof EntityFishingHook);
+    }
+
+    public void setFishingHook(EntityFishingHook entity){
+        if(!(entity instanceof EntityFishingHook) && this.fishingHook instanceof EntityFishingHook){
+            this.fishingHook.close();
+            this.unlinkHookFromPlayer();
+        }
+        if(entity instanceof EntityFishingHook){
+            this.linkHookToPlayer(entity);
+        }
+        this.fishingHook = entity;
+    }
+
+    public EntityFishingHook getFishingHook(){
+        return this.fishingHook;
+    }
+
+    public boolean linkHookToPlayer(EntityFishingHook entity){
+        if(entity.isAlive()){
+            this.setFishingHook(entity);
+            EntityEventPacket pk = new EntityEventPacket();
+            pk.eid = this.getFishingHook().getId();
+            pk.event = EntityEventPacket.FISH_HOOK_POSITION;
+            this.server.broadcastPacket(this.level.getPlayers(), pk);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean unlinkHookFromPlayer(){
+        if(this.fishingHook instanceof EntityFishingHook){
+            EntityEventPacket pk = new EntityEventPacket(); 
+            pk.eid = this.fishingHook.getId();
+            pk.event = EntityEVentPacket.FISH_HOOK_TEASE;
+            this.server.broadcastPacket(this.leve.getPlayers(), pk);
+            return true;
+        }
+        return false;
+    }
 
     public BlockEnderChest getViewingEnderChest() {
         return viewingEnderChest;
@@ -1521,6 +1566,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     } else {
                         this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.getId(), this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
                     }
+
+                    if(this.fishingHook instanceof EntityFishingHook){
+                        if(this.distance(this.fishingHook) > 33 || this.inventory.getItemInHand().getId() == Item.FISHING_ROD){
+                            this.setFishingHook(null);
+                        }
+                    }
                 }
             }
 
@@ -2442,6 +2493,26 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 }
                             } else {
                                 bottle.spawnToAll();
+                            }
+                        } else if (item.getId() == Item.FISHING_ROD) {
+                            if(!this.isFishing()){
+                                CompoundTag nbt = new CompoundTag()
+                                        .putList(new ListTag<DoubleTag>("Pos")
+                                                .add(new DoubleTag("", x))
+                                                .add(new DoubleTag("", y + this.getEyeHeight()))
+                                                .add(new DoubleTag("", z)))
+                                        .putList(new ListTag<DoubleTag>("Motion")
+                                                .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) / 2))
+                                                .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI)))
+                                                .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) / 2)))
+                                        .putList(new ListTag<FloatTag>("Rotation")
+                                                .add(new FloatTag("", (float) yaw))
+                                                .add(new FloatTag("", (float) pitch)));
+                                double f = 0.6;
+                                Entity hook = new EntityFishingHook(this.chunk, nbt, this);
+                                hook.setMotion(bottle.getMotion().multiply(f));
+                                hook.spawnToAll();
+                                this.setFishingHook(hook);
                             }
                         } else if (item.getId() == Item.SPLASH_POTION) {
                             CompoundTag nbt = new CompoundTag()
@@ -3821,6 +3892,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 pk.message = reason;
                 this.directDataPacket(pk);
             }
+
+            if(this.fishingHook instanceof EntityFishingHook){
+                this.fishingHook.close();
+                this.fishingHook = null;
+            }
+
 
             this.connected = false;
             PlayerQuitEvent ev = null;
