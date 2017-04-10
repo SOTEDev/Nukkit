@@ -16,15 +16,14 @@ public class PlayerActionPacket extends DataPacket {
 
     public static final byte ACTION_RELEASE_ITEM = 5;
     public static final byte ACTION_STOP_SLEEPING = 6;
-    public static final byte ACTION_RESPAWN = 7;
+    public static final byte ACTION_SPAWN_SAME_DIMENSION = 7;
     public static final byte ACTION_JUMP = 8;
     public static final byte ACTION_START_SPRINT = 9;
     public static final byte ACTION_STOP_SPRINT = 10;
     public static final byte ACTION_START_SNEAK = 11;
     public static final byte ACTION_STOP_SNEAK = 12;
-    public static final byte ACTION_DIMENSION_CHANGE = 13; //TODO: correct these
-
-    public static final byte ACTION_NETHER_UNKNOWN = 14; //todo what's this?
+    public static final byte ACTION_SPAWN_OVERWORLD = 13;
+    public static final byte ACTION_SPAWN_NETHER = 14;
 
     public static final byte ACTION_START_GLIDE = 15;
     public static final byte ACTION_STOP_GLIDE = 16;
