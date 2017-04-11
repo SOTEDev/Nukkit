@@ -133,13 +133,21 @@ public abstract class EntityProjectile extends Entity {
                 movingObjectPosition = MovingObjectPosition.fromEntity(nearEntity);
             }
 
-            if (movingObjectPosition != null) {
+            boolean noDamage = false;
+
+            if (this instanceof EntityFishingHook) {
+                EntityFishingHook hook = (EntityFishingHook) this;
+                if(hook.isCatched) noDamage = true;
+            }
+
+            if (movingObjectPosition != null && !noDamage) {
                 if (movingObjectPosition.entityHit != null) {
 
                     ProjectileHitEvent hitEvent;
                     this.server.getPluginManager().callEvent(hitEvent = new ProjectileHitEvent(this, movingObjectPosition));
 
                     if (!hitEvent.isCancelled()) {
+                        boolean notDissappear = false;
                         movingObjectPosition = hitEvent.getMovingObjectPosition();
                         double motion = Math.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
                         double damage = Math.ceil(motion * this.getDamage());
@@ -151,6 +159,12 @@ public abstract class EntityProjectile extends Entity {
                         if (this instanceof EntityPotion) {
                             EntityPotion potion = (EntityPotion) this;
                             potion.onSplash();
+                        }
+
+                        if (this instanceof EntityFishingHook) {
+                            EntityFishingHook hook = (EntityFishingHook) this;
+                            hook.onCatch(movingObjectPosition.entityHit);
+                            notDissappear = true;
                         }
 
                         EntityDamageEvent ev;
@@ -172,8 +186,10 @@ public abstract class EntityProjectile extends Entity {
                             }
                         }
 
-                        this.kill();
-                        return true;
+                        if(!notDissappear){
+                            this.kill();
+                            return true;
+                        }
                     }
                 }
             }

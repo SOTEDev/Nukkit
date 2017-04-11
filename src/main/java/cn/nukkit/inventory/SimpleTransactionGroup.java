@@ -1,14 +1,14 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.Player;
-import cn.nukkit.Server;
-import cn.nukkit.event.inventory.InventoryTransactionEvent;
-import cn.nukkit.item.Item;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import cn.nukkit.Player;
+import cn.nukkit.Server;
+import cn.nukkit.event.inventory.InventoryTransactionEvent;
+import cn.nukkit.item.Item;
 
 /**
  * author: MagicDroidX
@@ -112,8 +112,14 @@ public class SimpleTransactionGroup implements TransactionGroup {
     public boolean canExecute() {
         List<Item> haveItems = new ArrayList<>();
         List<Item> needItems = new ArrayList<>();
+        boolean a = this.matchItems(needItems, haveItems);
+        boolean b = haveItems.isEmpty();
+        boolean c = needItems.isEmpty();
+        boolean d = !this.transactions.isEmpty();
+        System.out.println(a+":"+b+":"+c+":"+d);
 
-        return this.matchItems(needItems, haveItems) && haveItems.isEmpty() && needItems.isEmpty() && !this.transactions.isEmpty();
+        return a && b && c && d;
+        //return this.matchItems(needItems, haveItems) && haveItems.isEmpty() && needItems.isEmpty() && !this.transactions.isEmpty();
     }
 
     @Override

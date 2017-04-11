@@ -1,5 +1,10 @@
 package cn.nukkit.inventory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
@@ -11,11 +16,6 @@ import cn.nukkit.level.Position;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.utils.DyeColor;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX
@@ -222,8 +222,8 @@ public class EnchantInventory extends ContainerInventory {
                         this.setItem(0, result);
                         if(this.setting != 1){
                             lapis.setCount(lapis.getCount() - i - 1);
-                            this.setItem(1, lapis);
                         }
+                        this.setItem(1, lapis);
                         who.setExperience(exp, level - cost);
                         break;
                     }

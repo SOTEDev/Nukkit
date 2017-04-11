@@ -348,6 +348,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public int UIProfile = LoginPacket.GUI_POCKET;
 
+    public List<Item> tranceferedItems = new ArrayList<>();
+
     public EntityFishingHook fishingHook;
 
     public boolean linkHookToPlayer(EntityFishingHook entity){
@@ -1544,12 +1546,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     } else {
                         this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.getId(), this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
                     }
-
-                    if(this.fishingHook instanceof EntityFishingHook){
-                        if(this.distance(this.fishingHook) > 33 || this.inventory.getItemInHand().getId() == Item.FISHING_ROD){
-                            this.setFishingHook(null);
-                        }
-                    }
                 }
             }
 
@@ -1713,6 +1709,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     ++this.inAirTicks;
 
+                }
+
+                if(this.fishingHook instanceof EntityFishingHook){
+                    if(this.distance(this.fishingHook) > 33 || this.inventory.getItemInHand().getId() != Item.FISHING_ROD){
+                        this.setFishingHook(null);
+                    }
                 }
 
                 if (this.isSurvival() || this.isAdventure()) {
@@ -2471,10 +2473,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         .putList(new ListTag<FloatTag>("Rotation")
                                                 .add(new FloatTag("", (float) yaw))
                                                 .add(new FloatTag("", (float) pitch)));
-                                double f = 0.6;
+                                double f = 1.5;//0.6
                                 hook = new EntityFishingHook(this.chunk, nbt, this);
                                 hook.setMotion(hook.getMotion().multiply(f));
                                 hook.spawnToAll();
+                                this.linkHookToPlayer(hook);
+                            }else{
+                                this.fishingHook.reelLine();
                             }
                             this.setFishingHook(hook);
                         } else if (item.getId() == Item.SPLASH_POTION) {
@@ -3471,8 +3476,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.currentTransaction.addTransaction(transaction);
 
                     if (this.currentTransaction.canExecute() || this.isCreative()) {
+                        System.out.println("successful");
                         this.currentTransaction = null;
                     } else {
+                        System.out.println("fail");
                         if (containerSetSlotPacket.item.getId() != 0) {
                             inventory.sendSlot(containerSetSlotPacket.hotbarSlot, this);
                             inventory.sendSlot(containerSetSlotPacket.slot, this);
