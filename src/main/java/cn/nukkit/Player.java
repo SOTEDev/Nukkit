@@ -1549,9 +1549,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
 
-            if (!this.isSpectator()) {
+            /*if (!this.isSpectator()) {
                 this.checkNearEntities();
-            }
+            }*/
             if (this.speed == null) speed = new Vector3(from.x - to.x, from.y - to.y, from.z - to.z);
             else this.speed.setComponents(from.x - to.x, from.y - to.y, from.z - to.z);
         } else {
@@ -1679,6 +1679,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 if (this.isCreative() && !this.isInsideOfFire()) {
                     this.extinguish();
                 }
+            }
+
+            if (!this.isSpectator()) {
+                this.checkNearEntities();
             }
 
             if (!this.isSpectator() && this.speed != null) {
@@ -3420,8 +3424,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
                     BaseTransaction transaction;
-                    System.out.println("windowid: "+containerSetSlotPacket.windowid);
-                    System.out.println("item: "+containerSetSlotPacket.item.getName());
                     if (containerSetSlotPacket.windowid == 0) { //Our inventory
                         if (containerSetSlotPacket.slot >= this.inventory.getSize()) {
                             break;
@@ -3476,10 +3478,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.currentTransaction.addTransaction(transaction);
 
                     if (this.currentTransaction.canExecute() || this.isCreative()) {
-                        System.out.println("successful");
                         this.currentTransaction = null;
                     } else {
-                        System.out.println("fail");
                         if (containerSetSlotPacket.item.getId() != 0) {
                             inventory.sendSlot(containerSetSlotPacket.hotbarSlot, this);
                             inventory.sendSlot(containerSetSlotPacket.slot, this);
