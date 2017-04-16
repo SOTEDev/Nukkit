@@ -22,6 +22,8 @@ public class EntityBoat extends EntityVehicle {
 
     public static final int DATA_WOOD_ID = 20;
 
+    public Vector3 ridePosition = new Vector3(0, 1, 0);
+
     public EntityBoat(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
@@ -162,6 +164,10 @@ public class EntityBoat extends EntityVehicle {
         }
 
         return hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
+    }
+
+    public Vector3 getRidePosition(){
+        return this.ridePosition;
     }
 
 }

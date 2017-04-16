@@ -1549,9 +1549,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
 
-            /*if (!this.isSpectator()) {
+            if (!this.isSpectator()) {
                 this.checkNearEntities();
-            }*/
+            }
             if (this.speed == null) speed = new Vector3(from.x - to.x, from.y - to.y, from.z - to.z);
             else this.speed.setComponents(from.x - to.x, from.y - to.y, from.z - to.z);
         } else {
@@ -1681,9 +1681,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
 
-            if (!this.isSpectator()) {
+            /*if (!this.isSpectator()) {
                 this.checkNearEntities();
-            }
+            }*/
 
             if (!this.isSpectator() && this.speed != null) {
                 if (this.onGround) {
@@ -2887,6 +2887,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     this.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, false);
                                     break;
                                 }
+                            }
+
+                            switch (((InteractPacket) packet).action) {
+                                case InteractPacket.ACTION_RIGHT_CLICK:
+                                    cancelled = true;
+                                    targetEntity.interact(this);
+                                break;
                             }
 
                             EntityDamageByEntityEvent entityDamageByEntityEvent = new EntityDamageByEntityEvent(this, targetEntity, EntityDamageEvent.CAUSE_ENTITY_ATTACK, damage);

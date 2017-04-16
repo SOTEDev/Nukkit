@@ -771,13 +771,13 @@ public abstract class Entity extends Location implements Metadatable {
                 || source.getCause() == EntityDamageEvent.CAUSE_LAVA)) {
             source.setCancelled();
         }
-        if(source.getCause() == EntityDamageEvent.CAUSE_CONTACT || source.getCause() == EntityDamageEvent.CAUSE_LAVA){
+        /*if(source.getCause() == EntityDamageEvent.CAUSE_CONTACT || source.getCause() == EntityDamageEvent.CAUSE_LAVA){
             if(System.nanoTime() - this.lastCactusDamage >= 1000000000){
                 this.lastCactusDamage = System.nanoTime();
             }else{
                 return;
             }
-        }
+        }*/
 
         getServer().getPluginManager().callEvent(source);
         if (source.isCancelled()) {
@@ -1195,6 +1195,10 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void onCollideWithPlayer(EntityHuman entityPlayer) {
 
+    }
+
+    public boolean interact(Player player) {
+        return true;
     }
 
     protected boolean switchLevel(Level targetLevel) {

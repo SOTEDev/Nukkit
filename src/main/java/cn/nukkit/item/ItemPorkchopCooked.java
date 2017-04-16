@@ -17,4 +17,9 @@ public class ItemPorkchopCooked extends ItemEdible {
     public ItemPorkchopCooked(Integer meta, int count) {
         super(COOKED_PORKCHOP, meta, count, "Cooked Porkchop");
     }
+
+    @Override
+    public boolean isWolfsFavoriteMeat(){
+        return true;
+    }
 }
