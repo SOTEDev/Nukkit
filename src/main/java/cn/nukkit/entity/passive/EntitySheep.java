@@ -3,10 +3,16 @@ package cn.nukkit.entity.passive;
 import java.util.Random;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.BlockAir;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.sound.PlaySound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.DyeColor;
@@ -21,12 +27,14 @@ public class EntitySheep extends EntityAnimal {
 
     public static final int DATA_COLOR_INFO = 16;
 
+    public Random rand = new Random();
+
     public EntitySheep(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         if(!nbt.contains("Color")){
             nbt.putByte("Color", getRandomSheepColor(new Random()).getWoolData());
         }
-        this.setDataProperty(new ByteEntityData(DATA_COLOR_INFO, getColor().getWoolData()));
+        this.setDataProperty(new ByteEntityData(DATA_COLOR_INFO, getFleeceColor().getWoolData()));
     }
 
     @Override
@@ -54,20 +62,26 @@ public class EntitySheep extends EntityAnimal {
         Item item = player.getInventory().getItemInHand();
         if (item != null && item.getId() == Item.SHEARS && !this.getSheared()/* && !this.isChild()*/){
             this.setSheared(true);
-            //int i = 1 + this.rand.nextInt(3);
+            int i = 1 + this.rand.nextInt(3);
 
-                //for (int j = 0; j < i; ++j){
-                    Vector3 motion = new Vector3();
-                    //motion.y += (double)(this.rand.nextFloat() * 0.05F);
-                    //motion.x += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
-                    //motino.z += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
-                    this.level.dropItem(this, Item.get(Item.WOOL, this.getColor().getWoolData()), motion);
+            for (int j = 0; j < i; ++j){
+                Vector3 motion = new Vector3();
+                motion.y += (double)(this.rand.nextFloat() * 0.05F);
+                motion.x += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
+                motion.z += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
+                this.level.dropItem(this, Item.get(Item.WOOL, this.getFleeceColor().getWoolData()), motion);
+            }
 
-                //}
+            if (player.isSurvival()) {
+                item.useOn((Entity) null);
+                if (item.getDamage() >= item.getMaxDurability()) {
+                    player.getInventory().setItemInHand(new ItemBlock(new BlockAir()));
+                } else {
+                    player.getInventory().setItemInHand(item);
+                }
+            }
 
-            //itemstack.damageItem(1, player);
-
-            //this.playSound("mob.sheep.shear", 1.0F, 1.0F);
+            this.level.addSound(new PlaySound(this, "mob.sheep.shear", 1.0F, 1.0F));
 
         }
 
@@ -82,11 +96,11 @@ public class EntitySheep extends EntityAnimal {
         return i < 5 ? DyeColor.BLACK : (i < 10 ? DyeColor.GRAY : (i < 15 ? DyeColor.LIGHT_GRAY : (i < 18 ? DyeColor.BROWN : (random.nextInt(500) == 0 ? DyeColor.PINK : DyeColor.WHITE))));
     }
 
-    public DyeColor getColor(){
+    public DyeColor getFleeceColor(){
         return DyeColor.getByWoolData(this.getDataPropertyByte(DATA_COLOR_INFO));
     }
 
-    public void setColor(DyeColor dyeColor){
+    public void setFleeceColor(DyeColor dyeColor){
         this.setDataProperty(new ByteEntityData(DATA_COLOR_INFO, dyeColor.getWoolData()));
     }
 
@@ -105,7 +119,21 @@ public class EntitySheep extends EntityAnimal {
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{Item.get(Item.WOOL)};
+        EntityDamageEvent ev = this.getLastDamageCause();
+        int looting = ev instanceof EntityDamageByEntityEvent ? ((EntityDamageByEntityEvent) ev).getDamager() instanceof Player ? ((Player)((EntityDamageByEntityEvent) ev).getDamager()).getInventory().getItemInHand().getEnchantmentLevel(Enchantment.ID_LOOTING) : 0 : 0;
+
+        int i = this.rand.nextInt(2) + 1 + this.rand.nextInt(1 + looting);
+
+        Item mutton;
+        if (this.isOnFire()){
+            mutton = Item.get(Item.COOKED_MUTTON, 0, 1);
+        }else{
+            mutton = Item.get(Item.RAW_MUTTON, 0, 1);
+        }
+        if(!this.getSheared()){
+            return new Item[]{mutton, Item.get(Item.WOOL, this.getFleeceColor().getWoolData(), i)};
+        }
+        return new Item[]{mutton};
     }
 
     @Override

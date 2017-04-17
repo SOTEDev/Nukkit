@@ -45,6 +45,7 @@ import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.data.StringEntityData;
 import cn.nukkit.entity.item.EntityBoat;
+import cn.nukkit.entity.item.EntityEnderPearl;
 import cn.nukkit.entity.item.EntityExpBottle;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityPotion;
@@ -2428,6 +2429,43 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             } else {
                                 egg.spawnToAll();
                             }
+                        } else if (item.getId() == Item.ENDER_PEARL) {
+                            CompoundTag nbt = new CompoundTag()
+                                    .putList(new ListTag<DoubleTag>("Pos")
+                                            .add(new DoubleTag("", x))
+                                            .add(new DoubleTag("", y + this.getEyeHeight()))
+                                            .add(new DoubleTag("", z)))
+                                    .putList(new ListTag<DoubleTag>("Motion")
+                                            /* .add(new DoubleTag("", aimPos.x))
+                                        .add(new DoubleTag("", aimPos.y))
+                                        .add(new DoubleTag("", aimPos.z)))*/
+                                            .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) / 2))
+                                            .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI)))
+                                            .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) / 2)))
+                                    .putList(new ListTag<FloatTag>("Rotation")
+                                            .add(new FloatTag("", (float) yaw))
+                                            .add(new FloatTag("", (float) pitch)));
+
+                            float f = 1.5f;
+                            EntityEnderPearl pearl = new EntityEnderPearl(this.chunk, nbt, this);
+
+                            pearl.setMotion(pearl.getMotion().multiply(f));
+                            if (this.isSurvival()) {
+                                item.setCount(item.getCount() - 1);
+                                this.inventory.setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
+                            }
+                            if (pearl instanceof EntityProjectile) {
+                                ProjectileLaunchEvent projectileLaunchEvent = new ProjectileLaunchEvent(pearl);
+                                this.server.getPluginManager().callEvent(projectileLaunchEvent);
+                                if (projectileLaunchEvent.isCancelled()) {
+                                    pearl.kill();
+                                } else {
+                                    pearl.spawnToAll();
+                                    this.level.addSound(new LaunchSound(this), this.getViewers().values());
+                                }
+                            } else {
+                                pearl.spawnToAll();
+                            }
                         } else if (item.getId() == Item.EXPERIENCE_BOTTLE) {
                             CompoundTag nbt = new CompoundTag()
                                     .putList(new ListTag<DoubleTag>("Pos")
@@ -2484,6 +2522,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.linkHookToPlayer(hook);
                             }else{
                                 this.fishingHook.reelLine();
+                                item.useOn((Entity) null);
                             }
                             this.setFishingHook(hook);
                         } else if (item.getId() == Item.SPLASH_POTION) {

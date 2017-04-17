@@ -75,7 +75,7 @@ public class EntityWolf extends EntityTameable{
                     }
                 }else if (item.getId() == Item.DYE){
                     DyeColor dyeColor = DyeColor.getByDyeData(item.getDamage());
-                    if (dyeColor.getDyeData() == this.getCollarColor().getDyeData()){
+                    if (dyeColor.getDyeData() != this.getCollarColor().getDyeData()){
                         this.setCollarColor(dyeColor);
                         if (!player.isCreative()){
                             item.count--;
@@ -136,7 +136,7 @@ public class EntityWolf extends EntityTameable{
     }
 
     public void setCollarColor(DyeColor collarcolor){
-        this.setDataProperty(new ByteEntityData(Entity.DATA_COLOUR, collarcolor.getDyeData()), true);
+        this.setDataProperty(new ByteEntityData(Entity.DATA_COLOUR, collarcolor.getWoolData()), true);
     }
 
     public void setAttackTarget(Entity entity){

@@ -215,8 +215,9 @@ public class EntityFishingHook extends EntityProjectile {
 
     public Item getFishingResult(Random rand, Player player){
         float f = rand.nextFloat();
-        int i = 0;//LuckOfSea
-        int j = 0;//Lure
+        Item rod = player.getInventory().getItemInHand();
+        int i = rod.getEnchantmentLevel(Enchantment.ID_FORTUNE_FISHING);
+        int j = rod.getEnchantmentLevel(Enchantment.ID_LURE);
         float f1 = 0.1F - (float)i * 0.025F - (float)j * 0.01F;
         float f2 = 0.05F + (float)i * 0.01F - (float)j * 0.01F;
         f1 = MathHelper.clamp_float(f1, 0.0F, 1.0F);

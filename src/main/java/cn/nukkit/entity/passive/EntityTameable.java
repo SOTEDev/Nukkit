@@ -3,9 +3,11 @@ package cn.nukkit.entity.passive;
 import cn.nukkit.Player;
 import cn.nukkit.entity.EntityOwnable;
 import cn.nukkit.entity.data.ByteEntityData;
+import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.entity.data.StringEntityData;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.DyeColor;
 
 /**
  * Author: BeYkeRYkt
@@ -68,6 +70,7 @@ public abstract class EntityTameable extends EntityAnimal implements EntityOwnab
     @Override
     public void setOwnerName(String playerName) {
         setDataProperty(new StringEntityData(DATA_OWNER_NAME, playerName));
+        setDataProperty(new LongEntityData(DATA_OWNER_EID, getOwner().getId()));
     }
 
     @Override
@@ -93,22 +96,19 @@ public abstract class EntityTameable extends EntityAnimal implements EntityOwnab
 
         if (flag) {
             setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, (byte) (var | 4)));
+            if(this instanceof EntityWolf){
+                ((EntityWolf)this).setCollarColor(DyeColor.RED);
+            }
         } else {
             setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, (byte) (var & -5)));
         }
     }
 
     public boolean isSitting() {
-        return (getDataPropertyByte(DATA_TAMED_FLAG) & 1) != 0;
+        return getDataFlag(DATA_FLAGS, DATA_FLAG_SITTING);
     }
 
     public void setSitting(boolean flag) {
-        int var = getDataPropertyByte(DATA_TAMED_FLAG); // ?
-
-        if (flag) {
-            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, (byte) (var | 1)));
-        } else {
-            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, (byte) (var & -2)));
-        }
+        this.setDataFlag(DATA_FLAGS,  DATA_FLAG_SITTING, flag);
     }
 }
