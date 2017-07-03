@@ -4,7 +4,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Utils;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 /**
  * author: MagicDroidX
@@ -247,11 +246,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public boolean isEmpty() {
-<<<<<<< HEAD
-        return Arrays.equals(this.blocks, new byte[4096]);
-=======
         return Utils.isByteArrayEmpty(this.blocks);
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 
     @Override

@@ -18,11 +18,7 @@ public class ContainerSetSlotPacket extends DataPacket {
     public int slot;
     public int hotbarSlot;
     public Item item;
-<<<<<<< HEAD
-    public byte unknown;
-=======
     public int selectedSlot;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 
     @Override
     public void decode() {
@@ -30,11 +26,7 @@ public class ContainerSetSlotPacket extends DataPacket {
         this.slot = this.getVarInt();
         this.hotbarSlot = this.getVarInt();
         this.item = this.getSlot();
-<<<<<<< HEAD
-        this.unknown = (byte) this.getByte();
-=======
         this.selectedSlot = this.getByte();
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 
     @Override
@@ -44,10 +36,6 @@ public class ContainerSetSlotPacket extends DataPacket {
         this.putVarInt(this.slot);
         this.putVarInt(this.hotbarSlot);
         this.putSlot(this.item);
-<<<<<<< HEAD
-        this.putByte(this.unknown);
-=======
         this.putByte((byte) this.selectedSlot);
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 }

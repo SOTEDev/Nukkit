@@ -1,10 +1,5 @@
 package cn.nukkit.block;
 
-<<<<<<< HEAD
-import cn.nukkit.entity.Entity;
-import cn.nukkit.event.entity.EntityPortalEnterEvent;
-=======
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
 
@@ -59,29 +54,6 @@ public class BlockEndPortal extends BlockFlowable {
     }
 
     @Override
-<<<<<<< HEAD
-    public void onEntityCollide(Entity entity) {
-        entity.inPortalTicks++;
-
-        if (entity.inPortalTicks >= 80) {
-            EntityPortalEnterEvent ev = new EntityPortalEnterEvent(entity, EntityPortalEnterEvent.TYPE_END);
-            this.level.getServer().getPluginManager().callEvent(ev);
-
-            if (ev.isCancelled()) {
-                return;
-            }
-
-            //todo: teleport to the end
-        }
-    }
-
-
-    @Override
-    public BlockColor getColor() {
-        return BlockColor.AIR_BLOCK_COLOR;
-    }
-
-=======
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
     }
@@ -95,5 +67,4 @@ public class BlockEndPortal extends BlockFlowable {
     public boolean canHarvestWithHand() {
         return false;
     }
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 }

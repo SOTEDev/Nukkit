@@ -1,49 +1,28 @@
 package cn.nukkit.blockentity;
 
-<<<<<<< HEAD
-import java.util.HashSet;
-
-import cn.nukkit.Player;
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockAir;
-import cn.nukkit.inventory.HopperInventory;
-=======
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.inventory.HopperInventory;
 import cn.nukkit.inventory.Inventory;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
-<<<<<<< HEAD
-=======
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 
 /**
-<<<<<<< HEAD
- * author: MagicDroidX
- * Nukkit Project
-=======
  * Created by CreeperFace on 8.5.2017.
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
  */
 public class BlockEntityHopper extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 
     protected final HopperInventory inventory;
 
-<<<<<<< HEAD
-    public BlockEntityHopper(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
-=======
     public int transferCooldown = 8;
 
     private AxisAlignedBB pickupArea;
@@ -55,7 +34,6 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
             this.transferCooldown = this.namedTag.getInt("TransferCooldown");
         }
 
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         this.inventory = new HopperInventory(this);
 
         if (!this.namedTag.contains("Items") || !(this.namedTag.get("Items") instanceof ListTag)) {
@@ -66,42 +44,13 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
             this.inventory.setItem(i, this.getItem(i));
         }
 
-<<<<<<< HEAD
-        scheduleUpdate();
-=======
         this.pickupArea = new AxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 2, this.z + 1);
 
         this.scheduleUpdate();
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 
     @Override
     public boolean isBlockEntityValid() {
-<<<<<<< HEAD
-        return getBlock().getId() == Block.HOPPER_BLOCK;
-    }
-
-    @Override
-    public void close() {
-        if (!this.closed) {
-            for (Player player : new HashSet<>(this.getInventory().getViewers())) {
-                player.removeWindow(this.getInventory());
-            }
-
-            for (Player player : new HashSet<>(this.getInventory().getViewers())) {
-                player.removeWindow(this.getInventory());
-            }
-            super.close();
-        }
-    }
-
-    @Override
-    public void saveNBT() {
-        this.namedTag.putList(new ListTag<CompoundTag>("Items"));
-        for (int index = 0; index < this.getSize(); index++) {
-            this.setItem(index, this.inventory.getItem(index));
-        }
-=======
         return this.level.getBlockIdAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()) == Block.HOPPER_BLOCK;
     }
 
@@ -131,16 +80,11 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
     public void setTransferCooldown(int transferCooldown) {
         this.transferCooldown = transferCooldown;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 
     @Override
     public int getSize() {
-<<<<<<< HEAD
-        return 5;
-=======
         return 3;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 
     protected int getSlotIndex(int index) {
@@ -173,11 +117,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
         if (item.getId() == Item.AIR || item.getCount() <= 0) {
             if (i >= 0) {
-<<<<<<< HEAD
-                this.namedTag.getList("Items").remove(i);
-=======
                 this.namedTag.getList("Items").getAll().remove(i);
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
             }
         } else if (i < 0) {
             (this.namedTag.getList("Items", CompoundTag.class)).add(d);
@@ -187,8 +127,6 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
     }
 
     @Override
-<<<<<<< HEAD
-=======
     public void saveNBT() {
         this.namedTag.putList(new ListTag<CompoundTag>("Items"));
         for (int index = 0; index < this.getSize(); index++) {
@@ -199,31 +137,11 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
     }
 
     @Override
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     public HopperInventory getInventory() {
         return inventory;
     }
 
     @Override
-<<<<<<< HEAD
-    public String getName() {
-        return this.hasName() ? this.namedTag.getString("CustomName") : "Hopper";
-    }
-
-    @Override
-    public boolean hasName() {
-        return this.namedTag.contains("CustomName");
-    }
-
-    @Override
-    public void setName(String name) {
-        if (name == null || name.equals("")) {
-            this.namedTag.remove("CustomName");
-            return;
-        }
-
-        this.namedTag.putString("CustomName", name);
-=======
     public boolean onUpdate() {
         if (this.closed) {
             return false;
@@ -354,17 +272,11 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         }
 
         return false;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 
     @Override
     public CompoundTag getSpawnCompound() {
-<<<<<<< HEAD
-        CompoundTag c;
-        c = new CompoundTag()
-=======
         CompoundTag c = new CompoundTag()
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
                 .putString("id", BlockEntity.HOPPER)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
@@ -376,8 +288,4 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
         return c;
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 }

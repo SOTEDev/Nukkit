@@ -793,8 +793,6 @@ public class CraftingManager {
                 "PSP",
                 "PPP"
         ).setIngredient("P", Item.get(Item.OBSIDIAN, 0, 1)).setIngredient("S", Item.get(Item.ENDER_EYE, 0, 1)));
-<<<<<<< HEAD
-=======
 
         this.registerRecipe(new BigShapedRecipe(Item.get(Item.REDSTONE_TORCH, 0, 1),
                 "  R",
@@ -861,7 +859,6 @@ public class CraftingManager {
                 "ICI",
                 " I "
         ).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 5)).setIngredient("C", Item.get(Item.CHEST, 0, 1)));
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 
     protected void registerFurnace() {

@@ -52,11 +52,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
     @Override
     public boolean onUpdate() {
         //Only check every 100 ticks
-<<<<<<< HEAD
-        if(currentTick++ % 100 != 0) {
-=======
         if (currentTick++ % 100 != 0) {
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
             return true;
         }
 
@@ -73,11 +69,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         int tileZ = getFloorZ();
 
         //The power level that we're testing for
-<<<<<<< HEAD
-        for(int powerLevel = 1; powerLevel <= POWER_LEVEL_MAX; powerLevel++) {
-=======
         for (int powerLevel = 1; powerLevel <= POWER_LEVEL_MAX; powerLevel++) {
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
             int queryY = tileY - powerLevel; //Layer below the beacon block
 
             for (int queryX = tileX - powerLevel; queryX <= tileX + powerLevel; queryX++) {
@@ -85,19 +77,11 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
 
                     int testBlockId = level.getBlockIdAt(queryX, queryY, queryZ);
                     if (
-<<<<<<< HEAD
-                        testBlockId != Block.IRON_BLOCK &&
-                        testBlockId != Block.GOLD_BLOCK &&
-                        testBlockId != Block.EMERALD_BLOCK &&
-                        testBlockId != Block.DIAMOND_BLOCK
-                    ) {
-=======
                             testBlockId != Block.IRON_BLOCK &&
                                     testBlockId != Block.GOLD_BLOCK &&
                                     testBlockId != Block.EMERALD_BLOCK &&
                                     testBlockId != Block.DIAMOND_BLOCK
                             ) {
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
                         return powerLevel - 1;
                     }
 
@@ -114,11 +98,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
 
     public void setPowerLevel(int level) {
         int currentLevel = getPowerLevel();
-<<<<<<< HEAD
-        if(level != currentLevel) {
-=======
         if (level != currentLevel) {
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
             namedTag.putInt("Level", level);
             chunk.setChanged();
             this.spawnToAll();

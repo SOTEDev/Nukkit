@@ -1,9 +1,5 @@
 package cn.nukkit.command;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.data.CommandData;
@@ -16,6 +12,10 @@ import cn.nukkit.permission.Permissible;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * author: MagicDroidX
@@ -50,8 +50,6 @@ public abstract class Command {
     protected Map<String, CommandParameter[]> commandParameters = new HashMap<>();
 
     public Timing timing;
-
-    public boolean isSpecial = false;
 
     public Command(String name) {
         this(name, "", null, new String[0]);
@@ -101,10 +99,6 @@ public abstract class Command {
 
     public void addCommandParameters(String key, CommandParameter[] parameters) {
         this.commandParameters.put(key, parameters);
-    }
-
-    public String getCommandDataString(Player player){
-        return "";
     }
 
     /**

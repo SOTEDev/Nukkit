@@ -1,9 +1,5 @@
 package cn.nukkit.block;
 
-<<<<<<< HEAD
-import cn.nukkit.item.Item;
-=======
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 import cn.nukkit.item.ItemTool;
 
 /**
@@ -41,14 +37,7 @@ public class BlockIcePacked extends BlockIce {
     }
 
     @Override
-<<<<<<< HEAD
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {this.getId(), 0, 1}
-        };
-=======
     public boolean canHarvestWithHand() {
         return false;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 }

@@ -1,7 +1,5 @@
 package cn.nukkit.block;
 
-import java.util.Random;
-
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
@@ -16,6 +14,8 @@ import cn.nukkit.level.sound.ItemFrameRemovedSound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
+
+import java.util.Random;
 
 /**
  * Created by Pub4Game on 03.07.2016.
@@ -154,12 +154,6 @@ public class BlockItemFrame extends BlockTransparent {
     }
 
     @Override
-<<<<<<< HEAD
-    public boolean canPassThrough() {
-        return true;
-    }
-}
-=======
     public Item toItem() {
         return new ItemItemFrame();
     }
@@ -200,4 +194,3 @@ public class BlockItemFrame extends BlockTransparent {
         return null;
     }
 }
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e

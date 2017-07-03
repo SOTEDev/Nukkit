@@ -10,15 +10,7 @@ public class CommandParameter {
     public final static String ARG_TYPE_PLAYER = "target";
     public final static String ARG_TYPE_BLOCK_POS = "blockpos";
     public final static String ARG_TYPE_RAW_TEXT = "rawtext";
-    public final static String ARG_TYPE_INT = "int";  
-
-    public static final String ENUM_TYPE_ITEM_LIST = "itemType";
-    public static final String ENUM_TYPE_BLOCK_LIST = "blockType";
-    public static final String ENUM_TYPE_COMMAND_LIST = "commandName";
-    public static final String ENUM_TYPE_ENCHANTMENT_LIST = "enchantmentType";
-    public static final String ENUM_TYPE_ENTITY_LIST = "entityType";
-    public static final String ENUM_TYPE_EFFECT_LIST = "effectType";
-    public static final String ENUM_TYPE_PARTICLE_LIST = "particleType";
+    public final static String ARG_TYPE_INT = "int";
 
     public static final String ENUM_TYPE_ITEM_LIST = "itemType";
     public static final String ENUM_TYPE_BLOCK_LIST = "blockType";

@@ -4,10 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
-<<<<<<< HEAD
-=======
 import cn.nukkit.math.BlockFace;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 
 /**
  * author: MagicDroidX

@@ -68,45 +68,6 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final byte SOUND_ITEM_FIZZ = 59;
     public static final byte SOUND_CHEST_OPEN = 60;
     public static final byte SOUND_CHEST_CLOSED = 61;
-<<<<<<< HEAD
-    public static final byte SOUND_POWER_ON = 62;
-    public static final byte SOUND_POWER_OFF = 63;
-    public static final byte SOUND_ATTACH = 64;
-    public static final byte SOUND_DETACH = 65;
-    public static final byte SOUND_DENY = 66;
-    public static final byte SOUND_TRIPOD = 67;
-    public static final byte SOUND_POP = 68;
-    public static final byte SOUND_DROP_SLOT = 69;
-    public static final byte SOUND_NOTE = 70;
-    public static final byte SOUND_THORNS = 71;
-    public static final byte SOUND_PISTON_IN = 72;
-    public static final byte SOUND_PISTON_OUT = 73;
-    public static final byte SOUND_PORTAL = 74;
-    public static final byte SOUND_WATER = 75;
-    public static final byte SOUND_LAVA_POP = 76;
-    public static final byte SOUND_LAVA = 77;
-    public static final byte SOUND_BURP = 78;
-    public static final byte SOUND_BUCKET_FILL_WATER = 79;
-    public static final byte SOUND_BUCKET_FILL_LAVA = 80;
-    public static final byte SOUND_BUCKET_EMPTY_WATER = 81;
-    public static final byte SOUND_BUCKET_EMPTY_LAVA = 82;
-    public static final byte SOUND_GUARDIAN_FLOP = 83;
-    public static final byte SOUND_ELDERGUARDIAN_CURSE = 84;
-    public static final byte SOUND_MOB_WARNING = 85;
-    public static final byte SOUND_MOB_WARNING_BABY = 86;
-    public static final byte SOUND_TELEPORT = 87;
-    public static final byte SOUND_SHULKER_OPEN = 88;
-    public static final byte SOUND_SHULKER_CLOSE = 89;
-    public static final byte SOUND_HAGGLE = 90;
-    public static final byte SOUND_HAGGLE_YES = 91;
-    public static final byte SOUND_HAGGLE_NO = 92;
-    public static final byte SOUND_HAGGLE_IDLE = 93;
-    public static final byte SOUND_DEFAULT = 94;
-    public static final byte SOUND_UNDEFINED = 95;
-
-
-    public byte type;
-=======
     public static final byte SOUND_SHULKERBOX_OPEN = 62;
     public static final byte SOUND_SHULKERBOX_CLOSED = 63;
     public static final byte SOUND_POWER_ON = 64;
@@ -155,26 +116,17 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final byte SOUND_UNDEFINED = 107;
 
     public int sound;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     public float x;
     public float y;
     public float z;
     public int extraData = -1;
-<<<<<<< HEAD
-    public int pitch = -1;
-=======
     public int pitch = 1;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     public boolean unknownBool;
     public boolean disableRelativeVolume;
 
     @Override
     public void decode() {
-<<<<<<< HEAD
-        this.type = (byte) this.getByte();
-=======
         this.sound = this.getByte();
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         Vector3f v = this.getVector3f();
         this.x = v.x;
         this.y = v.y;
@@ -188,11 +140,7 @@ public class LevelSoundEventPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-<<<<<<< HEAD
-        this.putByte(this.type);
-=======
         this.putByte((byte) this.sound);
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         this.putVector3f(this.x, this.y, this.z);
         this.putVarInt(this.extraData);
         this.putVarInt(this.pitch);

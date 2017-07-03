@@ -99,11 +99,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
     public boolean attack(EntityDamageEvent source) {
         //false?
         source.setDamage(0);
-<<<<<<< HEAD
-        super.attack(source);
-=======
         return super.attack(source);
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 
     @Override

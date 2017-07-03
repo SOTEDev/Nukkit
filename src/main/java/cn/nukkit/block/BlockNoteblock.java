@@ -5,10 +5,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.sound.NoteBoxSound;
-<<<<<<< HEAD
-import cn.nukkit.math.Vector3;
-=======
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 import cn.nukkit.network.protocol.BlockEventPacket;
 
 /**
@@ -121,9 +117,6 @@ public class BlockNoteblock extends BlockSolid {
             return false;
         }
     }
-<<<<<<< HEAD
-}
-=======
 
     @Override
     public int onUpdate(int type) {
@@ -134,4 +127,3 @@ public class BlockNoteblock extends BlockSolid {
         return 0;
     }
 }
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e

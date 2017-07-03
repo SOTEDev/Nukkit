@@ -1,16 +1,5 @@
 package cn.nukkit.level.format.anvil;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
@@ -23,8 +12,6 @@ import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 
-<<<<<<< HEAD
-=======
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,7 +19,6 @@ import java.nio.ByteOrder;
 import java.util.*;
 import java.util.regex.Pattern;
 
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -125,6 +111,7 @@ public class Anvil extends BaseLevelProvider {
                     tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound());
                 }
             }
+
             try {
                 blockEntities = NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN, true);
             } catch (IOException e) {
@@ -146,12 +133,6 @@ public class Anvil extends BaseLevelProvider {
         }
 
         BinaryStream stream = new BinaryStream();
-<<<<<<< HEAD
-        stream.putByte((byte) 16); // Send all chunk sections 
-        for (cn.nukkit.level.format.ChunkSection section : chunk.getSections()) { 
-            stream.putByte((byte) 0);
-            stream.put(section.getBytes());
-=======
         int count = 0;
         cn.nukkit.level.format.ChunkSection[] sections = chunk.getSections();
         for (int i = sections.length - 1; i >= 0; i--) {
@@ -164,7 +145,6 @@ public class Anvil extends BaseLevelProvider {
         for (int i = 0; i < count; i++) {
             stream.putByte((byte) 0);
             stream.put(sections[i].getBytes());
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         }
         for (int height : chunk.getHeightMapArray()) {
             stream.putByte((byte) height);

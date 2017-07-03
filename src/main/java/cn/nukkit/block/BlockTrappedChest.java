@@ -4,11 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.item.Item;
-<<<<<<< HEAD
-=======
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
@@ -36,18 +33,6 @@ public class BlockTrappedChest extends BlockChest {
     }
 
     @Override
-<<<<<<< HEAD
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        int[] faces = {4, 2, 5, 3};
-
-        BlockEntityChest chest = null;
-        this.meta = faces[player != null ? player.getDirection() : 0];
-
-        for (int side = 2; side <= 5; ++side) {
-            if ((this.meta == 4 || this.meta == 5) && (side == 4 || side == 5)) {
-                continue;
-            } else if ((this.meta == 3 || this.meta == 2) && (side == 2 || side == 3)) {
-=======
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         int[] faces = {2, 5, 3, 4};
 
@@ -58,7 +43,6 @@ public class BlockTrappedChest extends BlockChest {
             if ((this.meta == 4 || this.meta == 5) && (side == BlockFace.WEST || side == BlockFace.EAST)) {
                 continue;
             } else if ((this.meta == 3 || this.meta == 2) && (side == BlockFace.NORTH || side == BlockFace.SOUTH)) {
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
                 continue;
             }
             Block c = this.getSide(side);
@@ -99,8 +83,6 @@ public class BlockTrappedChest extends BlockChest {
 
         return true;
     }
-<<<<<<< HEAD
-=======
 
     @Override
     public int getWeakPower(BlockFace face) {
@@ -124,5 +106,4 @@ public class BlockTrappedChest extends BlockChest {
     public boolean isPowerSource() {
         return true;
     }
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 }

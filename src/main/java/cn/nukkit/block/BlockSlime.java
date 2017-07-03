@@ -31,15 +31,5 @@ public class BlockSlime extends BlockSolid {
     @Override
     public double getResistance() {
         return 0;
-<<<<<<< HEAD
-    }
-
-    @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {Item.SLIME_BLOCK, 0, 1}
-        };
-=======
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 }

@@ -42,11 +42,7 @@ public class BlockMobSpawner extends BlockSolid {
     }
 
     @Override
-<<<<<<< HEAD
-    public int[][] getDrops(Item item) {
-=======
     public Item[] getDrops(Item item) {
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
                     toItem()

@@ -36,13 +36,8 @@ public abstract class Enchantment implements Cloneable {
     public static final int ID_PROTECTION_PROJECTILE = 4;
     public static final int ID_THORNS = 5;
     public static final int ID_WATER_BREATHING = 6;
-<<<<<<< HEAD
-    public static final int ID_WATER_WORKER = 7;
-    public static final int ID_WATER_WALKER = 8;
-=======
     public static final int ID_WATER_WALKER = 7;
     public static final int ID_WATER_WORKER = 8;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     public static final int ID_DAMAGE_ALL = 9;
     public static final int ID_DAMAGE_SMITE = 10;
     public static final int ID_DAMAGE_ARTHROPODS = 11;

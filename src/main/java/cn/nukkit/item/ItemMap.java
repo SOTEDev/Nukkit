@@ -1,8 +1,5 @@
 package cn.nukkit.item;
 
-<<<<<<< HEAD
-import java.awt.Graphics2D;
-=======
 import cn.nukkit.Player;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.ClientboundMapItemDataPacket;
@@ -10,25 +7,12 @@ import cn.nukkit.utils.MainLogger;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-<<<<<<< HEAD
-import javax.imageio.ImageIO;
-
-import cn.nukkit.Player;
-import cn.nukkit.block.Block;
-import cn.nukkit.level.Level;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.ClientboundMapItemDataPacket;
-import cn.nukkit.utils.MainLogger;
-
-=======
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 /**
  * Created by CreeperFace on 18.3.2017.
  */
@@ -115,19 +99,7 @@ public class ItemMap extends Item {
     }
 
     @Override
-<<<<<<< HEAD
-    public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
-        return true;
-    }
-
-    @Override
     public int getMaxStackSize() {
         return 1;
     }
 }
-=======
-    public int getMaxStackSize() {
-        return 1;
-    }
-}
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e

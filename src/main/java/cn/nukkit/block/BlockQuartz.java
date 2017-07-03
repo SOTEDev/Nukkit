@@ -60,11 +60,7 @@ public class BlockQuartz extends BlockSolid {
     }
 
     @Override
-<<<<<<< HEAD
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-=======
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         if (this.meta != QUARTZ_NORMAL) {
             short[] faces = new short[]{
                     0,
@@ -75,11 +71,7 @@ public class BlockQuartz extends BlockSolid {
                     0b0100
             };
 
-<<<<<<< HEAD
-            this.meta = ((this.meta & 0x03) | faces[face]);
-=======
             this.meta = ((this.meta & 0x03) | faces[face.getIndex()]);
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         }
         this.getLevel().setBlock(block, this, true, true);
 

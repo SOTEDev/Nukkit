@@ -20,8 +20,4 @@ public class MapInfoRequestPacket extends DataPacket {
     public void encode() {
 
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e

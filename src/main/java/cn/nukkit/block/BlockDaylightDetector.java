@@ -29,16 +29,6 @@ public class BlockDaylightDetector extends BlockTransparent {
     @Override
     public double getHardness() {
         return 0.2;
-<<<<<<< HEAD
-    }
-
-    @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {Item.DAYLIGHT_DETECTOR, 0, 1}
-        };
-=======
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 
     @Override

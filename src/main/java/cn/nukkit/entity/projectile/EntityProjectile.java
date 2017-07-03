@@ -1,22 +1,10 @@
 package cn.nukkit.entity.projectile;
 
-import java.util.Random;
-
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
-<<<<<<< HEAD
-import cn.nukkit.entity.item.EntityPotion;
-import cn.nukkit.event.entity.EntityCombustByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.ProjectileHitEvent;
-=======
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
@@ -143,7 +131,7 @@ public abstract class EntityProjectile extends Entity {
                     continue;
                 }
 
-                AxisAlignedBB axisalignedbb = entity.boundingBox.grow(0.2, 0.2, 0.2);
+                AxisAlignedBB axisalignedbb = entity.boundingBox.grow(0.3, 0.3, 0.3);
                 MovingObjectPosition ob = axisalignedbb.calculateIntercept(this, moveVector);
 
                 if (ob == null) {
@@ -153,9 +141,6 @@ public abstract class EntityProjectile extends Entity {
                 double distance = this.distanceSquared(ob.hitVector);
 
                 if (distance < nearDistance) {
-                    if(shootingEntity instanceof Player && entity instanceof Player){
-                        if(!((Player)shootingEntity).canSee((Player) entity)) continue;
-                    }
                     nearDistance = distance;
                     nearEntity = entity;
                 }
@@ -165,69 +150,10 @@ public abstract class EntityProjectile extends Entity {
                 movingObjectPosition = MovingObjectPosition.fromEntity(nearEntity);
             }
 
-            boolean noDamage = false;
-
-            if (this instanceof EntityFishingHook) {
-                EntityFishingHook hook = (EntityFishingHook) this;
-                if(hook.isCatched) noDamage = true;
-            }
-
-            if (movingObjectPosition != null && !noDamage) {
+            if (movingObjectPosition != null) {
                 if (movingObjectPosition.entityHit != null) {
-<<<<<<< HEAD
-
-                    ProjectileHitEvent hitEvent;
-                    this.server.getPluginManager().callEvent(hitEvent = new ProjectileHitEvent(this, movingObjectPosition));
-
-                    if (!hitEvent.isCancelled()) {
-                        boolean notDissappear = false;
-                        movingObjectPosition = hitEvent.getMovingObjectPosition();
-                        double motion = Math.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
-                        double damage = Math.ceil(motion * this.getDamage());
-
-                        if (this instanceof EntityArrow && ((EntityArrow) this).isCritical) {
-                            damage += new Random().nextInt((int) (damage / 2) + 1);
-                        }
-
-                        if (this instanceof EntityPotion) {
-                            EntityPotion potion = (EntityPotion) this;
-                            potion.onSplash();
-                        }
-
-                        if (this instanceof EntityFishingHook) {
-                            EntityFishingHook hook = (EntityFishingHook) this;
-                            hook.onCatch(movingObjectPosition.entityHit);
-                            notDissappear = true;
-                        }
-
-                        EntityDamageEvent ev;
-                        if (this.shootingEntity == null) {
-                            ev = new EntityDamageByEntityEvent(this, movingObjectPosition.entityHit, EntityDamageEvent.CAUSE_PROJECTILE, (float) damage);
-                        } else {
-                            ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, movingObjectPosition.entityHit, EntityDamageEvent.CAUSE_PROJECTILE, (float) damage);
-                        }
-
-                        movingObjectPosition.entityHit.attack(ev);
-
-                        this.hadCollision = true;
-
-                        if (this.fireTicks > 0) {
-                            EntityCombustByEntityEvent ev2 = new EntityCombustByEntityEvent(this, movingObjectPosition.entityHit, 5);
-                            this.server.getPluginManager().callEvent(ev2);
-                            if (!ev2.isCancelled()) {
-                                movingObjectPosition.entityHit.setOnFire(ev2.getDuration());
-                            }
-                        }
-
-                        if(!notDissappear){
-                            this.kill();
-                            return true;
-                        }
-                    }
-=======
                     onCollideWithEntity(movingObjectPosition.entityHit);
                     return true;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
                 }
             }
 

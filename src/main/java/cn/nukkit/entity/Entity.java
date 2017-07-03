@@ -1,42 +1,15 @@
 package cn.nukkit.entity;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockDirt;
 import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockWater;
-<<<<<<< HEAD
-import cn.nukkit.entity.data.ByteEntityData;
-import cn.nukkit.entity.data.EntityData;
-import cn.nukkit.entity.data.EntityMetadata;
-import cn.nukkit.entity.data.FloatEntityData;
-import cn.nukkit.entity.data.IntEntityData;
-import cn.nukkit.entity.data.LongEntityData;
-import cn.nukkit.entity.data.ShortEntityData;
-import cn.nukkit.entity.data.StringEntityData;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityDespawnEvent;
-import cn.nukkit.event.entity.EntityLevelChangeEvent;
-import cn.nukkit.event.entity.EntityMotionEvent;
-import cn.nukkit.event.entity.EntityRegainHealthEvent;
-import cn.nukkit.event.entity.EntitySpawnEvent;
-import cn.nukkit.event.entity.EntityTeleportEvent;
-=======
 import cn.nukkit.entity.data.*;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityPortalEnterEvent.PortalType;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent;
@@ -45,10 +18,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector2;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -66,6 +36,10 @@ import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
+
+import java.lang.reflect.Constructor;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author MagicDroidX
@@ -122,33 +96,6 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_LEAD_HOLDER_EID = 38; //long
     public static final int DATA_SCALE = 39; //float
     public static final int DATA_INTERACTIVE_TAG = 40; //string (button text)
-<<<<<<< HEAD
-    /* 41 (long) */
-    public static final int DATA_URL_TAG = 43; //string
-    public static final int DATA_MAX_AIR = 44; //short
-    public static final int DATA_MARK_VARIANT = 45; //int
-    /* 46 (byte)
-     * 47 (int)
-     * 48 (int)
-     * 49 (long)
-     * 50 (long)
-     * 51 (long)
-     * 52 (short)
-     * 53 (unknown) */
-    public static final int DATA_BOUNDING_BOX_WIDTH = 54; //float
-    public static final int DATA_BOUNDING_BOX_HEIGHT = 55; //float
-    public static final int DATA_FUSE_LENGTH = 56; //int
-    /* 56 (vector3f)
-     * 57 (byte)
-	 * 58 (float)
-	 * 59 (float) */
-
-    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS = 61; //float
-    public static final int DATA_AREA_EFFECT_CLOUD_WAITING = 62; //int
-    public static final int DATA_AREA_EFFECT_CLOUD_PARTICLE = 63; //int
-    public static final int DATA_TRADE_PLAYER = 68;//long
-
-=======
     public static final int DATA_NPC_SKIN_ID = 41; //string
     public static final int DATA_URL_TAG = 42; //string
     public static final int DATA_MAX_AIR = 43; //short
@@ -186,7 +133,6 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_MAX_STRENGTH = 76; //int
     /* 77 (int)
      * 78 (int) */
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     public static final int DATA_FLAG_ONFIRE = 0;
     public static final int DATA_FLAG_SNEAKING = 1;
     public static final int DATA_FLAG_RIDING = 2;
@@ -324,8 +270,6 @@ public abstract class Entity extends Location implements Metadatable {
     protected Timing timing;
 
     protected boolean isPlayer = false;
-
-    public long lastCactusDamage = 0;
 
     public float getHeight() {
         return 0;
@@ -562,8 +506,6 @@ public abstract class Entity extends Location implements Metadatable {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_IMMOBILE, value);
     }
 
-<<<<<<< HEAD
-=======
     public boolean canClimb() {
         return this.getDataFlag(DATA_FLAGS, DATA_FLAG_CAN_CLIMB);
     }
@@ -588,7 +530,6 @@ public abstract class Entity extends Location implements Metadatable {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_WALLCLIMBING, value);
     }
 
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     public void setScale(float scale) {
         this.scale = scale;
         this.setDataProperty(new FloatEntityData(DATA_SCALE, this.scale));
@@ -840,11 +781,7 @@ public abstract class Entity extends Location implements Metadatable {
     public void sendPotionEffects(Player player) {
         for (Effect effect : this.effects.values()) {
             MobEffectPacket pk = new MobEffectPacket();
-<<<<<<< HEAD
-            pk.eid = player.getId();
-=======
             pk.eid = this.getId();
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
             pk.effectId = effect.getId();
             pk.amplifier = effect.getAmplifier();
             pk.particles = effect.isVisible();
@@ -902,13 +839,6 @@ public abstract class Entity extends Location implements Metadatable {
                 || source.getCause() == DamageCause.FIRE_TICK
                 || source.getCause() == DamageCause.LAVA)) {
             return false;
-        }
-        if(source.getCause() == EntityDamageEvent.CAUSE_CONTACT || source.getCause() == EntityDamageEvent.CAUSE_LAVA){
-            if(System.nanoTime() - this.lastCactusDamage >= 1000000000){
-                this.lastCactusDamage = System.nanoTime();
-            }else{
-                return;
-            }
         }
 
         getServer().getPluginManager().callEvent(source);
@@ -1177,11 +1107,7 @@ public abstract class Entity extends Location implements Metadatable {
             this.lastYaw = this.yaw;
             this.lastPitch = this.pitch;
 
-<<<<<<< HEAD
-            this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.getId(), this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
-=======
             this.addMovement(this.x, this.y + this.getBaseOffset(), this.z, this.yaw, this.pitch, this.yaw);
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         }
 
         if (diffMotion > 0.0025 || (diffMotion > 0.0001 && this.getMotion().lengthSquared() <= 0.0001)) { //0.05 ** 2

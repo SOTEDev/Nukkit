@@ -1,7 +1,5 @@
 package cn.nukkit.inventory;
 
-import java.util.Collection;
-
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.BlockAir;
@@ -17,11 +15,8 @@ import cn.nukkit.network.protocol.ContainerSetSlotPacket;
 import cn.nukkit.network.protocol.MobArmorEquipmentPacket;
 import cn.nukkit.network.protocol.MobEquipmentPacket;
 
-<<<<<<< HEAD
-=======
 import java.util.Collection;
 
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -171,19 +166,11 @@ public class PlayerInventory extends BaseInventory {
     }
 
     public boolean setArmorItem(int index, Item item) {
-<<<<<<< HEAD
-        return this.setArmorItem(this.getSize() + index, item, false);
-    }
-
-    public boolean setArmorItem(int index, Item item, boolean ignoreArmorEvents) {
-        return this.setItem(this.getSize() + index, item);
-=======
         return this.setArmorItem(index, item, false);
     }
 
     public boolean setArmorItem(int index, Item item, boolean ignoreArmorEvents) {
         return this.setItem(this.getSize() + index, item, ignoreArmorEvents);
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 
     public Item getHelmet() {
@@ -223,11 +210,7 @@ public class PlayerInventory extends BaseInventory {
         return setItem(index, item, false);
     }
 
-<<<<<<< HEAD
-    private boolean setItem(int index, Item item, boolean ignoreArmorEvents) { 
-=======
     private boolean setItem(int index, Item item, boolean ignoreArmorEvents) {
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         if (index < 0 || index >= this.size) {
             return false;
         } else if (item.getId() == 0 || item.getCount() <= 0) {

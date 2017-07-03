@@ -62,15 +62,11 @@ public class Vector2 {
     }
 
     public Vector2 ceil() {
-        return new Vector2((int) Math.ceil(this.x), (int) Math.ceil(this.y));
+        return new Vector2((int) (this.x + 1), (int) (this.y + 1));
     }
 
     public Vector2 floor() {
-<<<<<<< HEAD
-        return new Vector2(this.getFloorX(), this.getFloorY());
-=======
         return new Vector2((int) Math.floor(this.x), (int) Math.floor(this.y));
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 
     public Vector2 round() {

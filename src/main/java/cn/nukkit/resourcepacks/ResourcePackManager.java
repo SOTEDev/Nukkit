@@ -29,10 +29,7 @@ public class ResourcePackManager {
                 if (!pack.isDirectory()) { //directory resource packs temporarily unsupported
                     switch (Files.getFileExtension(pack.getName())) {
                         case "zip":
-<<<<<<< HEAD
-=======
                         case "mcpack":
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
                             resourcePack = new ZippedResourcePack(pack);
                             break;
                         default:
@@ -47,14 +44,8 @@ public class ResourcePackManager {
                     this.resourcePacksById.put(resourcePack.getPackId(), resourcePack);
                 }
             } catch (IllegalArgumentException e) {
-<<<<<<< HEAD
-                //Server.getInstance().getLogger().warning(Server.getInstance().getLanguage()
-                //        .translateString("nukkit.resources.fail", pack.getName(), e.getMessage()));
-                Server.getInstance().getLogger().warning(pack.getName()+"\n"+e.getMessage());
-=======
                 Server.getInstance().getLogger().warning(Server.getInstance().getLanguage()
                         .translateString("nukkit.resources.fail", pack.getName(), e.getMessage()));
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
             }
         }
 

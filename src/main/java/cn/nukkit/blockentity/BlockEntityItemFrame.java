@@ -96,13 +96,9 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
                 .putInt("z", (int) this.z)
                 .putCompound("Item", item ? NBTIO.putItemHelper(new ItemBlock(new BlockAir())) : NBTItem)
                 .putByte("ItemRotation", item ? 0 : this.getItemRotation());
-<<<<<<< HEAD
-                //.putFloat("ItemDropChance", this.getItemDropChance());
-=======
                 // TODO: This crashes the client, why?
                 // .putFloat("ItemDropChance", this.getItemDropChance());
     }
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 
     public int getAnalogOutput() {
         return this.getItem() == null || this.getItem().getId() == 0 ? 0 : this.getItemRotation() % 8 + 1;

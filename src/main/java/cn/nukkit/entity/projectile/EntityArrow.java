@@ -3,15 +3,6 @@ package cn.nukkit.entity.projectile;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
-<<<<<<< HEAD
-import cn.nukkit.level.particle.CriticalParticle;
-import cn.nukkit.level.particle.DustParticle;
-import cn.nukkit.level.particle.MobSpellInstantaneousParticle;
-import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.math.Vector3;
-=======
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
@@ -57,17 +48,6 @@ public class EntityArrow extends EntityProjectile {
     protected float gravity = 0.05f;
     protected float drag = 0.01f;
 
-<<<<<<< HEAD
-    protected double damage = 2;
-
-    protected boolean isCritical;
-
-    public int particleType = 0;
-
-    public int[] rgba = new int[4];
-
-=======
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     public EntityArrow(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
@@ -121,37 +101,8 @@ public class EntityArrow extends EntityProjectile {
 
         boolean hasUpdate = super.onUpdate(currentTick);
 
-<<<<<<< HEAD
-        if (!this.hadCollision && this.isCritical) {
-            NukkitRandom random = new NukkitRandom();
-            Vector3 pos = this.add(
-                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
-                    this.getHeight() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
-                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500);
-            if(this.particleType == 0){
-                this.level.addParticle(new CriticalParticle(pos));
-            }
-        } else if (this.onGround) {
-            this.isCritical = false;
-=======
         if (this.onGround || this.hadCollision) {
             this.setCritical(false);
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
-        }
-        if(this.particleType == 1){
-            NukkitRandom random = new NukkitRandom();
-            Vector3 pos = this.add(
-                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
-                    this.getHeight() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
-                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500);
-            this.level.addParticle(new DustParticle(pos, rgba[0], rgba[1], rgba[2], rgba[3]));
-        }else if(this.particleType == 2){
-            NukkitRandom random = new NukkitRandom();
-            Vector3 pos = this.add(
-                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
-                    this.getHeight() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500,
-                    this.getWidth() / 2 + ((double) NukkitMath.randomRange(random, -100, 100)) / 500);
-            this.level.addParticle(new MobSpellInstantaneousParticle(pos, rgba[0], rgba[1], rgba[2], rgba[3]));
         }
 
         if (this.age > 1200) {
@@ -162,15 +113,6 @@ public class EntityArrow extends EntityProjectile {
         this.timing.stopTiming();
 
         return hasUpdate;
-    }
-
-    public void setParticleColor(int r, int g, int b, int a, int type){
-        this.particleType = type;
-        this.rgba = new int[]{r,g,b,a};
-    }
-
-    public void setCritical(boolean bool) {
-        this.isCritical = bool;
     }
 
     @Override

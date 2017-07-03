@@ -1,7 +1,5 @@
 package cn.nukkit.entity;
 
-import java.util.Random;
-
 import cn.nukkit.Player;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -18,6 +16,8 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+
+import java.util.Random;
 
 public abstract class EntityHumanType extends EntityCreature implements InventoryHolder {
 
@@ -174,15 +174,9 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
 
                 if (armor.getDamage() >= armor.getMaxDurability()) {
                     inventory.setArmorItem(slot, new ItemBlock(new BlockAir()));
-<<<<<<< HEAD
-                }else{
-                    inventory.setArmorItem(slot, armor, true);
-                 }
-=======
                 } else {
                     inventory.setArmorItem(slot, armor, true);
                 }
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
             }
 
             return true;

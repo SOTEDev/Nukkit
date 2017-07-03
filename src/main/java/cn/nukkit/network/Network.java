@@ -1,94 +1,17 @@
 package cn.nukkit.network;
 
+import cn.nukkit.Nukkit;
+import cn.nukkit.Player;
+import cn.nukkit.Server;
+import cn.nukkit.network.protocol.*;
+import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.BinaryStream;
+import cn.nukkit.utils.Zlib;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import cn.nukkit.Nukkit;
-import cn.nukkit.Player;
-import cn.nukkit.Server;
-import cn.nukkit.network.protocol.AddEntityPacket;
-import cn.nukkit.network.protocol.AddHangingEntityPacket;
-import cn.nukkit.network.protocol.AddItemEntityPacket;
-import cn.nukkit.network.protocol.AddItemPacket;
-import cn.nukkit.network.protocol.AddPaintingPacket;
-import cn.nukkit.network.protocol.AddPlayerPacket;
-import cn.nukkit.network.protocol.AdventureSettingsPacket;
-import cn.nukkit.network.protocol.AnimatePacket;
-import cn.nukkit.network.protocol.AvailableCommandsPacket;
-import cn.nukkit.network.protocol.BatchPacket;
-import cn.nukkit.network.protocol.BlockEntityDataPacket;
-import cn.nukkit.network.protocol.BlockEventPacket;
-import cn.nukkit.network.protocol.BossEventPacket;
-import cn.nukkit.network.protocol.ChangeDimensionPacket;
-import cn.nukkit.network.protocol.ChunkRadiusUpdatedPacket;
-import cn.nukkit.network.protocol.ClientboundMapItemDataPacket;
-import cn.nukkit.network.protocol.CommandStepPacket;
-import cn.nukkit.network.protocol.ContainerClosePacket;
-import cn.nukkit.network.protocol.ContainerOpenPacket;
-import cn.nukkit.network.protocol.ContainerSetContentPacket;
-import cn.nukkit.network.protocol.ContainerSetDataPacket;
-import cn.nukkit.network.protocol.ContainerSetSlotPacket;
-import cn.nukkit.network.protocol.CraftingDataPacket;
-import cn.nukkit.network.protocol.CraftingEventPacket;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.DisconnectPacket;
-import cn.nukkit.network.protocol.DropItemPacket;
-import cn.nukkit.network.protocol.EntityEventPacket;
-import cn.nukkit.network.protocol.ExplodePacket;
-import cn.nukkit.network.protocol.FullChunkDataPacket;
-import cn.nukkit.network.protocol.GameRulesChangedPacket;
-import cn.nukkit.network.protocol.HurtArmorPacket;
-import cn.nukkit.network.protocol.InteractPacket;
-import cn.nukkit.network.protocol.InventoryActionPacket;
-import cn.nukkit.network.protocol.ItemFrameDropItemPacket;
-import cn.nukkit.network.protocol.LevelEventPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
-import cn.nukkit.network.protocol.LoginPacket;
-import cn.nukkit.network.protocol.MapInfoRequestPacket;
-import cn.nukkit.network.protocol.MobArmorEquipmentPacket;
-import cn.nukkit.network.protocol.MobEquipmentPacket;
-import cn.nukkit.network.protocol.MoveEntityPacket;
-import cn.nukkit.network.protocol.MovePlayerPacket;
-import cn.nukkit.network.protocol.PlayStatusPacket;
-import cn.nukkit.network.protocol.PlayerActionPacket;
-import cn.nukkit.network.protocol.PlayerInputPacket;
-import cn.nukkit.network.protocol.PlayerListPacket;
-import cn.nukkit.network.protocol.ProtocolInfo;
-import cn.nukkit.network.protocol.RemoveBlockPacket;
-import cn.nukkit.network.protocol.RemoveEntityPacket;
-import cn.nukkit.network.protocol.ReplaceItemInSlotPacket;
-import cn.nukkit.network.protocol.RequestChunkRadiusPacket;
-import cn.nukkit.network.protocol.ResourcePackChunkDataPacket;
-import cn.nukkit.network.protocol.ResourcePackChunkRequestPacket;
-import cn.nukkit.network.protocol.ResourcePackClientResponsePacket;
-import cn.nukkit.network.protocol.ResourcePackDataInfoPacket;
-import cn.nukkit.network.protocol.ResourcePackStackPacket;
-import cn.nukkit.network.protocol.ResourcePacksInfoPacket;
-import cn.nukkit.network.protocol.RespawnPacket;
-import cn.nukkit.network.protocol.SetCommandsEnabledPacket;
-import cn.nukkit.network.protocol.SetDifficultyPacket;
-import cn.nukkit.network.protocol.SetEntityDataPacket;
-import cn.nukkit.network.protocol.SetEntityLinkPacket;
-import cn.nukkit.network.protocol.SetEntityMotionPacket;
-import cn.nukkit.network.protocol.SetHealthPacket;
-import cn.nukkit.network.protocol.SetPlayerGameTypePacket;
-import cn.nukkit.network.protocol.SetSpawnPositionPacket;
-import cn.nukkit.network.protocol.SetTimePacket;
-import cn.nukkit.network.protocol.SetTitlePacket;
-import cn.nukkit.network.protocol.ShowCreditsPacket;
-import cn.nukkit.network.protocol.SpawnExperienceOrbPacket;
-import cn.nukkit.network.protocol.StartGamePacket;
-import cn.nukkit.network.protocol.TakeItemEntityPacket;
-import cn.nukkit.network.protocol.TextPacket;
-import cn.nukkit.network.protocol.TransferPacket;
-import cn.nukkit.network.protocol.UpdateBlockPacket;
-import cn.nukkit.network.protocol.UpdateTradePacket;
-import cn.nukkit.network.protocol.UseItemPacket;
-import cn.nukkit.utils.Binary;
-import cn.nukkit.utils.BinaryStream;
-import cn.nukkit.utils.Zlib;
 
 /**
  * author: MagicDroidX
@@ -343,13 +266,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.REMOVE_BLOCK_PACKET, RemoveBlockPacket.class);
         this.registerPacket(ProtocolInfo.REMOVE_ENTITY_PACKET, RemoveEntityPacket.class);
         this.registerPacket(ProtocolInfo.REPLACE_ITEM_IN_SLOT_PACKET, ReplaceItemInSlotPacket.class);
-<<<<<<< HEAD
-        this.registerPacket(ProtocolInfo.GAME_RULES_CHANGED_PACKET, GameRulesChangedPacket.class);
         this.registerPacket(ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET, RequestChunkRadiusPacket.class);
-        this.registerPacket(ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET, RequestChunkRadiusPacket.class);
-=======
-        this.registerPacket(ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET, RequestChunkRadiusPacket.class);
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         this.registerPacket(ProtocolInfo.RESOURCE_PACKS_INFO_PACKET, ResourcePacksInfoPacket.class);
         this.registerPacket(ProtocolInfo.RESOURCE_PACK_STACK_PACKET, ResourcePackStackPacket.class);
         this.registerPacket(ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET, ResourcePackClientResponsePacket.class);
@@ -368,22 +285,13 @@ public class Network {
         this.registerPacket(ProtocolInfo.SET_SPAWN_POSITION_PACKET, SetSpawnPositionPacket.class);
         this.registerPacket(ProtocolInfo.SET_TITLE_PACKET, SetTitlePacket.class);
         this.registerPacket(ProtocolInfo.SET_TIME_PACKET, SetTimePacket.class);
-<<<<<<< HEAD
-        this.registerPacket(ProtocolInfo.SET_TITLE_PACKET, SetTitlePacket.class);
-=======
         this.registerPacket(ProtocolInfo.SHOW_CREDITS_PACKET, ShowCreditsPacket.class);
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         this.registerPacket(ProtocolInfo.SPAWN_EXPERIENCE_ORB_PACKET, SpawnExperienceOrbPacket.class);
         this.registerPacket(ProtocolInfo.START_GAME_PACKET, StartGamePacket.class);
         this.registerPacket(ProtocolInfo.TAKE_ITEM_ENTITY_PACKET, TakeItemEntityPacket.class);
         this.registerPacket(ProtocolInfo.TEXT_PACKET, TextPacket.class);
-        this.registerPacket(ProtocolInfo.TRANSFER_PACKET, TransferPacket.class);
         this.registerPacket(ProtocolInfo.UPDATE_BLOCK_PACKET, UpdateBlockPacket.class);
         this.registerPacket(ProtocolInfo.USE_ITEM_PACKET, UseItemPacket.class);
-<<<<<<< HEAD
-        this.registerPacket(ProtocolInfo.SHOW_CREDITS_PACKET, ShowCreditsPacket.class);
-=======
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         this.registerPacket(ProtocolInfo.UPDATE_TRADE_PACKET, UpdateTradePacket.class);
     }
 }

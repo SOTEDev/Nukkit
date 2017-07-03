@@ -1,9 +1,5 @@
 package cn.nukkit.blockentity;
 
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Map;
-
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.Position;
@@ -13,6 +9,10 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author MagicDroidX
@@ -33,17 +33,11 @@ public abstract class BlockEntity extends Position {
     public static final String ITEM_FRAME = "ItemFrame";
     public static final String CAULDRON = "Cauldron";
     public static final String BEACON = "Beacon";
-<<<<<<< HEAD
-    public static final String HOPPER = "Hopper";
-    public static final String DROPPER = "Dropper";
-    public static final String DISPENSER = "Dispenser";
-=======
     public static final String PISTON_ARM = "PistonArm";
     public static final String MOVING_BLOCK = "MovingBlock";
     public static final String COMPARATOR = "Comparator";
     public static final String HOPPER = "Hopper";
     public static final String BED = "Bed";
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 
 
     public static long count = 1;
@@ -56,7 +50,6 @@ public abstract class BlockEntity extends Position {
     public long id;
 
     public boolean closed = false;
-    public boolean using = false;
     public CompoundTag namedTag;
     protected long lastUpdate;
     protected Server server;
@@ -166,10 +159,6 @@ public abstract class BlockEntity extends Position {
     }
 
     public abstract boolean isBlockEntityValid();
-
-    public boolean isUsing(){
-        return this.using;
-    }
 
     public boolean onUpdate() {
         return false;

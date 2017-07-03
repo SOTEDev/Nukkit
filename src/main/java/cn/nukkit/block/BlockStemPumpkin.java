@@ -35,11 +35,7 @@ public class BlockStemPumpkin extends BlockCrops {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-<<<<<<< HEAD
-            if (this.getSide(0).getId() != FARMLAND) {
-=======
             if (this.down().getId() != FARMLAND) {
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }

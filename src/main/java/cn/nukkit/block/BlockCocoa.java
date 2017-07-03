@@ -86,23 +86,14 @@ public class BlockCocoa extends BlockTransparent {
 
         return bbs[this.meta / 4].getOffsetBoundingBox(x, y, z);
     }
-    
-    @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz){
-        return this.place(item, block, target, face, fx, fy, fz, null);
-    }
 
     @Override
-<<<<<<< HEAD
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-=======
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         if (target.getId() == Block.WOOD && target.getDamage() == BlockWood.JUNGLE) {
             if (face != BlockFace.DOWN && face != BlockFace.UP) {
                 int[] faces = new int[]{
@@ -199,8 +190,6 @@ public class BlockCocoa extends BlockTransparent {
     public int getToolType() {
         return ItemTool.TYPE_AXE;
     }
-<<<<<<< HEAD
-=======
 
     @Override
     public Item[] getDrops(Item item) {
@@ -214,5 +203,4 @@ public class BlockCocoa extends BlockTransparent {
             };
         }
     }
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 }

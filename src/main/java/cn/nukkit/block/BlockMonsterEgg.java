@@ -48,12 +48,7 @@ public class BlockMonsterEgg extends BlockSolid {
     }
 
     @Override
-<<<<<<< HEAD
-    public int[][] getDrops(Item item) {
-        return new int[0][0];
-=======
     public Item[] getDrops(Item item) {
         return new Item[0];
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 }

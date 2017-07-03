@@ -63,13 +63,8 @@ public class BlockFlowerPot extends BlockFlowable {
     }
 
     @Override
-<<<<<<< HEAD
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if (face != Vector3.SIDE_UP) return false;
-=======
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (face != BlockFace.UP) return false;
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         CompoundTag nbt = new CompoundTag()
                 .putString("id", BlockEntity.FLOWER_POT)
                 .putInt("x", (int) this.x)

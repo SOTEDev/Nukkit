@@ -39,15 +39,6 @@ public class BlockBricksEndStone extends BlockSolid {
     }
 
     @Override
-<<<<<<< HEAD
-    public int[][] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{
-                    {Item.END_BRICKS, 0, 1}
-            };
-        } else {
-            return new int[0][0];
-=======
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
@@ -55,7 +46,6 @@ public class BlockBricksEndStone extends BlockSolid {
             };
         } else {
             return new Item[0];
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         }
     }
 }

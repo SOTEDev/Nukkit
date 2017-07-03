@@ -1,18 +1,6 @@
 package cn.nukkit.utils;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringWriter;
+import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.nio.channels.FileChannel;
@@ -181,9 +169,6 @@ public class Utils {
         result |= ((int) a & 0xff) << 24;
         return result & 0xFFFFFFFFL;
     }
-<<<<<<< HEAD
-}
-=======
 
     public static <T> java.util.List<T[]> toChunk(java.util.List<T> list, int size) {
         java.util.List<T[]> result = new ArrayList<>();
@@ -204,4 +189,3 @@ public class Utils {
         return result;
     }
 }
->>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
