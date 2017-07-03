@@ -75,6 +75,23 @@ public class OfflinePlayer implements IPlayer {
     }
 
     @Override
+<<<<<<< HEAD
+=======
+    public boolean isBanned() {
+        return this.server.getNameBans().isBanned(this.getName());
+    }
+
+    @Override
+    public void setBanned(boolean value) {
+        if (value) {
+            this.server.getNameBans().addBan(this.getName(), null, null, null);
+        } else {
+            this.server.getNameBans().remove(this.getName());
+        }
+    }
+
+    @Override
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     public boolean isWhitelisted() {
         return this.server.isWhitelisted(this.getName().toLowerCase());
     }

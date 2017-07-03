@@ -26,4 +26,8 @@ public class PlayerMapInfoRequestEvent extends PlayerEvent implements Cancellabl
     public static HandlerList getHandlers() {
         return handlers;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e

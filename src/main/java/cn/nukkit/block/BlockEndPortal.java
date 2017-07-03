@@ -1,7 +1,10 @@
 package cn.nukkit.block;
 
+<<<<<<< HEAD
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityPortalEnterEvent;
+=======
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
 
@@ -56,6 +59,7 @@ public class BlockEndPortal extends BlockFlowable {
     }
 
     @Override
+<<<<<<< HEAD
     public void onEntityCollide(Entity entity) {
         entity.inPortalTicks++;
 
@@ -77,4 +81,19 @@ public class BlockEndPortal extends BlockFlowable {
         return BlockColor.AIR_BLOCK_COLOR;
     }
 
+=======
+    public BlockColor getColor() {
+        return BlockColor.AIR_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canBePushed() {
+        return false;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
+    }
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 }

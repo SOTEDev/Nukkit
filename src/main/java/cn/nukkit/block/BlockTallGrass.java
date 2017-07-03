@@ -2,9 +2,10 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemSeedsWheat;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.Random;
@@ -60,8 +61,8 @@ public class BlockTallGrass extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        Block down = this.getSide(Vector3.SIDE_DOWN);
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        Block down = this.down();
         if (down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.PODZOL) {
             this.getLevel().setBlock(block, this, true);
             return true;
@@ -72,7 +73,7 @@ public class BlockTallGrass extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.getSide(0).isTransparent()) {
+            if (this.down().isTransparent()) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -93,28 +94,28 @@ public class BlockTallGrass extends BlockFlowable {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         boolean dropSeeds = new Random().nextInt(10) == 0;
         if (item.isShears()) {
             //todo enchantment
             if (dropSeeds) {
-                return new int[][]{
-                        {Item.SEEDS, 0, 1},
-                        {Item.TALL_GRASS, this.meta, 1}
+                return new Item[]{
+                        new ItemSeedsWheat(),
+                        Item.get(Item.TALL_GRASS, this.meta, 1)
                 };
             } else {
-                return new int[][]{
-                        {Item.TALL_GRASS, this.meta, 1}
+                return new Item[]{
+                        Item.get(Item.TALL_GRASS, this.meta, 1)
                 };
             }
         }
 
         if (dropSeeds) {
-            return new int[][]{
-                    {Item.SEEDS, 0, 1},
+            return new Item[]{
+                    new ItemSeedsWheat()
             };
         } else {
-            return new int[0][0];
+            return new Item[0];
         }
     }
 

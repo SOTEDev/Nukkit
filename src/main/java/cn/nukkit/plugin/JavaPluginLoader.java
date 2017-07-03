@@ -3,7 +3,6 @@ package cn.nukkit.plugin;
 import cn.nukkit.Server;
 import cn.nukkit.event.plugin.PluginDisableEvent;
 import cn.nukkit.event.plugin.PluginEnableEvent;
-import cn.nukkit.plugin.certification.PluginCertificateTask;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
 
@@ -53,11 +52,14 @@ public class JavaPluginLoader implements PluginLoader {
                     plugin = pluginClass.newInstance();
                     this.initPlugin(plugin, description, dataFolder, file);
 
+<<<<<<< HEAD
                     if (plugin != null && description.isSigned()) {
                         PluginCertificateTask task = new PluginCertificateTask(plugin);
                         task.run();
                     }
 
+=======
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
                     return plugin;
                 } catch (ClassCastException e) {
                     throw new PluginException("main class `" + description.getMain() + "' does not extend PluginBase");

@@ -6,6 +6,7 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 
 /**
@@ -20,27 +21,21 @@ public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
         return handlers;
     }
 
-    public static final int LEFT_CLICK_BLOCK = 0;
-    public static final int RIGHT_CLICK_BLOCK = 1;
-    public static final int LEFT_CLICK_AIR = 2;
-    public static final int RIGHT_CLICK_AIR = 3;
-    public static final int PHYSICAL = 4;
-
     protected final Block blockTouched;
 
     protected final Vector3 touchVector;
 
-    protected final int blockFace;
+    protected final BlockFace blockFace;
 
     protected final Item item;
 
-    protected final int action;
+    protected final Action action;
 
-    public PlayerInteractEvent(Player player, Item item, Vector3 block, int face) {
-        this(player, item, block, face, RIGHT_CLICK_BLOCK);
+    public PlayerInteractEvent(Player player, Item item, Vector3 block, BlockFace face) {
+        this(player, item, block, face, Action.RIGHT_CLICK_BLOCK);
     }
 
-    public PlayerInteractEvent(Player player, Item item, Vector3 block, int face, int action) {
+    public PlayerInteractEvent(Player player, Item item, Vector3 block, BlockFace face, Action action) {
         if (block instanceof Block) {
             this.blockTouched = (Block) block;
             this.touchVector = new Vector3(0, 0, 0);
@@ -55,7 +50,7 @@ public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
         this.action = action;
     }
 
-    public int getAction() {
+    public Action getAction() {
         return action;
     }
 
@@ -71,7 +66,15 @@ public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
         return touchVector;
     }
 
-    public int getFace() {
+    public BlockFace getFace() {
         return blockFace;
+    }
+
+    public enum Action {
+        LEFT_CLICK_BLOCK,
+        RIGHT_CLICK_BLOCK,
+        LEFT_CLICK_AIR,
+        RIGHT_CLICK_AIR,
+        PHYSICAL
     }
 }

@@ -6,6 +6,10 @@ import cn.nukkit.blockentity.BlockEntityEnderChest;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
+<<<<<<< HEAD
+=======
+import cn.nukkit.math.BlockFace;
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
@@ -75,9 +79,15 @@ public class BlockEnderChest extends BlockTransparent {
     }
 
     @Override
+<<<<<<< HEAD
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         int[] faces = {4, 2, 5, 3};
         this.meta = faces[player != null ? player.getDirection() : 0];
+=======
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        int[] faces = {2, 5, 3, 4};
+        this.meta = faces[player != null ? player.getDirection().getHorizontalIndex() : 0];
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 
         this.getLevel().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag("")
@@ -104,7 +114,11 @@ public class BlockEnderChest extends BlockTransparent {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
+<<<<<<< HEAD
             Block top = this.getSide(1);
+=======
+            Block top = this.up();
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
             if (!top.isTransparent()) {
                 return true;
             }
@@ -136,6 +150,7 @@ public class BlockEnderChest extends BlockTransparent {
     }
 
     @Override
+<<<<<<< HEAD
     public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new int[][]{
@@ -143,6 +158,15 @@ public class BlockEnderChest extends BlockTransparent {
             };
         } else {
             return new int[0][0];
+=======
+    public Item[] getDrops(Item item) {
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+            return new Item[]{
+                    Item.get(Item.OBSIDIAN, 0, 8)
+            };
+        } else {
+            return new Item[0];
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         }
     }
 
@@ -154,4 +178,17 @@ public class BlockEnderChest extends BlockTransparent {
     public Set<Player> getViewers() {
         return viewers;
     }
+<<<<<<< HEAD
+=======
+
+    @Override
+    public boolean canBePushed() {
+        return false;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
+    }
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 }

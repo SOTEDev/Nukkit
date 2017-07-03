@@ -95,7 +95,6 @@ import cn.nukkit.utils.Zlib;
  * Nukkit Project
  */
 public class Network {
-    public static int BATCH_THRESHOLD = 512;
 
     public static final byte CHANNEL_NONE = 0;
     public static final byte CHANNEL_PRIORITY = 1; //Priority channel, only to be used when it matters
@@ -205,7 +204,6 @@ public class Network {
         try {
             data = Zlib.inflate(packet.payload, 64 * 1024 * 1024);
         } catch (Exception e) {
-            Server.getInstance().getLogger().logException(e);
             return;
         }
 
@@ -219,10 +217,6 @@ public class Network {
                 DataPacket pk;
 
                 if ((pk = this.getPacket(buf[0])) != null) {
-                    if (pk.pid() == ProtocolInfo.BATCH_PACKET) {
-                        throw new IllegalStateException("Invalid BatchPacket inside BatchPacket");
-                    }
-
                     pk.setBuffer(buf, 1);
 
                     pk.decode();
@@ -309,6 +303,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.BATCH_PACKET, BatchPacket.class);
         this.registerPacket(ProtocolInfo.BLOCK_ENTITY_DATA_PACKET, BlockEntityDataPacket.class);
         this.registerPacket(ProtocolInfo.BLOCK_EVENT_PACKET, BlockEventPacket.class);
+        this.registerPacket(ProtocolInfo.BLOCK_PICK_REQUEST_PACKET, BlockPickRequestPacket.class);
         this.registerPacket(ProtocolInfo.BOSS_EVENT_PACKET, BossEventPacket.class);
         this.registerPacket(ProtocolInfo.CHANGE_DIMENSION_PACKET, ChangeDimensionPacket.class);
         this.registerPacket(ProtocolInfo.CHUNK_RADIUS_UPDATED_PACKET, ChunkRadiusUpdatedPacket.class);
@@ -324,8 +319,10 @@ public class Network {
         this.registerPacket(ProtocolInfo.DISCONNECT_PACKET, DisconnectPacket.class);
         this.registerPacket(ProtocolInfo.DROP_ITEM_PACKET, DropItemPacket.class);
         this.registerPacket(ProtocolInfo.ENTITY_EVENT_PACKET, EntityEventPacket.class);
+        this.registerPacket(ProtocolInfo.ENTITY_FALL_PACKET, EntityFallPacket.class);
         this.registerPacket(ProtocolInfo.EXPLODE_PACKET, ExplodePacket.class);
         this.registerPacket(ProtocolInfo.FULL_CHUNK_DATA_PACKET, FullChunkDataPacket.class);
+        this.registerPacket(ProtocolInfo.GAME_RULES_CHANGED_PACKET, GameRulesChangedPacket.class);
         this.registerPacket(ProtocolInfo.HURT_ARMOR_PACKET, HurtArmorPacket.class);
         this.registerPacket(ProtocolInfo.INTERACT_PACKET, InteractPacket.class);
         this.registerPacket(ProtocolInfo.INVENTORY_ACTION_PACKET, InventoryActionPacket.class);
@@ -341,13 +338,18 @@ public class Network {
         this.registerPacket(ProtocolInfo.PLAYER_ACTION_PACKET, PlayerActionPacket.class);
         this.registerPacket(ProtocolInfo.PLAYER_INPUT_PACKET, PlayerInputPacket.class);
         this.registerPacket(ProtocolInfo.PLAYER_LIST_PACKET, PlayerListPacket.class);
+        this.registerPacket(ProtocolInfo.PLAY_SOUND_PACKET, PlaySoundPacket.class);
         this.registerPacket(ProtocolInfo.PLAY_STATUS_PACKET, PlayStatusPacket.class);
         this.registerPacket(ProtocolInfo.REMOVE_BLOCK_PACKET, RemoveBlockPacket.class);
         this.registerPacket(ProtocolInfo.REMOVE_ENTITY_PACKET, RemoveEntityPacket.class);
         this.registerPacket(ProtocolInfo.REPLACE_ITEM_IN_SLOT_PACKET, ReplaceItemInSlotPacket.class);
+<<<<<<< HEAD
         this.registerPacket(ProtocolInfo.GAME_RULES_CHANGED_PACKET, GameRulesChangedPacket.class);
         this.registerPacket(ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET, RequestChunkRadiusPacket.class);
         this.registerPacket(ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET, RequestChunkRadiusPacket.class);
+=======
+        this.registerPacket(ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET, RequestChunkRadiusPacket.class);
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         this.registerPacket(ProtocolInfo.RESOURCE_PACKS_INFO_PACKET, ResourcePacksInfoPacket.class);
         this.registerPacket(ProtocolInfo.RESOURCE_PACK_STACK_PACKET, ResourcePackStackPacket.class);
         this.registerPacket(ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET, ResourcePackClientResponsePacket.class);
@@ -355,6 +357,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.RESOURCE_PACK_CHUNK_DATA_PACKET, ResourcePackChunkDataPacket.class);
         this.registerPacket(ProtocolInfo.RESOURCE_PACK_CHUNK_REQUEST_PACKET, ResourcePackChunkRequestPacket.class);
         this.registerPacket(ProtocolInfo.RESPAWN_PACKET, RespawnPacket.class);
+        this.registerPacket(ProtocolInfo.RIDER_JUMP_PACKET, RiderJumpPacket.class);
         this.registerPacket(ProtocolInfo.SET_COMMANDS_ENABLED_PACKET, SetCommandsEnabledPacket.class);
         this.registerPacket(ProtocolInfo.SET_DIFFICULTY_PACKET, SetDifficultyPacket.class);
         this.registerPacket(ProtocolInfo.SET_ENTITY_DATA_PACKET, SetEntityDataPacket.class);
@@ -363,8 +366,13 @@ public class Network {
         this.registerPacket(ProtocolInfo.SET_HEALTH_PACKET, SetHealthPacket.class);
         this.registerPacket(ProtocolInfo.SET_PLAYER_GAME_TYPE_PACKET, SetPlayerGameTypePacket.class);
         this.registerPacket(ProtocolInfo.SET_SPAWN_POSITION_PACKET, SetSpawnPositionPacket.class);
-        this.registerPacket(ProtocolInfo.SET_TIME_PACKET, SetTimePacket.class);
         this.registerPacket(ProtocolInfo.SET_TITLE_PACKET, SetTitlePacket.class);
+        this.registerPacket(ProtocolInfo.SET_TIME_PACKET, SetTimePacket.class);
+<<<<<<< HEAD
+        this.registerPacket(ProtocolInfo.SET_TITLE_PACKET, SetTitlePacket.class);
+=======
+        this.registerPacket(ProtocolInfo.SHOW_CREDITS_PACKET, ShowCreditsPacket.class);
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         this.registerPacket(ProtocolInfo.SPAWN_EXPERIENCE_ORB_PACKET, SpawnExperienceOrbPacket.class);
         this.registerPacket(ProtocolInfo.START_GAME_PACKET, StartGamePacket.class);
         this.registerPacket(ProtocolInfo.TAKE_ITEM_ENTITY_PACKET, TakeItemEntityPacket.class);
@@ -372,7 +380,10 @@ public class Network {
         this.registerPacket(ProtocolInfo.TRANSFER_PACKET, TransferPacket.class);
         this.registerPacket(ProtocolInfo.UPDATE_BLOCK_PACKET, UpdateBlockPacket.class);
         this.registerPacket(ProtocolInfo.USE_ITEM_PACKET, UseItemPacket.class);
+<<<<<<< HEAD
         this.registerPacket(ProtocolInfo.SHOW_CREDITS_PACKET, ShowCreditsPacket.class);
+=======
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         this.registerPacket(ProtocolInfo.UPDATE_TRADE_PACKET, UpdateTradePacket.class);
     }
 }

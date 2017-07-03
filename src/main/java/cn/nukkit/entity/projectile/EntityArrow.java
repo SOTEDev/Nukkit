@@ -3,12 +3,15 @@ package cn.nukkit.entity.projectile;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
+<<<<<<< HEAD
 import cn.nukkit.level.particle.CriticalParticle;
 import cn.nukkit.level.particle.DustParticle;
 import cn.nukkit.level.particle.MobSpellInstantaneousParticle;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+=======
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
@@ -51,14 +54,10 @@ public class EntityArrow extends EntityProjectile {
         return 0.01f;
     }
 
-    @Override
-    protected double getDamage() {
-        return namedTag.contains("damage") ? namedTag.getDouble("damage") : 2;
-    }
-
     protected float gravity = 0.05f;
     protected float drag = 0.01f;
 
+<<<<<<< HEAD
     protected double damage = 2;
 
     protected boolean isCritical;
@@ -67,6 +66,8 @@ public class EntityArrow extends EntityProjectile {
 
     public int[] rgba = new int[4];
 
+=======
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     public EntityArrow(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
@@ -77,7 +78,37 @@ public class EntityArrow extends EntityProjectile {
 
     public EntityArrow(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
         super(chunk, nbt, shootingEntity);
-        this.isCritical = critical;
+        this.setCritical(critical);
+    }
+
+    @Override
+    protected void initEntity() {
+        super.initEntity();
+
+        this.damage = namedTag.contains("damage") ? namedTag.getDouble("damage") : 2;
+    }
+
+    public void setCritical() {
+        this.setCritical(true);
+    }
+
+    public void setCritical(boolean value) {
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL, value);
+    }
+
+    public boolean isCritical() {
+        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL);
+    }
+
+    @Override
+    public int getResultDamage() {
+        int base = super.getResultDamage();
+
+        if (this.isCritical()) {
+            base += this.level.rand.nextInt(base / 2 + 2);
+        }
+
+        return base;
     }
 
     @Override
@@ -90,6 +121,7 @@ public class EntityArrow extends EntityProjectile {
 
         boolean hasUpdate = super.onUpdate(currentTick);
 
+<<<<<<< HEAD
         if (!this.hadCollision && this.isCritical) {
             NukkitRandom random = new NukkitRandom();
             Vector3 pos = this.add(
@@ -101,6 +133,10 @@ public class EntityArrow extends EntityProjectile {
             }
         } else if (this.onGround) {
             this.isCritical = false;
+=======
+        if (this.onGround || this.hadCollision) {
+            this.setCritical(false);
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         }
         if(this.particleType == 1){
             NukkitRandom random = new NukkitRandom();
@@ -119,7 +155,7 @@ public class EntityArrow extends EntityProjectile {
         }
 
         if (this.age > 1200) {
-            this.kill();
+            this.close();
             hasUpdate = true;
         }
 
@@ -149,6 +185,8 @@ public class EntityArrow extends EntityProjectile {
         pk.speedX = (float) this.motionX;
         pk.speedY = (float) this.motionY;
         pk.speedZ = (float) this.motionZ;
+        pk.yaw = (float) this.yaw;
+        pk.pitch = (float) this.pitch;
         pk.metadata = this.dataProperties;
         player.dataPacket(pk);
 

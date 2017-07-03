@@ -25,6 +25,62 @@ public class CraftingManager {
     private static int RECIPE_COUNT = 0;
 
     public CraftingManager() {
+        /*try { //TODO: json
+            Utils.writeFile(Server.getInstance().getDataPath() + "recipes.json", Server.class.getClassLoader().getResourceAsStream("recipes.json"));
+        } catch (IOException e) {
+            MainLogger.getLogger().logException(e);
+        }
+
+
+        Config recipes = new Config(Server.getInstance().getDataPath() + "recipes.json", Config.JSON);
+
+        MainLogger.getLogger().info("Loading recipes...");
+        for (Object obj : recipes.getAll().values()) {
+            ConfigSection recipe;
+            if (obj instanceof ConfigSection) {
+                recipe = (ConfigSection) obj;
+            } else {
+                continue;
+            }
+
+
+            switch (recipe.getInt("type")) {
+                case 0:
+                    // TODO: handle multiple result items
+                    Map<String, Object> first = recipe.getMapList("output").get(0);
+                    ShapelessRecipe result = new ShapelessRecipe(Item.get((int) first.get("id"), (int) first.get("damage"), (int) first.get("count"), first.get("nbt").toString().getBytes()));
+                    for (Map<String, Object> ingredient : recipe.getMapList("input")) {
+                        result.addIngredient(Item.get((int) ingredient.get("id"), (int) ingredient.get("damage"), (int) ingredient.get("count"), ingredient.get("nbt").toString().getBytes()));
+                    }
+                    this.registerRecipe(result);
+                    break;
+                case 1:
+                    // TODO: handle multiple result items
+                    first = recipe.getMapList("output").get(0);
+                    ShapedRecipe shapedRecipe = new ShapedRecipe(Item.get((int) first.get("id"), (int) first.get("damage"), (int) first.get("count"), first.get("nbt").toString().getBytes()));
+                    List<List<Map<String, Object>>> shape = Utils.toChunk(recipe.getList("input"), recipe.getInt("width"));
+
+                    for (int y = 0; y < shape.size(); y++) {
+                        List<Map<String, Object>> row = shape.get(y);
+
+                        for (int x = 0; x < row.size(); x++) {
+                            Map<String, Object> ingredient = row.get(x);
+                            shapedRecipe.addIngredient(x, y, Item.get((int) ingredient.get("id"), (int) ingredient.get("damage"), (int) ingredient.get("count"), ingredient.get("nbt").toString().getBytes()));
+                        }
+                    }
+                    this.registerRecipe(shapedRecipe);
+                    break;
+                case 2:
+                case 3:
+                    ConfigSection resultMap = recipe.getSection("output");
+                    Item resultItem = Item.get(resultMap.getInt("id"), resultMap.getInt("damage"), resultMap.getInt("count"), resultMap.getString("nbt").getBytes());
+                    this.registerRecipe(new FurnaceRecipe(resultItem, Item.get(recipe.getInt("id"), recipe.getInt("damage", -1), 1)));
+                    break;
+                default:
+                    break;
+            }
+        }*/
+
         this.registerFurnace();
         this.registerBrewing();
         this.registerDyes();
@@ -92,9 +148,8 @@ public class CraftingManager {
         )).setIngredient("X", Item.get(Item.PUMPKIN, 0, 1)).setIngredient("Y", Item.get(Item.TORCH, 0, 1)));
 
         this.registerRecipe((new ShapedRecipe(Item.get(Item.SNOW_BLOCK, 0, 1),
-                "   ",
-                "XX ",
-                "XX "
+                "XX",
+                "XX"
         )).setIngredient("X", Item.get(Item.SNOWBALL, 0, 1)));
 
         this.registerRecipe((new ShapedRecipe(Item.get(Item.SNOW_LAYER, 0, 6),
@@ -512,7 +567,7 @@ public class CraftingManager {
                 " N "
         )).setIngredient("N", Item.get(Item.SLAB, BlockSlabStone.SANDSTONE, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.STONE_BRICK, BlockBricksStone.NORMAL, 1),
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.STONE_BRICK, BlockBricksStone.NORMAL, 4),
                 "   ",
                 "SS ",
                 "SS "
@@ -738,6 +793,75 @@ public class CraftingManager {
                 "PSP",
                 "PPP"
         ).setIngredient("P", Item.get(Item.OBSIDIAN, 0, 1)).setIngredient("S", Item.get(Item.ENDER_EYE, 0, 1)));
+<<<<<<< HEAD
+=======
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.REDSTONE_TORCH, 0, 1),
+                "  R",
+                "  S"
+        ).setIngredient("R", Item.get(Item.REDSTONE_DUST, 0, 1)).setIngredient("S", Item.get(Item.STICK, 0, 1)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.LEVER, 0, 1),
+                "  S",
+                "  C"
+        ).setIngredient("C", Item.get(Item.COBBLESTONE, 0, 1)).setIngredient("S", Item.get(Item.STICK, 0, 1)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.STONE_BUTTON, 0, 1),
+                "  S"
+        ).setIngredient("S", Item.get(Item.STONE, 0, 1)));
+
+        for (int i = 0; i < 6; i++) {
+            this.registerRecipe(new BigShapedRecipe(Item.get(Item.WOODEN_BUTTON, 0, 1),
+                    "  W"
+            ).setIngredient("W", Item.get(Item.PLANKS, i, 1)));
+
+            this.registerRecipe(new BigShapedRecipe(Item.get(Item.WOODEN_PRESSURE_PLATE, 0, 1),
+                    "WW "
+            ).setIngredient("W", Item.get(Item.PLANKS, i, 2)));
+
+            this.registerRecipe(new BigShapedRecipe(Item.get(Item.TRIPWIRE_HOOK, 0, 2),
+                    " I ",
+                    " S ",
+                    " P "
+            ).setIngredient("P", Item.get(Item.PLANKS, i, 1)).setIngredient("S", Item.get(Item.STICK, 0, 1)).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 1)));
+        }
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.STONE_PRESSURE_PLATE, 0, 1),
+                "SS "
+        ).setIngredient("S", Item.get(Item.STONE, 0, 2)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.HEAVY_WEIGHTED_PRESSURE_PLATE, 0, 1),
+                "II "
+        ).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 2)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.LIGHT_WEIGHTED_PRESSURE_PLATE, 0, 1),
+                "GG "
+        ).setIngredient("G", Item.get(Item.GOLD_INGOT, 0, 2)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.REDSTONE_LAMP, 0, 1),
+                " R ",
+                "RGR",
+                " R "
+        ).setIngredient("R", Item.get(Item.REDSTONE_DUST, 0, 4)).setIngredient("G", Item.get(Item.GLOWSTONE_BLOCK, 0, 1)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.REPEATER, 0, 1),
+                "   ",
+                "TRT",
+                "SSS"
+        ).setIngredient("R", Item.get(Item.REDSTONE_DUST, 0, 1)).setIngredient("T", Item.get(Item.REDSTONE_TORCH, 0, 2)).setIngredient("S", Item.get(Item.STONE, 0, 3)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.COMPARATOR, 0, 1),
+                " T ",
+                "TQT",
+                "SSS"
+        ).setIngredient("Q", Item.get(Item.QUARTZ, 0, 1)).setIngredient("T", Item.get(Item.REDSTONE_TORCH, 0, 3)).setIngredient("S", Item.get(Item.STONE, 0, 3)));
+
+        this.registerRecipe(new BigShapedRecipe(Item.get(Item.HOPPER, 0, 1),
+                "I I",
+                "ICI",
+                " I "
+        ).setIngredient("I", Item.get(Item.IRON_INGOT, 0, 5)).setIngredient("C", Item.get(Item.CHEST, 0, 1)));
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 
     protected void registerFurnace() {
@@ -759,8 +883,9 @@ public class CraftingManager {
         this.registerRecipe(new FurnaceRecipe(Item.get(Item.STEAK, 0, 1), Item.get(Item.RAW_BEEF, null, 1)));
         this.registerRecipe(new FurnaceRecipe(Item.get(Item.COOKED_CHICKEN, 0, 1), Item.get(Item.RAW_CHICKEN, null, 1)));
         this.registerRecipe(new FurnaceRecipe(Item.get(Item.BAKED_POTATO, 0, 1), Item.get(Item.POTATO, null, 1)));
+        this.registerRecipe(new FurnaceRecipe(Item.get(Item.COOKED_MUTTON, 0, 1), Item.get(Item.RAW_MUTTON, null, 1)));
 
-        this.registerRecipe(new FurnaceRecipe(Item.get(Item.HARDENED_CLAY, 0, 1), Item.get(Item.CLAY_BLOCK, null, 1)));
+        this.registerRecipe(new FurnaceRecipe(Item.get(Item.TERRACOTTA, 0, 1), Item.get(Item.CLAY_BLOCK, null, 1)));
     }
 
     protected void registerBrewing() {
@@ -843,7 +968,7 @@ public class CraftingManager {
                 "XXX"
         )).setIngredient("X", Item.get(Item.GOLD_INGOT, 0, 1)).setIngredient("Y", Item.get(Item.APPLE, 0, 1)));
 
-        this.registerRecipe((new BigShapedRecipe(Item.get(Item.GOLDEN_APPLE, 1, 1),
+        this.registerRecipe((new BigShapedRecipe(Item.get(Item.GOLDEN_APPLE_ENCHANTED, 1, 1),
                 "XXX",
                 "XYX",
                 "XXX"
@@ -1011,11 +1136,11 @@ public class CraftingManager {
                     "DW"
             )).setIngredient('D', Item.get(Item.DYE, i, 1)).setIngredient('W', Item.get(Item.WOOL, 0, 1)));
 
-            this.registerRecipe((new BigShapedRecipe(Item.get(Item.STAINED_CLAY, 15 - i, 8),
+            this.registerRecipe((new BigShapedRecipe(Item.get(Item.STAINED_TERRACOTTA, 15 - i, 8),
                     "CCC",
                     "CDC",
                     "CCC"
-            )).setIngredient('D', Item.get(Item.DYE, i, 1)).setIngredient('C', Item.get(Item.HARDENED_CLAY, 0, 1)));
+            )).setIngredient('D', Item.get(Item.DYE, i, 1)).setIngredient('C', Item.get(Item.TERRACOTTA, 0, 1)));
             //TODO: add glass things?
 
             this.registerRecipe((new ShapedRecipe(Item.get(Item.CARPET, i, 3),

@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+<<<<<<< HEAD
 import java.util.Map;
 
 import cn.nukkit.Player;
@@ -17,6 +18,12 @@ import cn.nukkit.utils.BlockColor;
  * Nukkit Project
  */
 public class BlockDispenser extends BlockTransparent {
+=======
+/**
+ * Created by CreeperFace on 15.4.2017.
+ */
+public class BlockDispenser extends BlockSolid {
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 
     public BlockDispenser() {
         this(0);
@@ -27,21 +34,29 @@ public class BlockDispenser extends BlockTransparent {
     }
 
     @Override
+<<<<<<< HEAD
     public boolean canBeActivated() {
+=======
+    public boolean hasComparatorInputOverride() {
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         return true;
     }
 
     @Override
+<<<<<<< HEAD
     public int getId() {
         return DISPENSER;
     }
 
     @Override
+=======
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     public String getName() {
         return "Dispenser";
     }
 
     @Override
+<<<<<<< HEAD
     public double getHardness() {
         return 3.5;
     }
@@ -137,5 +152,25 @@ public class BlockDispenser extends BlockTransparent {
     @Override
     public BlockColor getColor() {
         return BlockColor.STONE_BLOCK_COLOR;
+=======
+    public int getId() {
+        return DISPENSER;
+    }
+
+    @Override
+    public int getComparatorInputOverride() {
+        /*BlockEntity blockEntity = this.level.getBlockEntity(this);
+
+        if(blockEntity instanceof BlockEntityDispenser) {
+            //return ContainerInventory.calculateRedstone(((BlockEntityDispenser) blockEntity).getInventory()); TODO: dispenser
+        }*/
+
+        return super.getComparatorInputOverride();
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
     }
 }

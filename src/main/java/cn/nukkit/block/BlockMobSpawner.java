@@ -42,13 +42,28 @@ public class BlockMobSpawner extends BlockSolid {
     }
 
     @Override
+<<<<<<< HEAD
     public int[][] getDrops(Item item) {
+=======
+    public Item[] getDrops(Item item) {
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{
-                    {Item.MONSTER_SPAWNER, 0, 1}
+            return new Item[]{
+                    toItem()
             };
         } else {
-            return new int[0][0];
+            return new Item[0];
         }
     }
+
+    @Override
+    public boolean canBePushed() {
+        return false;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
+    }
+
 }

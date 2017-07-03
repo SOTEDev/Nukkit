@@ -8,6 +8,7 @@ import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.item.*;
 import cn.nukkit.level.sound.ExplodeSound;
 import cn.nukkit.level.sound.SplashSound;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 
@@ -84,7 +85,7 @@ public class BlockCauldron extends BlockSolid {
                     ItemBucket bucket = (ItemBucket) item.clone();
                     bucket.setDamage(8);//water bucket
 
-                    PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, 0, item, bucket);
+                    PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, item, bucket);
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         if (player.isSurvival()) {
@@ -104,7 +105,7 @@ public class BlockCauldron extends BlockSolid {
                     ItemBucket bucket = (ItemBucket) item.clone();
                     bucket.setDamage(0);//empty bucket
 
-                    PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, 0, item, bucket);
+                    PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, item, bucket);
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         if (player.isSurvival()) {
@@ -183,12 +184,16 @@ public class BlockCauldron extends BlockSolid {
 
                 this.level.addSound(new SplashSound(this.add(0.5, 0.5, 0.5)));
                 break;
+            default:
+                return true;
         }
+
+        this.level.updateComparatorOutputLevel(this);
         return true;
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         CompoundTag nbt = new CompoundTag("")
                 .putString("id", BlockEntity.CHEST)
                 .putInt("x", (int) this.x)
@@ -210,11 +215,29 @@ public class BlockCauldron extends BlockSolid {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{{Item.CAULDRON, 0, 1}};
+            return new Item[]{new ItemCauldron()};
         }
 
-        return new int[0][0];
+        return new Item[0];
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemCauldron();
+    }
+
+    public boolean hasComparatorInputOverride() {
+        return true;
+    }
+
+    public int getComparatorInputOverride() {
+        return this.meta;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
     }
 }

@@ -4,7 +4,9 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityFlowerPot;
 import cn.nukkit.item.Item;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.item.ItemFlowerPot;
+import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 
@@ -61,8 +63,13 @@ public class BlockFlowerPot extends BlockFlowable {
     }
 
     @Override
+<<<<<<< HEAD
     public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         if (face != Vector3.SIDE_UP) return false;
+=======
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if (face != BlockFace.UP) return false;
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         CompoundTag nbt = new CompoundTag()
                 .putString("id", BlockEntity.FLOWER_POT)
                 .putInt("x", (int) this.x)
@@ -123,7 +130,7 @@ public class BlockFlowerPot extends BlockFlowable {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         boolean dropInside = false;
         int insideID = 0;
         int insideMeta = 0;
@@ -135,15 +142,24 @@ public class BlockFlowerPot extends BlockFlowable {
         }
 
         if (dropInside) {
-            return new int[][]{
-                    {Item.FLOWER_POT, 0, 1},
-                    {insideID, insideMeta, 1}
+            return new Item[]{
+                    new ItemFlowerPot(),
+                    Item.get(insideID, insideMeta, 1)
             };
         } else {
-            return new int[][]{
-                    {Item.FLOWER_POT, 0, 1}
+            return new Item[]{
+                    new ItemFlowerPot()
             };
         }
     }
 
+    @Override
+    protected AxisAlignedBB recalculateBoundingBox() {
+        return new AxisAlignedBB(this.x + 0.3125, this.y, this.z + 0.3125, this.x + 0.6875, this.y + 0.375, this.z + 0.6875);
+    }
+
+    @Override
+    public boolean canPassThrough() {
+        return false;
+    }
 }

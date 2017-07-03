@@ -2,9 +2,15 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+<<<<<<< HEAD
 import cn.nukkit.entity.item.EntityMinecartChest;
 import cn.nukkit.entity.item.EntityMinecartTNT;
 import cn.nukkit.level.Level;
+=======
+import cn.nukkit.entity.item.EntityMinecartTNT;
+import cn.nukkit.level.Level;
+import cn.nukkit.math.BlockFace;
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -30,7 +36,11 @@ public class ItemMinecartTNT extends Item {
     }
 
     @Override
+<<<<<<< HEAD
     public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
+=======
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         Block secret = level.getBlock(block.add(0, -1, 0));
         // TODO: 2016/1/30 check if blockId of secret is a rail
         EntityMinecartTNT minecart = new EntityMinecartTNT(
@@ -53,4 +63,12 @@ public class ItemMinecartTNT extends Item {
 
         return true;
     }
+<<<<<<< HEAD
+=======
+
+    @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 }

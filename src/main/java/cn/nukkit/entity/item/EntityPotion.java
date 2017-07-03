@@ -20,7 +20,7 @@ public class EntityPotion extends EntityProjectile {
 
     public static final int NETWORK_ID = 86;
 
-    public static final int DATA_POTION_ID = 16;
+    public static final int DATA_POTION_ID = 37;
 
     public int potionId;
 
@@ -39,6 +39,20 @@ public class EntityPotion extends EntityProjectile {
         potionId = this.namedTag.getShort("PotionId");
 
         this.dataProperties.putShort(DATA_POTION_ID, this.potionId);
+
+        /*Effect effect = Potion.getEffect(potionId, true); TODO: potion color
+
+        if(effect != null) {
+            int count = 0;
+            int[] c = effect.getColor();
+            count += effect.getAmplifier() + 1;
+
+            int r = ((c[0] * (effect.getAmplifier() + 1)) / count) & 0xff;
+            int g = ((c[1] * (effect.getAmplifier() + 1)) / count) & 0xff;
+            int b = ((c[2] * (effect.getAmplifier() + 1)) / count) & 0xff;
+
+            this.setDataProperty(new IntEntityData(Entity.DATA_UNKNOWN, (r << 16) + (g << 8) + b));
+        }*/
     }
 
     @Override

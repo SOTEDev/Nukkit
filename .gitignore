@@ -46,4 +46,11 @@ plugins
 plugins/*
 players
 players/*
+<<<<<<< HEAD
 /bin/
+=======
+logs
+logs/*
+resource_packs
+resource_packs/*
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e

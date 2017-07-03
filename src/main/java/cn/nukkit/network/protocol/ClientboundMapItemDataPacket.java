@@ -1,10 +1,19 @@
 package cn.nukkit.network.protocol;
 
+<<<<<<< HEAD
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 import cn.nukkit.utils.Utils;
 
+=======
+import cn.nukkit.utils.BinaryStream;
+import cn.nukkit.utils.Utils;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 /**
  * Created by CreeperFace on 5.3.2017.
  */
@@ -113,4 +122,8 @@ public class ClientboundMapItemDataPacket extends DataPacket {
         public String label;
         public Color color;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e

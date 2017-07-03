@@ -25,7 +25,11 @@ public class LoginPacket extends DataPacket {
     public int protocol;
     public byte gameEdition;
     public UUID clientUUID;
+<<<<<<< HEAD
     public String identityPublicKey;
+=======
+    public long clientId;
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
 
     public Skin skin;
 
@@ -57,13 +61,7 @@ public class LoginPacket extends DataPacket {
     public void decode() {
         this.protocol = this.getInt();
         this.gameEdition = (byte) this.getByte();
-        byte[] str;
-        try {
-            str = Zlib.inflate(this.get((int) this.getUnsignedVarInt()));
-        } catch (Exception e) {
-            return;
-        }
-        this.setBuffer(str, 0);
+        this.setBuffer(this.getByteArray(), 0);
         decodeChainData();
         decodeSkinData();
     }
@@ -91,10 +89,13 @@ public class LoginPacket extends DataPacket {
                 if (extra.has("displayName")) this.username = extra.get("displayName").getAsString();
                 if (extra.has("identity")) this.clientUUID = UUID.fromString(extra.get("identity").getAsString());
             }
+<<<<<<< HEAD
             if (chainMap.has("identityPublicKey")){
                 this.identityPublicKey = chainMap.get("identityPublicKey").getAsString();
                 if(this.identityPublicKey.equals(MOJANG_PUBKEY)) this.isXbox = true;
             }
+=======
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         }
     }
 
@@ -103,6 +104,7 @@ public class LoginPacket extends DataPacket {
         String skinId = null;
         if (skinToken.has("ADRole")) this.ADRole = skinToken.get("ADRole").getAsInt();
         if (skinToken.has("ClientRandomId")) this.clientId = skinToken.get("ClientRandomId").getAsLong();
+<<<<<<< HEAD
         if (skinToken.has("CurrentInputMode")) this.CurrentInputMode = skinToken.get("CurrentInputMode").getAsInt();
         if (skinToken.has("DefaultInputMode")) this.DefaultInputMode = skinToken.get("DefaultInputMode").getAsInt();
         if (skinToken.has("DeviceModel")) this.DeviceModel = skinToken.get("DeviceModel").getAsString();
@@ -110,6 +112,8 @@ public class LoginPacket extends DataPacket {
         if (skinToken.has("GameVersion")) this.GameVersion = skinToken.get("GameVersion").getAsString();
         if (skinToken.has("GuiScale")) this.GuiScale = skinToken.get("GuiScale").getAsInt();
         if (skinToken.has("ServerAddress")) this.serverAddress = skinToken.get("ServerAddress").getAsString();
+=======
+>>>>>>> 5da02c06ab18955d570103283c2f44d58ec01a6e
         if (skinToken.has("SkinId")) skinId = skinToken.get("SkinId").getAsString();
         if (skinToken.has("SkinData")) this.skin = new Skin(skinToken.get("SkinData").getAsString(), skinId);
         if (skinToken.has("TenantId")) this.TenantId = skinToken.get("TenantId").getAsString();
