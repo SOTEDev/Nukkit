@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
@@ -45,6 +46,11 @@ public class BlockRail extends BlockFlowable {
     }
 
     @Override
+    public boolean canPassThrough() {
+        return true;
+    }
+
+    @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }
@@ -52,7 +58,7 @@ public class BlockRail extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.getSide(0).isTransparent()) {
+            if (this.down().isTransparent()) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -61,20 +67,13 @@ public class BlockRail extends BlockFlowable {
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{
-                {Item.RAIL, 0, 1}
-        };
-    }
-
-    @Override
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        Block down = this.getSide(Vector3.SIDE_DOWN);
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        Block down = this.down();
         if (down == null) return false;
         if (down.isTransparent()) return false;
         int[][] arrayXZ = new int[][]{{1, 0}, {0, 1}, {-1, 0}, {0, -1}};

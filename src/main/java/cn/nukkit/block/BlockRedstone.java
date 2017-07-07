@@ -1,9 +1,8 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.redstone.Redstone;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 /*
@@ -18,8 +17,6 @@ public class BlockRedstone extends BlockSolid {
 
     public BlockRedstone(int meta) {
         super(0);
-        this.setPowerSource(true);
-        this.setPowerLevel(Redstone.POWER_STRONGEST);
     }
 
     @Override
@@ -47,37 +44,36 @@ public class BlockRedstone extends BlockSolid {
         return "Redstone Block";
     }
 
-    @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        this.getLevel().setBlock(block, this, true, false);
-        Redstone.active(this);
-        this.getLevel().updateAllLight(this);
-        this.getLevel().updateAroundRedstone(this);
-        this.getLevel().updateAround(block);
-        return true;
-    }
+    //TODO: redstone
 
     @Override
-    public boolean onBreak(Item item) {
-        int level = this.getPowerLevel();
-        this.getLevel().setBlock(this, new BlockAir(), true, true);
-        Redstone.deactive(this, level);
-        return true;
-    }
-
-    @Override
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new int[][]{
-                    {Item.REDSTONE_BLOCK, 0, 1}
+            return new Item[]{
+                    toItem()
             };
         } else {
-            return new int[0][0];
+            return new Item[0];
         }
     }
 
     @Override
     public BlockColor getColor() {
         return BlockColor.REDSTONE_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean isPowerSource() {
+        return true;
+    }
+
+    @Override
+    public int getWeakPower(BlockFace face) {
+        return 15;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
     }
 }

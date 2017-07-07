@@ -1,9 +1,5 @@
 package cn.nukkit.command;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.data.CommandData;
@@ -13,9 +9,13 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.permission.Permissible;
-import cn.nukkit.timings.Timing;
-import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.TextFormat;
+import co.aikar.timings.Timing;
+import co.aikar.timings.Timings;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * author: MagicDroidX

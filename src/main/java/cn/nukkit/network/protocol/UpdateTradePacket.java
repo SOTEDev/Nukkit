@@ -34,7 +34,7 @@ public class UpdateTradePacket extends DataPacket {
         this.putVarLong(player);
         this.putVarLong(trader);
         this.putString(displayName);
-        this.put(offers);
+        this.put(this.offers);
     }
 
 }

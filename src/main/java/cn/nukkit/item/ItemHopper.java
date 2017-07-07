@@ -3,12 +3,12 @@ package cn.nukkit.item;
 import cn.nukkit.block.BlockHopper;
 
 /**
- * Created by Pub4Game on 03.07.2016.
+ * Created by CreeperFace on 13.5.2017.
  */
 public class ItemHopper extends Item {
 
     public ItemHopper() {
-        this(0, 1);
+        this(0);
     }
 
     public ItemHopper(Integer meta) {
@@ -16,7 +16,7 @@ public class ItemHopper extends Item {
     }
 
     public ItemHopper(Integer meta, int count) {
-        super(HOPPER, meta, count, "Hopper");
+        super(HOPPER, 0, count, "Hopper");
         this.block = new BlockHopper();
     }
 }

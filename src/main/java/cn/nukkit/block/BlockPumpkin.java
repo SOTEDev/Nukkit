@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -44,12 +45,8 @@ public class BlockPumpkin extends BlockSolid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
-        if (player != null) {
-            if (player.getDirection() != null) {
-                this.meta = (player.getDirection() + 5) % 4;
-            }
-        }
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        this.meta = player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0;
         this.getLevel().setBlock(block, this, true, true);
         return true;
     }
@@ -57,5 +54,10 @@ public class BlockPumpkin extends BlockSolid {
     @Override
     public BlockColor getColor() {
         return BlockColor.FOLIAGE_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canBePushed() {
+        return false;
     }
 }

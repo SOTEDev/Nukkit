@@ -5,6 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBoat;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.SmokeParticle;
@@ -12,6 +13,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
+import cn.nukkit.network.protocol.SetEntityLinkPacket;
 
 /**
  * Created by yescallop on 2016/2/13.
@@ -21,8 +23,6 @@ public class EntityBoat extends EntityVehicle {
     public static final int NETWORK_ID = 90;
 
     public static final int DATA_WOOD_ID = 20;
-
-    public Vector3 ridePosition = new Vector3(0, 1, 0);
 
     public EntityBoat(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -84,28 +84,32 @@ public class EntityBoat extends EntityVehicle {
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
-        super.attack(source);
-        if (source.isCancelled()) return;
-        if (source instanceof EntityDamageByEntityEvent) {
-            Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-            if (damager instanceof Player) {
-                if (((Player) damager).isCreative()) {
-                    this.kill();
-                }
-                if (this.getHealth() <= 0) {
-                    if (((Player) damager).isSurvival()) {
-                        this.level.dropItem(this, new ItemBoat());
+    public boolean attack(EntityDamageEvent source) {
+        if (super.attack(source)) {
+            if (source instanceof EntityDamageByEntityEvent) {
+                Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
+                if (damager instanceof Player) {
+                    if (((Player) damager).isCreative()) {
+                        this.kill();
                     }
-                    this.close();
+                    if (this.getHealth() <= 0) {
+                        if (((Player) damager).isSurvival() && this.level.getGameRules().getBoolean("doEntityDrops")) {
+                            this.level.dropItem(this, new ItemBoat());
+                        }
+                        this.close();
+                    }
                 }
             }
-        }
 
-        EntityEventPacket pk = new EntityEventPacket();
-        pk.eid = this.getId();
-        pk.event = this.getHealth() <= 0 ? EntityEventPacket.DEATH_ANIMATION : EntityEventPacket.HURT_ANIMATION;
-        Server.broadcastPacket(this.hasSpawned.values(), pk);
+            EntityEventPacket pk = new EntityEventPacket();
+            pk.eid = this.getId();
+            pk.event = this.getHealth() <= 0 ? EntityEventPacket.DEATH_ANIMATION : EntityEventPacket.HURT_ANIMATION;
+            Server.broadcastPacket(this.hasSpawned.values(), pk);
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -166,8 +170,30 @@ public class EntityBoat extends EntityVehicle {
         return hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
     }
 
-    public Vector3 getRidePosition(){
-        return this.ridePosition;
-    }
+    @Override
+    public boolean onInteract(Player player, Item item) {
+        if (this.linkedEntity != null) {
+            return false;
+        }
 
+        SetEntityLinkPacket pk;
+
+        pk = new SetEntityLinkPacket();
+        pk.rider = this.getId(); //WTF
+        pk.riding = player.getId();
+        pk.type = 2;
+        Server.broadcastPacket(this.hasSpawned.values(), pk);
+
+        pk = new SetEntityLinkPacket();
+        pk.rider = this.getId();
+        pk.riding = 0;
+        pk.type = 2;
+        player.dataPacket(pk);
+
+        player.riding = this;
+        this.linkedEntity = player;
+
+        player.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, true);
+        return true;
+    }
 }

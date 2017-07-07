@@ -5,11 +5,14 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.sound.TNTPrimeSound;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 /**
  * @author MagicDroidX
@@ -44,6 +47,11 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
     }
 
     @Override
+    protected float getBaseOffset() {
+        return 0.49f;
+    }
+
+    @Override
     public boolean canCollide() {
         return false;
     }
@@ -60,10 +68,8 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
-        if (source.getCause() == EntityDamageEvent.CAUSE_VOID) {
-            super.attack(source);
-        }
+    public boolean attack(EntityDamageEvent source) {
+        return source.getCause() == DamageCause.VOID && super.attack(source);
     }
 
     protected void initEntity() {
@@ -77,6 +83,8 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
 
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_IGNITED, true);
         this.setDataProperty(new IntEntityData(DATA_FUSE_LENGTH, fuse));
+
+        this.level.addSound(new TNTPrimeSound(this));
     }
 
 

@@ -3,7 +3,6 @@ package cn.nukkit.entity.item;
 import cn.nukkit.Player;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
@@ -20,8 +19,6 @@ public class EntityMinecartEmpty extends EntityVehicle {
     public static final int DATA_VEHICLE_DISPLAY_DATA = 20;
     public static final int DATA_VEHICLE_DISPLAY_OFFSET = 21;
     public static final int DATA_VEHICLE_CUSTOM_DISPLAY = 22;
-
-    public Vector3 ridePosition = new Vector3(0, 1, 0);
 
     // TODO: 2016/1/30 check if these numbers correct
     @Override
@@ -87,20 +84,18 @@ public class EntityMinecartEmpty extends EntityVehicle {
     }
 
     @Override
-    public void attack(EntityDamageEvent source) {
-        super.attack(source);
-        if (source.isCancelled()) return;
-
-        EntityEventPacket pk = new EntityEventPacket();
-        pk.eid = this.id;
-        pk.event = EntityEventPacket.HURT_ANIMATION;
-        for (Player aPlayer : this.getLevel().getPlayers().values()) {
-            aPlayer.dataPacket(pk);
+    public boolean attack(EntityDamageEvent source) {
+        if (super.attack(source)) {
+            EntityEventPacket pk = new EntityEventPacket();
+            pk.eid = this.id;
+            pk.event = EntityEventPacket.HURT_ANIMATION;
+            for (Player aPlayer : this.getLevel().getPlayers().values()) {
+                aPlayer.dataPacket(pk);
+            }
+            return true;
+        } else {
+            return false;
         }
-    }
-
-    public Vector3 getRidePosition(){
-        return this.ridePosition;
     }
 
 }
