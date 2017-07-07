@@ -802,7 +802,7 @@ public class CraftingManager {
         this.registerRecipe(new BigShapedRecipe(Item.get(Item.LEVER, 0, 1),
                 "  S",
                 "  C"
-        ).setIngredient("C", Item.get(Item.COBBLESTONE, null, 1)).setIngredient("S", Item.get(Item.STICK, 0, 1)));
+        ).setIngredient("C", Item.get(Item.COBBLESTONE, 0, 1)).setIngredient("S", Item.get(Item.STICK, 0, 1)));
 
         this.registerRecipe(new BigShapedRecipe(Item.get(Item.STONE_BUTTON, 0, 1),
                 "  S"

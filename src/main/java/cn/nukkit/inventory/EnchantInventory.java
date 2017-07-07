@@ -30,8 +30,6 @@ public class EnchantInventory extends ContainerInventory {
     private int[] levels = null;
     private EnchantmentEntry[] entries = null;
 
-    public int setting = 0;//0: Default  1: SkyWars
-
     public EnchantInventory(Position position) {
         super(null, InventoryType.ENCHANT_TABLE);
         this.holder = new FakeBlockMenu(this, position);
