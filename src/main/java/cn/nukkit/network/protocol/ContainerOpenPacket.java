@@ -14,6 +14,7 @@ public class ContainerOpenPacket extends DataPacket {
 
     public byte windowid;
     public byte type;
+    public int slots;
     public int x;
     public int y;
     public int z;
@@ -29,6 +30,7 @@ public class ContainerOpenPacket extends DataPacket {
         this.reset();
         this.putByte(this.windowid);
         this.putByte(this.type);
+        this.putVarInt(this.slots);
         this.putBlockCoords(this.x, this.y, this.z);
         this.putVarLong(this.entityId);
     }

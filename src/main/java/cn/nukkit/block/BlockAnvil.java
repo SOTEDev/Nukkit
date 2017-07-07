@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -70,15 +69,17 @@ public class BlockAnvil extends BlockFallable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         if (!target.isTransparent()) {
+            int faces[] = {0, 1, 2, 3};
             int damage = this.getDamage();
-            int[] faces = {1, 2, 3, 0};
-            this.meta = faces[player != null ? player.getDirection().getHorizontalIndex() : 0];
-            if (damage >= 4 && damage <= 7) {
-                this.meta |=  0x04;
+            this.meta = faces[player != null ? player.getDirection() : 0] & 0x04;
+            if (damage >= 0 && damage <= 3) {
+                this.meta = faces[player != null ? player.getDirection() : 0];
+            } else if (damage >= 4 && damage <= 7) {
+                this.meta = faces[player != null ? player.getDirection() : 0] | 0x04;
             } else if (damage >= 8 && damage <= 11) {
-                this.meta |=  0x08;
+                this.meta = faces[player != null ? player.getDirection() : 0] | 0x08;
             }
             this.getLevel().setBlock(block, this, true);
             return true;
@@ -95,18 +96,24 @@ public class BlockAnvil extends BlockFallable {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         int damage = this.getDamage();
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            Item drop = this.toItem();
-
-            if (damage >= 4 && damage <= 7) { //Slightly Anvil
-                drop.setDamage(drop.getDamage() & 0x04);
+            if (damage >= 0 && damage <= 3) { //Anvil
+                return new int[][]{
+                        {this.getId(), 0, 1}
+                };
+            } else if (damage >= 4 && damage <= 7) { //Slightly Anvil
+                return new int[][]{
+                        {this.getId(), this.meta & 0x04, 1}
+                };
             } else if (damage >= 8 && damage <= 11) { //Very Damaged Anvil
-                drop.setDamage(drop.getDamage() & 0x08);
+                return new int[][]{
+                        {this.getId(), this.meta & 0x08, 1}
+                };
             }
         }
-        return new Item[0];
+        return new int[0][0];
     }
 
     @Override
@@ -114,8 +121,4 @@ public class BlockAnvil extends BlockFallable {
         return BlockColor.IRON_BLOCK_COLOR;
     }
 
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
-    }
 }

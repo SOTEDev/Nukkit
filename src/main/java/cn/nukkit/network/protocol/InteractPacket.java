@@ -12,8 +12,6 @@ public class InteractPacket extends DataPacket {
     public static final byte ACTION_VEHICLE_EXIT = 3;
     public static final byte ACTION_MOUSEOVER = 4;
 
-    public static final byte ACTION_OPEN_INVENTORY = 6;
-
     public byte action;
     public long target;
 

@@ -2,10 +2,9 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -45,9 +44,9 @@ public class BlockWaterLily extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         if (target instanceof BlockWater) {
-            Block up = target.up();
+            Block up = target.getSide(Vector3.SIDE_UP);
             if (up.getId() == Block.AIR) {
                 this.getLevel().setBlock(up, this, true, true);
                 return true;
@@ -59,7 +58,7 @@ public class BlockWaterLily extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (!(this.down() instanceof BlockWater)) {
+            if (!(this.getSide(0) instanceof BlockWater)) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -68,17 +67,14 @@ public class BlockWaterLily extends BlockFlowable {
     }
 
     @Override
-    public Item toItem() {
-        return new ItemBlock(this, 0);
+    public int[][] getDrops(Item item) {
+        return new int[][]{
+                {this.getId(), 0, 1}
+        };
     }
 
     @Override
     public BlockColor getColor() {
         return BlockColor.FOLIAGE_BLOCK_COLOR;
-    }
-
-    @Override
-    public boolean canPassThrough() {
-        return false;
     }
 }

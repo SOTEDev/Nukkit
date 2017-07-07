@@ -45,24 +45,19 @@ public class BlockLapis extends BlockSolid {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_STONE) {
-            return new Item[]{
-                    toItem()
+            return new int[][]{
+                    {Item.LAPIS_BLOCK, 0, 1}
             };
         } else {
-            return new Item[0];
+            return new int[0][0];
         }
     }
 
     @Override
     public BlockColor getColor() {
         return BlockColor.LAPIS_BLOCK_COLOR;
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
     }
 
 }

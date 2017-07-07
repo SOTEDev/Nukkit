@@ -2,9 +2,9 @@ package cn.nukkit.permission;
 
 import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.ServerException;
-import co.aikar.timings.Timings;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -90,7 +90,9 @@ public class PermissibleBase implements Permissible {
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin, String name, Boolean value) {
-        if (!plugin.isEnabled()) {
+        if (plugin == null) {
+            throw new PluginException("Plugin cannot be null");
+        } else if (!plugin.isEnabled()) {
             throw new PluginException("Plugin " + plugin.getDescription().getName() + " is disabled");
         }
 
@@ -106,6 +108,10 @@ public class PermissibleBase implements Permissible {
 
     @Override
     public void removeAttachment(PermissionAttachment attachment) {
+        if (attachment == null) {
+            throw new IllegalStateException("Attachment cannot be null");
+        }
+
         if (this.attachments.contains(attachment)) {
             this.attachments.remove(attachment);
             PermissionRemovedExecutor ex = attachment.getRemovalCallback();

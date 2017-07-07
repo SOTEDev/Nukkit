@@ -8,6 +8,7 @@ public class SetTimePacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.SET_TIME_PACKET;
 
     public int time;
+    public boolean started = true;
 
     @Override
     public byte pid() {
@@ -22,7 +23,8 @@ public class SetTimePacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putVarInt(this.time);
+        this.putUnsignedVarInt(this.time);
+        this.putBoolean(this.started);
     }
 
 }

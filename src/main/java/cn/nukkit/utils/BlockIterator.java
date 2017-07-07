@@ -2,7 +2,6 @@ package cn.nukkit.utils;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 
 import java.util.Iterator;
@@ -32,9 +31,9 @@ public class BlockIterator implements Iterator<Block> {
     private final int secondStep;
     private final int thirdStep;
 
-    private BlockFace mainFace;
-    private BlockFace secondFace;
-    private BlockFace thirdFace;
+    private int mainFace;
+    private int secondFace;
+    private int thirdFace;
 
     public BlockIterator(Level level, Vector3 start, Vector3 direction) {
         this(level, start, direction, 0);
@@ -122,16 +121,16 @@ public class BlockIterator implements Iterator<Block> {
             this.thirdError = -this.thirdStep + 1;
         }
 
-        Block lastBlock = startBlock.getSide(this.mainFace.getOpposite());
+        Block lastBlock = startBlock.getSide(Vector3.getOppositeSide(this.mainFace));
 
         if (this.secondError < 0) {
             this.secondError += gridSize;
-            lastBlock = lastBlock.getSide(this.secondFace.getOpposite());
+            lastBlock = lastBlock.getSide(Vector3.getOppositeSide(this.secondFace));
         }
 
         if (this.thirdError < 0) {
             this.thirdError += gridSize;
-            lastBlock = lastBlock.getSide(this.thirdFace.getOpposite());
+            lastBlock = lastBlock.getSide(Vector3.getOppositeSide(this.thirdFace));
         }
 
         this.secondError -= gridSize;
@@ -164,16 +163,16 @@ public class BlockIterator implements Iterator<Block> {
         return a.x == b.x && a.y == b.y && a.z == b.z;
     }
 
-    private BlockFace getXFace(Vector3 direction) {
-        return ((direction.x) > 0) ? BlockFace.EAST : BlockFace.WEST;
+    private int getXFace(Vector3 direction) {
+        return ((direction.x) > 0) ? Vector3.SIDE_EAST : Vector3.SIDE_WEST;
     }
 
-    private BlockFace getYFace(Vector3 direction) {
-        return ((direction.y) > 0) ? BlockFace.UP : BlockFace.DOWN;
+    private int getYFace(Vector3 direction) {
+        return ((direction.y) > 0) ? Vector3.SIDE_UP : Vector3.SIDE_DOWN;
     }
 
-    private BlockFace getZFace(Vector3 direction) {
-        return ((direction.z) > 0) ? BlockFace.SOUTH : BlockFace.NORTH;
+    private int getZFace(Vector3 direction) {
+        return ((direction.z) > 0) ? Vector3.SIDE_SOUTH : Vector3.SIDE_NORTH;
     }
 
     private double getXLength(Vector3 direction) {

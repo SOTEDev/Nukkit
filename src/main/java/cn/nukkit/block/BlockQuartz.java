@@ -2,9 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -55,12 +53,12 @@ public class BlockQuartz extends BlockSolid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         if (this.meta != QUARTZ_NORMAL) {
             short[] faces = new short[]{
                     0,
@@ -71,7 +69,7 @@ public class BlockQuartz extends BlockSolid {
                     0b0100
             };
 
-            this.meta = ((this.meta & 0x03) | faces[face.getIndex()]);
+            this.meta = ((this.meta & 0x03) | faces[face]);
         }
         this.getLevel().setBlock(block, this, true, true);
 
@@ -79,19 +77,14 @@ public class BlockQuartz extends BlockSolid {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
+            return new int[][]{
+                    {Item.QUARTZ_BLOCK, this.meta & 0x03, 1}
             };
         } else {
-            return new Item[0];
+            return new int[0][0];
         }
-    }
-
-    @Override
-    public Item toItem() {
-        return new ItemBlock(new BlockQuartz(), this.meta & 0x03, 1);
     }
 
     @Override
@@ -102,10 +95,5 @@ public class BlockQuartz extends BlockSolid {
     @Override
     public BlockColor getColor() {
         return BlockColor.QUARTZ_BLOCK_COLOR;
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
     }
 }

@@ -3,7 +3,6 @@ package cn.nukkit.entity.item;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ItemDespawnEvent;
 import cn.nukkit.event.entity.ItemSpawnEvent;
 import cn.nukkit.item.Item;
@@ -62,11 +61,6 @@ public class EntityItem extends Entity {
     }
 
     @Override
-    protected float getBaseOffset() {
-        return 0.125f;
-    }
-
-    @Override
     public boolean canCollide() {
         return false;
     }
@@ -105,12 +99,14 @@ public class EntityItem extends Entity {
     }
 
     @Override
-    public boolean attack(EntityDamageEvent source) {
-        return (source.getCause() == DamageCause.VOID ||
-                source.getCause() == DamageCause.FIRE_TICK ||
-                source.getCause() == DamageCause.ENTITY_EXPLOSION ||
-                source.getCause() == DamageCause.BLOCK_EXPLOSION)
-                && super.attack(source);
+    public void attack(EntityDamageEvent source) {
+        if (source.getCause() == EntityDamageEvent.CAUSE_VOID ||
+                source.getCause() == EntityDamageEvent.CAUSE_FIRE_TICK ||
+                source.getCause() == EntityDamageEvent.CAUSE_ENTITY_EXPLOSION ||
+                source.getCause() == EntityDamageEvent.CAUSE_BLOCK_EXPLOSION
+                ) {
+            super.attack(source);
+        }
     }
 
     @Override
@@ -186,8 +182,8 @@ public class EntityItem extends Entity {
     public void saveNBT() {
         super.saveNBT();
         if (this.item != null) { // Yes, a item can be null... I don't know what causes this, but it can happen.
-            this.namedTag.putCompound("Item", NBTIO.putItemHelper(this.item, -1));
-            this.namedTag.putShort("Health", (int) this.getHealth());
+            this.namedTag.putCompound("Item", NBTIO.putItemHelper(this.item));
+            this.namedTag.putShort("Health", this.getHealth());
             this.namedTag.putShort("Age", this.age);
             this.namedTag.putShort("PickupDelay", this.pickupDelay);
             if (this.owner != null) {
@@ -249,9 +245,10 @@ public class EntityItem extends Entity {
         pk.speedX = (float) this.motionX;
         pk.speedY = (float) this.motionY;
         pk.speedZ = (float) this.motionZ;
-        pk.metadata = this.dataProperties;
         pk.item = this.getItem();
         player.dataPacket(pk);
+
+        this.sendData(player);
 
         super.spawnTo(player);
     }

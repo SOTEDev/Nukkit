@@ -18,7 +18,6 @@ public class MobEquipmentPacket extends DataPacket {
     public Item item;
     public int slot;
     public int selectedSlot;
-    public int windowId;
 
     @Override
     public void decode() {
@@ -26,7 +25,6 @@ public class MobEquipmentPacket extends DataPacket {
         this.item = this.getSlot();
         this.slot = this.getByte();
         this.selectedSlot = this.getByte();
-        this.windowId = this.getByte();
     }
 
     @Override
@@ -36,6 +34,5 @@ public class MobEquipmentPacket extends DataPacket {
         this.putSlot(this.item);
         this.putByte((byte) this.slot);
         this.putByte((byte) this.selectedSlot);
-        this.putByte((byte) this.windowId);
     }
 }

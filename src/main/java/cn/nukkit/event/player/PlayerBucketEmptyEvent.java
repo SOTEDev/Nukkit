@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
-import cn.nukkit.math.BlockFace;
 
 public class PlayerBucketEmptyEvent extends PlayerBucketEvent {
     private static final HandlerList handlers = new HandlerList();
@@ -13,7 +12,7 @@ public class PlayerBucketEmptyEvent extends PlayerBucketEvent {
         return handlers;
     }
 
-    public PlayerBucketEmptyEvent(Player who, Block blockClicked, BlockFace blockFace, Item bucket, Item itemInHand) {
+    public PlayerBucketEmptyEvent(Player who, Block blockClicked, Integer blockFace, Item bucket, Item itemInHand) {
         super(who, blockClicked, blockFace, bucket, itemInHand);
     }
 

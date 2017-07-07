@@ -1,17 +1,20 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.ClientboundMapItemDataPacket;
-import cn.nukkit.utils.MainLogger;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import cn.nukkit.Player;
+import cn.nukkit.block.Block;
+import cn.nukkit.level.Level;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.ClientboundMapItemDataPacket;
+import cn.nukkit.utils.MainLogger;
 
 /**
  * Created by CreeperFace on 18.3.2017.
@@ -95,6 +98,11 @@ public class ItemMap extends Item {
 
     @Override
     public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
         return true;
     }
 

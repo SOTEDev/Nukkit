@@ -1,7 +1,5 @@
 package cn.nukkit.item.enchantment.protection;
 
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.enchantment.Enchantment;
 
 /**
@@ -27,16 +25,5 @@ public class EnchantmentProtectionAll extends EnchantmentProtection {
     @Override
     public double getTypeModifier() {
         return 1;
-    }
-
-    @Override
-    public float getDamageProtection(EntityDamageEvent e) {
-        DamageCause cause = e.getCause();
-
-        if (level <= 0 || cause == DamageCause.VOID || cause == DamageCause.CUSTOM || cause == DamageCause.MAGIC) {
-            return 0;
-        }
-
-        return (float) (getLevel() * getTypeModifier());
     }
 }

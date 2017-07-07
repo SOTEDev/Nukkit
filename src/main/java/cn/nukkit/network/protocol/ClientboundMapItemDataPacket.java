@@ -1,10 +1,9 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.utils.BinaryStream;
-import cn.nukkit.utils.Utils;
-
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
+
+import cn.nukkit.utils.Utils;
 
 /**
  * Created by CreeperFace on 5.3.2017.

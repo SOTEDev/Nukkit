@@ -1,12 +1,12 @@
 package cn.nukkit.item;
 
+import java.util.Random;
+
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.nbt.tag.ByteTag;
 import cn.nukkit.nbt.tag.Tag;
-
-import java.util.Random;
 
 /**
  * author: MagicDroidX
@@ -32,6 +32,7 @@ public abstract class ItemTool extends Item {
     public static final int DURABILITY_IRON = 251;
     public static final int DURABILITY_DIAMOND = 1562;
     public static final int DURABILITY_FLINT_STEEL = 65;
+    public static final int DURABILITY_FISHING_ROD = 64;
     public static final int DURABILITY_SHEARS = 239;
     public static final int DURABILITY_BOW = 385;
 

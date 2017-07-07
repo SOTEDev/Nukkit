@@ -27,8 +27,6 @@ public abstract class Enchantment implements Cloneable {
 
     protected static Enchantment[] enchantments;
 
-    //http://minecraft.gamepedia.com/Enchanting#Aqua_Affinity
-
     public static final int ID_PROTECTION_ALL = 0;
     public static final int ID_PROTECTION_FIRE = 1;
     public static final int ID_PROTECTION_FALL = 2;
@@ -36,8 +34,8 @@ public abstract class Enchantment implements Cloneable {
     public static final int ID_PROTECTION_PROJECTILE = 4;
     public static final int ID_THORNS = 5;
     public static final int ID_WATER_BREATHING = 6;
-    public static final int ID_WATER_WALKER = 7;
-    public static final int ID_WATER_WORKER = 8;
+    public static final int ID_WATER_WORKER = 7;
+    public static final int ID_WATER_WALKER = 8;
     public static final int ID_DAMAGE_ALL = 9;
     public static final int ID_DAMAGE_SMITE = 10;
     public static final int ID_DAMAGE_ARTHROPODS = 11;
@@ -90,7 +88,7 @@ public abstract class Enchantment implements Cloneable {
     }
 
     public static Enchantment getEnchantment(int id) {
-        return get(id) == null ? null : get(id).clone();
+        return get(id).clone();
     }
 
     public static Enchantment[] getEnchantments() {
@@ -173,7 +171,7 @@ public abstract class Enchantment implements Cloneable {
         return this.getMinEnchantAbility(level) + 5;
     }
 
-    public float getDamageProtection(EntityDamageEvent event) {
+    public int getDamageProtection(EntityDamageEvent event) {
         return 0;
     }
 

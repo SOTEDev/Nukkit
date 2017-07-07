@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -29,6 +30,13 @@ public class BlockDaylightDetector extends BlockTransparent {
     @Override
     public double getHardness() {
         return 0.2;
+    }
+
+    @Override
+    public int[][] getDrops(Item item) {
+        return new int[][]{
+                {Item.DAYLIGHT_DETECTOR, 0, 1}
+        };
     }
 
     @Override

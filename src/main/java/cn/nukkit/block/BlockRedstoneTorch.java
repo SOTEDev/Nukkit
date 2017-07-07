@@ -2,8 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.redstone.Redstone;
 
 /**
  * author: Angelic47
@@ -17,6 +16,8 @@ public class BlockRedstoneTorch extends BlockTorch {
 
     public BlockRedstoneTorch(int meta) {
         super(meta);
+        this.setPowerSource(true);
+        this.setPowerLevel(Redstone.POWER_STRONGEST);
     }
 
     @Override
@@ -35,54 +36,40 @@ public class BlockRedstoneTorch extends BlockTorch {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        Block below = this.down();
-        Vector3 pos = getLocation();
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+        Block below = this.getSide(0);
 
-        if (!target.isTransparent() && face != BlockFace.DOWN) {
-            this.meta = getFacing(face.getIndex()).getIndex();
+        if (!target.isTransparent() && face != 0) {
+            int[] faces = new int[]{
+                    0, //0, nerver used
+                    5, //1
+                    4, //2
+                    3, //3
+                    2, //4
+                    1, //5
+            };
+            this.meta = faces[face];
             this.getLevel().setBlock(block, this, true, true);
+            Redstone.active(this);
 
-            for (BlockFace side : BlockFace.values()) {
-                this.level.updateAround(pos.getSide(side));
-            }
             return true;
         } else if (!below.isTransparent() || below instanceof BlockFence || below.getId() == COBBLE_WALL) {
             this.meta = 0;
             this.getLevel().setBlock(block, this, true, true);
+            Redstone.active(this);
 
-            for (BlockFace side : BlockFace.values()) {
-                this.level.updateAroundRedstone(pos.getSide(side), null);
-            }
             return true;
         }
         return false;
     }
 
-    @Override
-    public int getWeakPower(BlockFace side) {
-        //return BlockFace.getFront(this.meta).getOpposite() != side ? 15 : 0;
-        return 15;
-    }
-
-    @Override
-    public int getStrongPower(BlockFace side) {
-        return side == BlockFace.DOWN ? this.getWeakPower(side) : 0;
-    }
 
     @Override
     public boolean onBreak(Item item) {
+        int level = this.getPowerLevel();
         this.getLevel().setBlock(this, new BlockAir(), true, true);
-        Vector3 pos = getLocation();
-
-        for (BlockFace side : BlockFace.values()) {
-            this.level.updateAroundRedstone(pos.getSide(side), null);
-        }
+        Redstone.deactive(this, level);
         return true;
     }
 
-    @Override
-    public boolean isPowerSource() {
-        return true;
-    }
 }

@@ -1,7 +1,6 @@
 package cn.nukkit.level;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.LevelException;
 
@@ -64,15 +63,15 @@ public class Position extends Vector3 {
         return false;
     }
 
-    public Position getSide(BlockFace face) {
-        return this.getSide(face, 1);
+    public Position getSide(int side) {
+        return this.getSide(side, 1);
     }
 
-    public Position getSide(BlockFace face, int step) {
+    public Position getSide(int side, int step) {
         if (!this.isValid()) {
             throw new LevelException("Undefined Level reference");
         }
-        return Position.fromObject(super.getSide(face, step), this.level);
+        return Position.fromObject(super.getSide(side, step), this.level);
     }
 
     @Override

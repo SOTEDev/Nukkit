@@ -6,10 +6,9 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
@@ -49,7 +48,8 @@ public class BlockLava extends BlockLiquid {
     public void onEntityCollide(Entity entity) {
         entity.highestPosition -= (entity.highestPosition - entity.y) * 0.5;
         if (!entity.hasEffect(Effect.FIRE_RESISTANCE)) {
-            entity.attack(new EntityDamageByBlockEvent(this, entity, DamageCause.LAVA, 4));
+            EntityDamageByBlockEvent ev = new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.CAUSE_LAVA, 4);
+            entity.attack(ev);
         }
 
         EntityCombustByBlockEvent ev = new EntityCombustByBlockEvent(this, entity, 15);
@@ -62,12 +62,12 @@ public class BlockLava extends BlockLiquid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         boolean ret = this.getLevel().setBlock(this, this, true, false);
         this.getLevel().scheduleUpdate(this, this.tickRate());
 
@@ -78,7 +78,8 @@ public class BlockLava extends BlockLiquid {
     public int onUpdate(int type) {
         int result = super.onUpdate(type);
 
-        if (type == Level.BLOCK_UPDATE_RANDOM && this.level.gameRules.getBoolean("doFireTick")) {
+        if (type == Level.BLOCK_UPDATE_RANDOM) {
+
             Random random = this.getLevel().rand;
 
             int i = random.nextInt(3);
@@ -96,7 +97,7 @@ public class BlockLava extends BlockLiquid {
                             if (!e.isCancelled()) {
                                 BlockFire fire = new BlockFire();
                                 this.getLevel().setBlock(v, fire, true);
-                                this.getLevel().scheduleUpdate(fire, fire.tickRate());
+                                this.getLevel().scheduleUpdate(v, fire.tickRate());
                                 return Level.BLOCK_UPDATE_RANDOM;
                             }
 
@@ -111,14 +112,14 @@ public class BlockLava extends BlockLiquid {
                     Vector3 v = this.add(random.nextInt(3) - 1, 0, random.nextInt(3) - 1);
                     Block block = this.getLevel().getBlock(v);
 
-                    if (block.up().getId() == AIR && block.getBurnChance() > 0) {
+                    if (block.getSide(SIDE_UP).getId() == AIR && block.getBurnChance() > 0) {
                         BlockIgniteEvent e = new BlockIgniteEvent(block, this, null, BlockIgniteEvent.BlockIgniteCause.LAVA);
                         this.level.getServer().getPluginManager().callEvent(e);
 
                         if (!e.isCancelled()) {
                             BlockFire fire = new BlockFire();
                             this.getLevel().setBlock(v, fire, true);
-                            this.getLevel().scheduleUpdate(fire, fire.tickRate());
+                            this.getLevel().scheduleUpdate(v, fire.tickRate());
                         }
                     }
                 }
@@ -130,8 +131,8 @@ public class BlockLava extends BlockLiquid {
     }
 
     protected boolean isSurroundingBlockFlammable(Block block) {
-        for (BlockFace face : BlockFace.values()) {
-            if (block.getSide(face).getBurnChance() > 0) {
+        for (int side = 0; side <= 5; ++side) {
+            if (block.getSide(side).getBurnChance() > 0) {
                 return true;
             }
         }

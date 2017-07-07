@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemGlowstoneDust;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -43,9 +42,9 @@ public class BlockGlowstone extends BlockTransparent {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                new ItemGlowstoneDust(0, ((int) (2d * Math.random()) + 2))
+    public int[][] getDrops(Item item) {
+        return new int[][]{
+                {Item.GLOWSTONE_DUST, 0, ((int) (2d * Math.random()) + 2)}
         };
     }
 

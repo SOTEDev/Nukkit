@@ -1,7 +1,5 @@
 package cn.nukkit.item.enchantment.damage;
 
-import cn.nukkit.entity.Entity;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -25,14 +23,5 @@ public class EnchantmentDamageAll extends EnchantmentDamage {
     @Override
     public int getMaxEnchantableLevel() {
         return 4;
-    }
-
-    @Override
-    public double getDamageBonus(Entity entity) {
-        if (this.getLevel() <= 0) {
-            return 0;
-        }
-
-        return 0.5 + getLevel() * 0.5;
     }
 }

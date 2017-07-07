@@ -1,5 +1,7 @@
 package cn.nukkit.inventory;
 
+import java.util.Collection;
+
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.BlockAir;
@@ -14,8 +16,6 @@ import cn.nukkit.network.protocol.ContainerSetContentPacket;
 import cn.nukkit.network.protocol.ContainerSetSlotPacket;
 import cn.nukkit.network.protocol.MobArmorEquipmentPacket;
 import cn.nukkit.network.protocol.MobEquipmentPacket;
-
-import java.util.Collection;
 
 /**
  * author: MagicDroidX
@@ -166,11 +166,11 @@ public class PlayerInventory extends BaseInventory {
     }
 
     public boolean setArmorItem(int index, Item item) {
-        return this.setArmorItem(index, item, false);
+        return this.setArmorItem(this.getSize() + index, item, false);
     }
 
     public boolean setArmorItem(int index, Item item, boolean ignoreArmorEvents) {
-        return this.setItem(this.getSize() + index, item, ignoreArmorEvents);
+        return this.setItem(this.getSize() + index, item);
     }
 
     public Item getHelmet() {
@@ -210,7 +210,7 @@ public class PlayerInventory extends BaseInventory {
         return setItem(index, item, false);
     }
 
-    private boolean setItem(int index, Item item, boolean ignoreArmorEvents) {
+    private boolean setItem(int index, Item item, boolean ignoreArmorEvents) { 
         if (index < 0 || index >= this.size) {
             return false;
         } else if (item.getId() == 0 || item.getCount() <= 0) {
@@ -320,7 +320,6 @@ public class PlayerInventory extends BaseInventory {
             if (player.equals(this.getHolder())) {
                 ContainerSetContentPacket pk2 = new ContainerSetContentPacket();
                 pk2.windowid = ContainerSetContentPacket.SPECIAL_ARMOR;
-                pk2.eid = player.getId();
                 pk2.slots = armor;
                 player.dataPacket(pk2);
             } else {
@@ -396,14 +395,9 @@ public class PlayerInventory extends BaseInventory {
     @Override
     public void sendContents(Player[] players) {
         ContainerSetContentPacket pk = new ContainerSetContentPacket();
-        pk.slots = new Item[this.getSize() +  + this.getHotbarSize()];
+        pk.slots = new Item[this.getSize()];
         for (int i = 0; i < this.getSize(); ++i) {
             pk.slots[i] = this.getItem(i);
-        }
-
-        //Because PE is stupid and shows 9 less slots than you send it, give it 9 dummy slots so it shows all the REAL slots.
-        for(int i = this.getSize(); i < this.getSize() + this.getHotbarSize(); ++i){
-            pk.slots[i] = Item.get(Item.AIR, 0, 0);
         }
 
         for (Player player : players) {
@@ -419,7 +413,6 @@ public class PlayerInventory extends BaseInventory {
                 this.close(player);
                 continue;
             }
-            pk.eid = player.getId();
             pk.windowid = (byte) id;
             player.dataPacket(pk.clone());
         }

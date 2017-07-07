@@ -14,9 +14,7 @@ public class AdventureSettingsPacket extends DataPacket {
     public boolean autoJump;
     public boolean allowFlight;
     public boolean noClip;
-    public boolean worldBuilder;
     public boolean isFlying;
-    public boolean muted;
 
     /*
      bit mask | flag name
@@ -47,9 +45,7 @@ public class AdventureSettingsPacket extends DataPacket {
         this.autoJump = (this.flags & (1 << 5)) != 0;
         this.allowFlight = (this.flags & (1 << 6)) != 0;
         this.noClip = (this.flags & (1 << 7)) != 0;
-        this.worldBuilder = (this.flags & (1 << 8)) != 0;
         this.isFlying = (this.flags & (1 << 9)) != 0;
-        this.muted = (this.flags & (1 << 10)) != 0;
     }
 
     @Override
@@ -63,9 +59,7 @@ public class AdventureSettingsPacket extends DataPacket {
         if (this.autoJump) this.flags |= 1 << 5;
         if (this.allowFlight) this.flags |= 1 << 6;
         if (this.noClip) this.flags |= 1 << 7;
-        if (this.worldBuilder) this.flags |= 1 << 8;
         if (this.isFlying) this.flags |= 1 << 9;
-        if (this.muted) this.flags |= 1 << 10;
         this.putUnsignedVarInt(this.flags);
         this.putUnsignedVarInt(this.userPermission);
     }

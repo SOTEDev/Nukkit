@@ -4,8 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.item.Item;
-import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
@@ -33,16 +31,16 @@ public class BlockTrappedChest extends BlockChest {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        int[] faces = {2, 5, 3, 4};
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+        int[] faces = {4, 2, 5, 3};
 
         BlockEntityChest chest = null;
-        this.meta = faces[player != null ? player.getDirection().getHorizontalIndex() : 0];
+        this.meta = faces[player != null ? player.getDirection() : 0];
 
-        for (BlockFace side : Plane.HORIZONTAL) {
-            if ((this.meta == 4 || this.meta == 5) && (side == BlockFace.WEST || side == BlockFace.EAST)) {
+        for (int side = 2; side <= 5; ++side) {
+            if ((this.meta == 4 || this.meta == 5) && (side == 4 || side == 5)) {
                 continue;
-            } else if ((this.meta == 3 || this.meta == 2) && (side == BlockFace.NORTH || side == BlockFace.SOUTH)) {
+            } else if ((this.meta == 3 || this.meta == 2) && (side == 2 || side == 3)) {
                 continue;
             }
             Block c = this.getSide(side);
@@ -81,29 +79,6 @@ public class BlockTrappedChest extends BlockChest {
             ((BlockEntityChest) blockEntity).pairWith(chest);
         }
 
-        return true;
-    }
-
-    @Override
-    public int getWeakPower(BlockFace face) {
-        int playerCount = 0;
-
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
-
-        if (blockEntity instanceof BlockEntityChest) {
-            playerCount = ((BlockEntityChest) blockEntity).getInventory().getViewers().size();
-        }
-
-        return playerCount < 0 ? 0 : playerCount > 15 ? 15 : playerCount;
-    }
-
-    @Override
-    public int getStrongPower(BlockFace side) {
-        return side == BlockFace.UP ? this.getWeakPower(side) : 0;
-    }
-
-    @Override
-    public boolean isPowerSource() {
         return true;
     }
 }

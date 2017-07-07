@@ -46,14 +46,7 @@ public class NBTIO {
             return Item.get(0);
         }
 
-        Item item;
-        try {
-            item = Item.get(tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count"));
-        } catch (Exception e) {
-            item = Item.fromString(tag.getString("id"));
-            item.setDamage(!tag.contains("Damage") ? 0 : tag.getShort("Damage"));
-            item.setCount(tag.getByte("Count"));
-        }
+        Item item = Item.get(tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count"));
 
         if (tag.contains("tag") && tag.get("tag") instanceof CompoundTag) {
             item.setNamedTag(tag.getCompound("tag"));

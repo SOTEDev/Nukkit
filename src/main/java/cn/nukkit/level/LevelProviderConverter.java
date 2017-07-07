@@ -52,9 +52,7 @@ class LevelProviderConverter {
 
     LevelProvider perform() throws IOException {
         new File(path).mkdir();
-        File dat = new File(provider.getPath(), "level.dat.old");
-        new File(provider.getPath(), "level.dat").renameTo(dat);
-        Utils.copyFile(dat, new File(path, "level.dat"));
+        Utils.copyFile(new File(provider.getPath(), "level.dat"), new File(path, "level.dat"));
         LevelProvider result;
         try {
             if (provider instanceof LevelDB) {

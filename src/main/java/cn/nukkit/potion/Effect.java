@@ -3,7 +3,6 @@ package cn.nukkit.potion;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.network.protocol.MobEffectPacket;
@@ -99,7 +98,7 @@ public class Effect implements Cloneable {
 
     protected int duration;
 
-    protected int amplifier = 0;
+    protected int amplifier;
 
     protected int color;
 
@@ -194,18 +193,22 @@ public class Effect implements Cloneable {
     }
 
     public void applyEffect(Entity entity) {
+        EntityEvent ev;
         switch (this.id) {
             case Effect.POISON: //POISON
                 if (entity.getHealth() > 1) {
-                    entity.attack(new EntityDamageEvent(entity, DamageCause.MAGIC, 1));
+                    ev = new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_MAGIC, 1);
+                    entity.attack((EntityDamageEvent) ev);
                 }
                 break;
             case Effect.WITHER: //WITHER
-                entity.attack(new EntityDamageEvent(entity, DamageCause.MAGIC, 1));
+                ev = new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_MAGIC, 1);
+                entity.attack((EntityDamageEvent) ev);
                 break;
             case Effect.REGENERATION: //REGENERATION
                 if (entity.getHealth() < entity.getMaxHealth()) {
-                    entity.heal(new EntityRegainHealthEvent(entity, 1, EntityRegainHealthEvent.CAUSE_MAGIC));
+                    ev = new EntityRegainHealthEvent(entity, 1, EntityRegainHealthEvent.CAUSE_MAGIC);
+                    entity.heal((EntityRegainHealthEvent) ev);
                 }
                 break;
             case Effect.SPEED:

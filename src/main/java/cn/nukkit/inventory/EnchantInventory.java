@@ -1,5 +1,10 @@
 package cn.nukkit.inventory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
@@ -11,11 +16,6 @@ import cn.nukkit.level.Position;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.utils.DyeColor;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX
@@ -96,7 +96,15 @@ public class EnchantInventory extends ContainerInventory {
                                 for (int enchLevel = enchantment.getMinLevel(); enchLevel < enchantment.getMaxLevel(); enchLevel++) {
                                     if (modifiedLevel >= enchantment.getMinEnchantAbility(enchLevel) && modifiedLevel <= enchantment.getMaxEnchantAbility(enchLevel)) {
                                         enchantment.setLevel(enchLevel);
-                                        possible.add(enchantment);
+                                        if(this.setting == 1){
+                                            int enid = enchantment.getId();
+                                            if(enid != Enchantment.ID_THORNS && enid != Enchantment.ID_WATER_BREATHING && enid != Enchantment.ID_WATER_WORKER && enid != Enchantment.ID_WATER_WALKER &&
+                                               enid != Enchantment.ID_DAMAGE_SMITE && enid != Enchantment.ID_DAMAGE_ARTHROPODS &&
+                                               enid != Enchantment.ID_BOW_KNOCKBACK && enid != Enchantment.ID_BOW_INFINITY) 
+                                            possible.add(enchantment);
+                                        }else{
+                                            possible.add(enchantment);
+                                        }
                                     }
                                 }
 
@@ -142,6 +150,7 @@ public class EnchantInventory extends ContainerInventory {
                                 }
 
                                 weights = new int[possible.size()];
+
                                 total = 0;
 
                                 for (int j = 0; j < weights.length; j++) {
@@ -182,7 +191,9 @@ public class EnchantInventory extends ContainerInventory {
     public void onClose(Player who) {
         super.onClose(who);
 
-        for (int i = 0; i < 2; ++i) {
+        int c = 2;
+        if(this.setting == 1) c = 1;
+        for (int i = 0; i < c; ++i) {
             this.getHolder().getLevel().dropItem(this.getHolder().add(0.5, 0.5, 0.5), this.getItem(i));
             this.clear(i);
         }
@@ -207,7 +218,9 @@ public class EnchantInventory extends ContainerInventory {
                     if (lapis.getId() == Item.DYE && lapis.getDamage() == DyeColor.BLUE.getDyeData() && lapis.getCount() > i && level >= cost) {
                         result.addEnchantment(enchantments);
                         this.setItem(0, result);
-                        lapis.setCount(lapis.getCount() - i - 1);
+                        if(this.setting != 1){
+                            lapis.setCount(lapis.getCount() - i - 1);
+                        }
                         this.setItem(1, lapis);
                         who.setExperience(exp, level - cost);
                         break;

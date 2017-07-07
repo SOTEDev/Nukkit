@@ -2,10 +2,9 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSnowball;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -55,8 +54,8 @@ public class BlockSnowLayer extends BlockFlowable {
     //TODO:雪片叠垒乐
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = this.down();
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+        Block down = this.getSide(0);
         if (down.isSolid()) {
             this.getLevel().setBlock(block, this, true);
 
@@ -68,7 +67,7 @@ public class BlockSnowLayer extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().isTransparent()) {
+            if (this.getSide(Vector3.SIDE_DOWN).isTransparent()) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;
@@ -83,24 +82,19 @@ public class BlockSnowLayer extends BlockFlowable {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         if (item.isShovel() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    new ItemSnowball()
+            return new int[][]{
+                    {Item.SNOWBALL, 0, 1}
             };
         } else {
-            return new Item[0];
+            return new int[0][0];
         }
     }
 
     @Override
     public BlockColor getColor() {
         return BlockColor.SNOW_BLOCK_COLOR;
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
     }
 }
 

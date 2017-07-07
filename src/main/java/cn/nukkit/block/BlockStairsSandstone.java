@@ -45,9 +45,4 @@ public class BlockStairsSandstone extends BlockStairs {
     public BlockColor getColor() {
         return BlockColor.SAND_BLOCK_COLOR;
     }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
-    }
 }

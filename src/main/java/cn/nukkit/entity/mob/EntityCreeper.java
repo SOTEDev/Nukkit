@@ -1,12 +1,9 @@
 package cn.nukkit.entity.mob;
 
 import cn.nukkit.Player;
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.weather.EntityLightningStrike;
 import cn.nukkit.event.entity.CreeperPowerEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
@@ -15,7 +12,6 @@ import cn.nukkit.network.protocol.AddEntityPacket;
  * @author Box.
  */
 public class EntityCreeper extends EntityMob {
-
     public static final int NETWORK_ID = 33;
 
     public static final int DATA_SWELL_DIRECTION = 16;
@@ -26,16 +22,6 @@ public class EntityCreeper extends EntityMob {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
-    }
-
-    @Override
-    public float getWidth() {
-        return 0.72f;
-    }
-
-    @Override
-    public float getHeight() {
-        return 1.8f;
     }
 
     public EntityCreeper(FullChunk chunk, CompoundTag nbt) {
@@ -66,10 +52,6 @@ public class EntityCreeper extends EntityMob {
         }
     }
 
-    public void onStruckByLightning(Entity entity) {
-        this.setPowered(true);
-    }
-
     @Override
     protected void initEntity() {
         super.initEntity();
@@ -77,15 +59,6 @@ public class EntityCreeper extends EntityMob {
         if (this.namedTag.getBoolean("powered") || this.namedTag.getBoolean("IsPowered")) {
             this.dataProperties.putBoolean(DATA_POWERED, true);
         }
-        this.setMaxHealth(20);
-    }
-
-    @Override
-    public Item[] getDrops() {
-        if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
-            return new Item[]{Item.get(Item.GUNPOWDER, level.rand.nextInt(2) + 1)};
-        }
-        return new Item[0];
     }
 
     @Override

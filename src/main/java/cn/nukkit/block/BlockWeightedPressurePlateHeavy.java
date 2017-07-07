@@ -1,34 +1,29 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.math.NukkitMath;
-import cn.nukkit.utils.BlockColor;
 
 /**
- * @author CreeperFace
+ * @author Nukkit Project Team
  */
-public class BlockWeightedPressurePlateHeavy extends BlockPressurePlateBase {
+public class BlockWeightedPressurePlateHeavy extends BlockWeightedPressurePlate {
+
+    public BlockWeightedPressurePlateHeavy(int meta) {
+        super(meta);
+    }
 
     public BlockWeightedPressurePlateHeavy() {
         this(0);
     }
 
-    public BlockWeightedPressurePlateHeavy(int meta) {
-        super(meta);
-        this.onPitch = 0.90000004f;
-        this.offPitch = 0.75f;
+    @Override
+    public String getName() {
+        return "Heavy Weighted Pressure Plate";
     }
 
     @Override
     public int getId() {
         return HEAVY_WEIGHTED_PRESSURE_PLATE;
-    }
-
-    @Override
-    public String getName() {
-        return "Weighted Pressure Plate (Heavy)";
     }
 
     @Override
@@ -47,39 +42,14 @@ public class BlockWeightedPressurePlateHeavy extends BlockPressurePlateBase {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
+            return new int[][]{
+                    {Item.HEAVY_WEIGHTED_PRESSURE_PLATE, 0, 1}
             };
         } else {
-            return new Item[0];
+            return new int[0][0];
         }
     }
 
-    @Override
-    public Item toItem() {
-        return new ItemBlock(this, 0);
-    }
-
-    @Override
-    public BlockColor getColor() {
-        return BlockColor.IRON_BLOCK_COLOR;
-    }
-
-    @Override
-    protected int computeRedstoneStrength() {
-        int count = Math.min(this.level.getCollidingEntities(getCollisionBoundingBox()).length, this.getMaxWeight());
-
-        if (count > 0) {
-            float f = (float) Math.min(this.getMaxWeight(), count) / (float) this.getMaxWeight();
-            return Math.max(1, NukkitMath.ceilFloat(f * 15.0F));
-        } else {
-            return 0;
-        }
-    }
-
-    public int getMaxWeight() {
-        return 150;
-    }
 }

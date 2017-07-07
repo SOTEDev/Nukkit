@@ -129,7 +129,7 @@ public class NBTOutputStream implements DataOutput, AutoCloseable {
     public void writeUTF(String s) throws IOException {
         byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
         if (network) {
-            VarInt.writeUnsignedVarInt(stream, bytes.length);
+            this.writeByte(bytes.length);
         } else {
             this.writeShort(bytes.length);
         }

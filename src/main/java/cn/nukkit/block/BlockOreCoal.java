@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemCoal;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.NukkitRandom;
 
@@ -45,23 +44,18 @@ public class BlockOreCoal extends BlockSolid {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    new ItemCoal()
+            return new int[][]{
+                    {Item.COAL, 0, 1}
             };
         } else {
-            return new Item[0];
+            return new int[0][0];
         }
     }
 
     @Override
     public int getDropExp() {
         return new NukkitRandom().nextRange(0, 2);
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
     }
 }

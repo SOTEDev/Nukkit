@@ -53,18 +53,13 @@ public class BlockDoubleSlabRedSandstone extends BlockSolid {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    Item.get(Item.RED_SANDSTONE_SLAB, this.meta & 0x07, 2)
+            return new int[][]{
+                    {Item.RED_SANDSTONE_SLAB, this.meta & 0x07, 2}
             };
         } else {
-            return new Item[0];
+            return new int[0][0];
         }
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
     }
 }

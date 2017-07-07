@@ -3,11 +3,8 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityFurnace;
-import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
@@ -65,9 +62,9 @@ public class BlockFurnaceBurning extends BlockSolid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        int faces[] = {2, 5, 3, 4};
-        this.meta = faces[player != null ? player.getDirection().getHorizontalIndex() : 0];
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+        int faces[] = {4, 2, 5, 3};
+        this.meta = faces[player != null ? player.getDirection() : 0];
         this.getLevel().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Items"))
@@ -128,33 +125,13 @@ public class BlockFurnaceBurning extends BlockSolid {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    new ItemBlock(new BlockFurnace())
+            return new int[][]{
+                    {Item.FURNACE, 0, 1}
             };
         } else {
-            return new Item[0];
+            return new int[0][0];
         }
-    }
-
-    public boolean hasComparatorInputOverride() {
-        return true;
-    }
-
-    @Override
-    public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
-
-        if (blockEntity instanceof BlockEntityFurnace) {
-            return ContainerInventory.calculateRedstone(((BlockEntityFurnace) blockEntity).getInventory());
-        }
-
-        return super.getComparatorInputOverride();
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
     }
 }

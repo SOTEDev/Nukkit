@@ -10,7 +10,7 @@ public class CommandParameter {
     public final static String ARG_TYPE_PLAYER = "target";
     public final static String ARG_TYPE_BLOCK_POS = "blockpos";
     public final static String ARG_TYPE_RAW_TEXT = "rawtext";
-    public final static String ARG_TYPE_INT = "int";
+    public final static String ARG_TYPE_INT = "int";  
 
     public static final String ENUM_TYPE_ITEM_LIST = "itemType";
     public static final String ENUM_TYPE_BLOCK_LIST = "blockType";

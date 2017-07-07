@@ -43,18 +43,13 @@ public class BlockMossStone extends BlockSolid {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
+            return new int[][]{
+                    {Item.MOSS_STONE, this.meta, 1}
             };
         } else {
-            return new Item[0];
+            return new int[0][0];
         }
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
     }
 }

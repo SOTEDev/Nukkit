@@ -6,7 +6,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -35,11 +34,6 @@ public class BlockLadder extends BlockTransparent {
 
     @Override
     public boolean hasEntityCollision() {
-        return true;
-    }
-
-    @Override
-    public boolean canBeClimbed() {
         return true;
     }
 
@@ -110,10 +104,10 @@ public class BlockLadder extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         if (!target.isTransparent()) {
-            if (face.getIndex() >= 2 && face.getIndex() <= 5) {
-                this.meta = face.getIndex();
+            if (face >= 2 && face <= 5) {
+                this.meta = face;
                 this.getLevel().setBlock(block, this, true, true);
                 return true;
             }
@@ -132,7 +126,7 @@ public class BlockLadder extends BlockTransparent {
                     5,
                     4
             };
-            if (!this.getSide(BlockFace.fromIndex(faces[this.meta])).isSolid()) {
+            if (!this.getSide(faces[this.meta]).isSolid()) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -143,6 +137,13 @@ public class BlockLadder extends BlockTransparent {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_AXE;
+    }
+
+    @Override
+    public int[][] getDrops(Item item) {
+        return new int[][]{
+                {this.getId(), 0, 1}
+        };
     }
 
     @Override

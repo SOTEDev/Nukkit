@@ -19,7 +19,6 @@ public class TextPacket extends DataPacket {
     public static final byte TYPE_TIP = 4;
     public static final byte TYPE_SYSTEM = 5;
     public static final byte TYPE_WHISPER = 6;
-    public static final byte TYPE_ANNOUNCEMENT = 7;
 
     public byte type;
     public String source = "";
@@ -32,8 +31,6 @@ public class TextPacket extends DataPacket {
         switch (type) {
             case TYPE_POPUP:
             case TYPE_CHAT:
-            case TYPE_WHISPER:
-            case TYPE_ANNOUNCEMENT:
                 this.source = this.getString();
             case TYPE_RAW:
             case TYPE_TIP:
@@ -58,8 +55,6 @@ public class TextPacket extends DataPacket {
         switch (this.type) {
             case TYPE_POPUP:
             case TYPE_CHAT:
-            case TYPE_WHISPER:
-            case TYPE_ANNOUNCEMENT:
                 this.putString(this.source);
             case TYPE_RAW:
             case TYPE_TIP:

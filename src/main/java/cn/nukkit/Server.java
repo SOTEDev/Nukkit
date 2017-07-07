@@ -1,23 +1,77 @@
 package cn.nukkit;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+
 import cn.nukkit.block.Block;
-import cn.nukkit.blockentity.*;
-import cn.nukkit.command.*;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityBeacon;
+import cn.nukkit.blockentity.BlockEntityBrewingStand;
+import cn.nukkit.blockentity.BlockEntityCauldron;
+import cn.nukkit.blockentity.BlockEntityChest;
+import cn.nukkit.blockentity.BlockEntityDispenser;
+import cn.nukkit.blockentity.BlockEntityDropper;
+import cn.nukkit.blockentity.BlockEntityEnchantTable;
+import cn.nukkit.blockentity.BlockEntityEnderChest;
+import cn.nukkit.blockentity.BlockEntityFlowerPot;
+import cn.nukkit.blockentity.BlockEntityFurnace;
+import cn.nukkit.blockentity.BlockEntityHopper;
+import cn.nukkit.blockentity.BlockEntityItemFrame;
+import cn.nukkit.blockentity.BlockEntitySign;
+import cn.nukkit.blockentity.BlockEntitySkull;
+import cn.nukkit.command.Command;
+import cn.nukkit.command.CommandReader;
+import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.ConsoleCommandSender;
+import cn.nukkit.command.PluginIdentifiableCommand;
+import cn.nukkit.command.SimpleCommandMap;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.Skin;
-import cn.nukkit.entity.item.*;
-import cn.nukkit.entity.mob.*;
-import cn.nukkit.entity.passive.*;
+import cn.nukkit.entity.item.EntityBoat;
+import cn.nukkit.entity.item.EntityEnderPearl;
+import cn.nukkit.entity.item.EntityExpBottle;
+import cn.nukkit.entity.item.EntityFallingBlock;
+import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.entity.item.EntityMinecartEmpty;
+import cn.nukkit.entity.item.EntityPainting;
+import cn.nukkit.entity.item.EntityPotion;
+import cn.nukkit.entity.item.EntityPrimedTNT;
+import cn.nukkit.entity.item.EntityXPOrb;
+import cn.nukkit.entity.mob.EntityCreeper;
+import cn.nukkit.entity.passive.EntityChicken;
+import cn.nukkit.entity.passive.EntityCow;
+import cn.nukkit.entity.passive.EntityOcelot;
+import cn.nukkit.entity.passive.EntityPig;
+import cn.nukkit.entity.passive.EntityRabbit;
+import cn.nukkit.entity.passive.EntitySheep;
+import cn.nukkit.entity.passive.EntityVillager;
+import cn.nukkit.entity.passive.EntityWolf;
 import cn.nukkit.entity.projectile.EntityArrow;
-import cn.nukkit.entity.projectile.EntityEnderPearl;
 import cn.nukkit.entity.projectile.EntitySnowball;
+import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
-import cn.nukkit.inventory.*;
+import cn.nukkit.inventory.CraftingManager;
+import cn.nukkit.inventory.FurnaceRecipe;
+import cn.nukkit.inventory.Recipe;
+import cn.nukkit.inventory.ShapedRecipe;
+import cn.nukkit.inventory.ShapelessRecipe;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.BaseLang;
@@ -39,7 +93,6 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
-import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -48,11 +101,12 @@ import cn.nukkit.network.CompressBatchedTask;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
-import cn.nukkit.network.protocol.*;
+import cn.nukkit.network.protocol.BatchPacket;
+import cn.nukkit.network.protocol.CraftingDataPacket;
+import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.network.protocol.PlayerListPacket;
+import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.network.query.QueryHandler;
-import cn.nukkit.network.rcon.RCON;
-import cn.nukkit.permission.BanEntry;
-import cn.nukkit.permission.BanList;
 import cn.nukkit.permission.DefaultPermissions;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.plugin.JavaPluginLoader;
@@ -64,16 +118,18 @@ import cn.nukkit.plugin.service.ServiceManager;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.resourcepacks.ResourcePackManager;
-import cn.nukkit.scheduler.FileWriteTask;
 import cn.nukkit.scheduler.ServerScheduler;
-import cn.nukkit.utils.*;
-import cn.nukkit.utils.bugreport.ExceptionHandler;
-import co.aikar.timings.Timings;
-import com.google.common.base.Preconditions;
-
-import java.io.*;
-import java.nio.ByteOrder;
-import java.util.*;
+import cn.nukkit.timings.Timings;
+import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.Config;
+import cn.nukkit.utils.ConfigSection;
+import cn.nukkit.utils.LevelException;
+import cn.nukkit.utils.MainLogger;
+import cn.nukkit.utils.ServerException;
+import cn.nukkit.utils.ServerKiller;
+import cn.nukkit.utils.TextFormat;
+import cn.nukkit.utils.Utils;
+import cn.nukkit.utils.Zlib;
 
 /**
  * @author MagicDroidX
@@ -85,10 +141,6 @@ public class Server {
     public static final String BROADCAST_CHANNEL_USERS = "nukkit.broadcast.user";
 
     private static Server instance = null;
-
-    private BanList banByName = null;
-
-    private BanList banByIP = null;
 
     private Config operators = null;
 
@@ -135,8 +187,6 @@ public class Server {
     private int maxPlayers;
 
     private boolean autoSave;
-
-    private RCON rcon;
 
     private EntityMetadataStore entityMetadata;
 
@@ -189,11 +239,7 @@ public class Server {
 
     private Level defaultLevel = null;
 
-    private Thread currentThread;
-
-    Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
-        Preconditions.checkState(instance == null, "Already initialized!");
-        currentThread = Thread.currentThread(); // Saves the current thread instance as a reference, used in Server#isPrimaryThread()
+    public Server(MainLogger logger, final String filePath, String dataPath, String pluginPath) {
         instance = this;
         this.logger = logger;
 
@@ -261,9 +307,8 @@ public class Server {
                 put("motd", "Nukkit Server For Minecraft: PE");
                 put("server-port", 19132);
                 put("server-ip", "0.0.0.0");
-                put("view-distance", 10);
+                put("view-distance", 22);
                 put("white-list", false);
-                put("achievements", true);
                 put("announce-player-achievements", true);
                 put("spawn-protection", 16);
                 put("max-players", 20);
@@ -280,11 +325,8 @@ public class Server {
                 put("level-seed", "");
                 put("level-type", "DEFAULT");
                 put("enable-query", true);
-                put("enable-rcon", false);
-                put("rcon.password", Base64.getEncoder().encodeToString(UUID.randomUUID().toString().replace("-", "").getBytes()).substring(3, 13));
                 put("auto-save", true);
                 put("force-resources", false);
-                put("bug-report", true);
             }
         });
 
@@ -304,6 +346,18 @@ public class Server {
 
         ServerScheduler.WORKERS = (int) poolSize;
 
+        int threshold;
+        try {
+            threshold = Integer.valueOf(String.valueOf(this.getConfig("network.batch-threshold", 256)));
+        } catch (Exception e) {
+            threshold = 256;
+        }
+
+        if (threshold < 0) {
+            threshold = -1;
+        }
+
+        Network.BATCH_THRESHOLD = threshold;
         this.networkCompressionLevel = (int) this.getConfig("network.compression-level", 7);
         this.networkCompressionAsync = (boolean) this.getConfig("network.async-compression", true);
 
@@ -317,20 +371,12 @@ public class Server {
 
         this.scheduler = new ServerScheduler();
 
-        if (this.getPropertyBoolean("enable-rcon", false)) {
-            this.rcon = new RCON(this, this.getPropertyString("rcon.password", ""), (!this.getIp().equals("")) ? this.getIp() : "0.0.0.0", this.getPropertyInt("rcon.port", this.getPort()));
-        }
-
         this.entityMetadata = new EntityMetadataStore();
         this.playerMetadata = new PlayerMetadataStore();
         this.levelMetadata = new LevelMetadataStore();
 
         this.operators = new Config(this.dataPath + "ops.txt", Config.ENUM);
         this.whitelist = new Config(this.dataPath + "white-list.txt", Config.ENUM);
-        this.banByName = new BanList(this.dataPath + "banned-players.json");
-        this.banByName.load();
-        this.banByIP = new BanList(this.dataPath + "banned-ips.json");
-        this.banByIP.load();
 
         this.maxPlayers = this.getPropertyInt("max-players", 20);
         this.setAutoSave(this.getPropertyBoolean("auto-save", true));
@@ -342,10 +388,6 @@ public class Server {
         Nukkit.DEBUG = (int) this.getConfig("debug.level", 1);
         if (this.logger instanceof MainLogger) {
             this.logger.setLogDebug(Nukkit.DEBUG > 1);
-        }
-
-        if (this.getConfig().getBoolean("bug-report", true)) {
-            ExceptionHandler.registerExceptionHandler();
         }
 
         this.logger.info(this.getLanguage().translateString("nukkit.server.networkStart", new String[]{this.getIp().equals("") ? "*" : this.getIp(), String.valueOf(this.getPort())}));
@@ -540,6 +582,10 @@ public class Server {
     public static void broadcastPacket(Player[] players, DataPacket packet) {
         packet.encode();
         packet.isEncoded = true;
+        if (Network.BATCH_THRESHOLD >= 0 && packet.getBuffer().length >= Network.BATCH_THRESHOLD) {
+            Server.getInstance().batchPackets(players, new DataPacket[]{packet}, false);
+            return;
+        }
 
         for (Player player : players) {
             player.dataPacket(packet);
@@ -595,6 +641,8 @@ public class Server {
     public void broadcastPacketsCallback(byte[] data, List<String> identifiers) {
         BatchPacket pk = new BatchPacket();
         pk.payload = data;
+        pk.encode();
+        pk.isEncoded = true;
 
         for (String i : identifiers) {
             if (this.players.containsKey(i)) {
@@ -604,7 +652,7 @@ public class Server {
     }
 
     public void enablePlugins(PluginLoadOrder type) {
-        for (Plugin plugin : new ArrayList<>(this.pluginManager.getPlugins().values())) {
+        for (Plugin plugin : this.pluginManager.getPlugins().values()) {
             if (!plugin.isEnabled() && type == plugin.getDescription().getOrder()) {
                 this.enablePlugin(plugin);
             }
@@ -625,12 +673,6 @@ public class Server {
     }
 
     public boolean dispatchCommand(CommandSender sender, String commandLine) throws ServerException {
-        // First we need to check if this command is on the main thread or not, if not, warn the user
-        if (!this.isPrimaryThread()) {
-            getLogger().warning("Command Dispatched Async: " + commandLine);
-            getLogger().warning("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
-            // TODO: We should sync the command to the main thread too!
-        }
         if (sender == null) {
             throw new ServerException("CommandSender is not valid");
         }
@@ -670,14 +712,8 @@ public class Server {
             this.setPropertyInt("difficulty", 3);
         }
 
-        this.banByIP.load();
-        this.banByName.load();
         this.reloadWhitelist();
         this.operators.reload();
-
-        for (BanEntry entry : this.getIPBans().getEntires().values()) {
-            this.getNetwork().blockAddress(entry.getName(), -1);
-        }
 
         this.pluginManager.registerInterface(JavaPluginLoader.class);
         this.pluginManager.loadPlugins(this.pluginPath);
@@ -710,10 +746,6 @@ public class Server {
             this.hasStopped = true;
 
             this.shutdown();
-
-            if (this.rcon != null) {
-                this.rcon.close();
-            }
 
             this.getLogger().debug("Disabling all plugins");
             this.pluginManager.disablePlugins();
@@ -758,10 +790,6 @@ public class Server {
             this.queryHandler = new QueryHandler();
         }
 
-        for (BanEntry entry : this.getIPBans().getEntires().values()) {
-            this.network.blockAddress(entry.getName(), -1);
-        }
-
         //todo send usage setting
 
         this.tickCounter = 0;
@@ -792,15 +820,14 @@ public class Server {
             while (this.isRunning) {
                 try {
                     this.tick();
-
-                    long next = this.nextTick;
-                    long current = System.currentTimeMillis();
-
-                    if (next - 0.1 > current) {
-                        Thread.sleep(next - current - 1, 900000);
-                    }
                 } catch (RuntimeException e) {
                     this.getLogger().logException(e);
+                }
+
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    Server.getInstance().getLogger().logException(e);
                 }
             }
         } catch (Throwable e) {
@@ -850,10 +877,7 @@ public class Server {
     }
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, Collection<Player> players) {
-        this.updatePlayerListData(uuid, entityId, name, skin,
-                players.stream()
-                        .filter(p -> !p.getUniqueId().equals(uuid))
-                        .toArray(Player[]::new));
+        this.updatePlayerListData(uuid, entityId, name, skin, players.stream().toArray(Player[]::new));
     }
 
     public void removePlayerListData(UUID uuid) {
@@ -872,19 +896,18 @@ public class Server {
     }
 
     public void sendFullPlayerListData(Player player) {
-        final UUID uuid = player.getUniqueId();
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_ADD;
-        pk.entries = this.playerList.values()
-                .stream()
-                .filter(p -> !p.getUniqueId().equals(uuid))
-                .map(p -> new PlayerListPacket.Entry(
-                        p.getUniqueId(),
-                        p.getId(),
-                        p.getDisplayName(),
-                        p.getSkin()))
-                .toArray(PlayerListPacket.Entry[]::new);
-
+        List<PlayerListPacket.Entry> entries = new ArrayList<>();
+        for (Player p : this.playerList.values()) {
+            if (p != player) entries.add(
+                    new PlayerListPacket.Entry(
+                            p.getUniqueId(),
+                            p.getId(),
+                            p.getDisplayName(),
+                            p.getSkin()));
+        }
+        pk.entries = entries.stream().toArray(PlayerListPacket.Entry[]::new);
         player.dataPacket(pk);
     }
 
@@ -909,13 +932,9 @@ public class Server {
 
     private void checkTickUpdates(int currentTick, long tickTime) {
         for (Player p : new ArrayList<>(this.players.values())) {
-            /*if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMEOUT, "Login timeout")) {
+            /*if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMOUT)) {
                 continue;
-            }
-
-            client freezes when applying resource packs
-            todo: fix*/
-
+            }*/
             if (this.alwaysTickPlayers) {
                 p.onUpdate(currentTick);
             }
@@ -995,9 +1014,6 @@ public class Server {
         Timings.connectionTimer.startTiming();
         this.network.processInterfaces();
 
-        if (this.rcon != null) {
-            this.rcon.check();
-        }
         Timings.connectionTimer.stopTiming();
 
         Timings.schedulerTimer.startTiming();
@@ -1078,9 +1094,8 @@ public class Server {
         return true;
     }
 
-    // TODO: Fix title tick
     public void titleTick() {
-        if (true || !Nukkit.ANSI) {
+        if (!Nukkit.ANSI) {
             return;
         }
 
@@ -1153,7 +1168,7 @@ public class Server {
     }
 
     public int getViewDistance() {
-        return this.getPropertyInt("view-distance", 10);
+        return this.getPropertyInt("view-distance", 22);
     }
 
     public String getIp() {
@@ -1224,7 +1239,6 @@ public class Server {
 
             case "3":
             case "spectator":
-            case "spc":
             case "view":
             case "v":
                 return Player.SPECTATOR;
@@ -1377,20 +1391,6 @@ public class Server {
 
     public CompoundTag getOfflinePlayerData(String name) {
         name = name.toLowerCase();
-        /*String path = this.getDataPath() + "players/";
-        File file = new File(path + name + ".dat");
-
-        if (this.shouldSavePlayerData() && file.exists()) {
-            try {
-                return NBTIO.readCompressed(new FileInputStream(file));
-            } catch (Exception e) {
-                file.renameTo(new File(path + name + ".dat.bak"));
-                this.logger.notice(this.getLanguage().translateString("nukkit.data.playerCorrupted", name));
-            }
-        } else {
-            this.logger.notice(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
-        }*/
-
         Position spawn = this.getDefaultLevel().getSafeSpawn();
         CompoundTag nbt = new CompoundTag()
                 .putLong("firstPlayed", System.currentTimeMillis() / 1000)
@@ -1416,30 +1416,13 @@ public class Server {
                 .putBoolean("OnGround", true)
                 .putBoolean("Invulnerable", false)
                 .putString("NameTag", name);
-
-        this.saveOfflinePlayerData(name, nbt);
         return nbt;
     }
 
     public void saveOfflinePlayerData(String name, CompoundTag tag) {
-        this.saveOfflinePlayerData(name, tag, false);
     }
 
     public void saveOfflinePlayerData(String name, CompoundTag tag, boolean async) {
-        /*if (this.shouldSavePlayerData()) {
-            try {
-                if (async) {
-                    this.getScheduler().scheduleAsyncTask(new FileWriteTask(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
-                } else {
-                    Utils.writeFile(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", new ByteArrayInputStream(NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
-                }
-            } catch (Exception e) {
-                this.logger.critical(this.getLanguage().translateString("nukkit.data.saveError", new String[]{name, e.getMessage()}));
-                if (Nukkit.DEBUG > 1) {
-                    this.logger.logException(e);
-                }
-            }
-        }*/
     }
 
     public Player getPlayer(String name) {
@@ -1565,13 +1548,7 @@ public class Server {
             return false;
         }
 
-        String path;
-
-        if (name.contains("/") || name.contains("\\")) {
-            path = name;
-        } else {
-            path = this.getDataPath() + "worlds/" + name + "/";
-        }
+        String path = this.getDataPath() + "worlds/" + name + "/";
 
         Class<? extends LevelProvider> provider = LevelProviderManager.getProvider(path);
 
@@ -1637,23 +1614,16 @@ public class Server {
             }
         }
 
-        String path;
-
-        if (name.contains("/") || name.contains("\\")) {
-            path = name;
-        } else {
-            path = this.getDataPath() + "worlds/" + name + "/";
-        }
-
         Level level;
         try {
+            String path = this.getDataPath() + "worlds/" + name + "/";
+
             provider.getMethod("generate", String.class, String.class, long.class, Class.class, Map.class).invoke(null, path, name, seed, generator, options);
 
             level = new Level(this, name, path, provider);
             this.levels.put(level.getId(), level);
 
             level.initLevel();
-            level.getGameRules().setGameRule("spawnRadius", "" + this.getSpawnRadius());
 
             level.setTickRate(this.baseTickRate);
         } catch (Exception e) {
@@ -1812,14 +1782,6 @@ public class Server {
         }
     }
 
-    public BanList getNameBans() {
-        return this.banByName;
-    }
-
-    public BanList getIPBans() {
-        return this.banByIP;
-    }
-
     public void addOp(String name) {
         this.operators.set(name.toLowerCase(), true);
         Player player = this.getPlayerExact(name);
@@ -1897,17 +1859,7 @@ public class Server {
     }
 
     public boolean shouldSavePlayerData() {
-        return (Boolean) this.getConfig("player.save-player-data", true);
-    }
-
-    /**
-     * Checks the current thread against the expected primary thread for the server.
-     *
-     * <b>Note:</b> this method should not be used to indicate the current synchronized state of the runtime. A current thread matching the main thread indicates that it is synchronized, but a mismatch does not preclude the same assumption.
-     * @return true if the current thread matches the expected primary thread, false otherwise
-     */
-    public boolean isPrimaryThread() {
-        return (Thread.currentThread() == currentThread);
+        return this.getPropertyBoolean("player.save-player-data", true);
     }
 
     private void registerEntities() {
@@ -1920,39 +1872,12 @@ public class Server {
         Entity.registerEntity("Painting", EntityPainting.class);
         //todo mobs
         Entity.registerEntity("Creeper", EntityCreeper.class);
-        Entity.registerEntity("Zombie", EntityZombie.class);
-        Entity.registerEntity("Blaze", EntityBlaze.class);
-        Entity.registerEntity("CaveSpider", EntityCaveSpider.class);
-        Entity.registerEntity("ElderGuardian", EntityElderGuardian.class);
-        Entity.registerEntity("EnderDragon", EntityEnderDragon.class);
-        Entity.registerEntity("Enderman", EntityEnderman.class);
-        Entity.registerEntity("Endermite", EntityEndermite.class);
-        Entity.registerEntity("Ghast", EntityGhast.class);
-        Entity.registerEntity("Guardian", EntityGuardian.class);
-        Entity.registerEntity("Husk", EntityHusk.class);
-        Entity.registerEntity("MagmaCube", EntityMagmaCube.class);
-        Entity.registerEntity("Shulker", EntityShulker.class);
-        Entity.registerEntity("Silferfish", EntitySilverfish.class);
-        Entity.registerEntity("Skeleton", EntitySkeleton.class);
-        Entity.registerEntity("SkeletonHorse", EntitySkeletonHorse.class);
-        Entity.registerEntity("Slime", EntitySlime.class);
-        Entity.registerEntity("Spider", EntitySpider.class);
-        Entity.registerEntity("Stray", EntityStray.class);
-        Entity.registerEntity("Witch", EntityWitch.class);
         //TODO: more mobs
-        Entity.registerEntity("Bat", EntityBat.class);
         Entity.registerEntity("Chicken", EntityChicken.class);
         Entity.registerEntity("Cow", EntityCow.class);
-        Entity.registerEntity("Donkey", EntityDonkey.class);
-        Entity.registerEntity("Horse", EntityHorse.class);
-        Entity.registerEntity("Llama", EntityLlama.class);
-        Entity.registerEntity("Mooshroom", EntityMooshroom.class);
-        Entity.registerEntity("Mule", EntityMule.class);
-        Entity.registerEntity("PolarBear", EntityPolarBear.class);
         Entity.registerEntity("Pig", EntityPig.class);
         Entity.registerEntity("Rabbit", EntityRabbit.class);
         Entity.registerEntity("Sheep", EntitySheep.class);
-        Entity.registerEntity("Squid", EntitySquid.class);
         Entity.registerEntity("Wolf", EntityWolf.class);
         Entity.registerEntity("Ocelot", EntityOcelot.class);
         Entity.registerEntity("Villager", EntityVillager.class);
@@ -1967,7 +1892,7 @@ public class Server {
         // TODO: 2016/1/30 all finds of minecart
         Entity.registerEntity("Boat", EntityBoat.class);
 
-        //Entity.registerEntity("Lightning", EntityLightning.class); lightning shouldn't be saved as entity
+        Entity.registerEntity("Lightning", EntityLightning.class);
     }
 
     private void registerBlockEntities() {
@@ -1982,10 +1907,9 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.CAULDRON, BlockEntityCauldron.class);
         BlockEntity.registerBlockEntity(BlockEntity.ENDER_CHEST, BlockEntityEnderChest.class);
         BlockEntity.registerBlockEntity(BlockEntity.BEACON, BlockEntityBeacon.class);
-        BlockEntity.registerBlockEntity(BlockEntity.PISTON_ARM, BlockEntityPistonArm.class);
-        BlockEntity.registerBlockEntity(BlockEntity.COMPARATOR, BlockEntityComparator.class);
+        BlockEntity.registerBlockEntity(BlockEntity.DROPPER, BlockEntityDropper.class);
+        BlockEntity.registerBlockEntity(BlockEntity.DISPENSER, BlockEntityDispenser.class);
         BlockEntity.registerBlockEntity(BlockEntity.HOPPER, BlockEntityHopper.class);
-        BlockEntity.registerBlockEntity(BlockEntity.BED, BlockEntityBed.class);
     }
 
     public static Server getInstance() {

@@ -24,9 +24,7 @@ public class DisconnectPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putBoolean(this.hideDisconnectionScreen);
-        if (!this.hideDisconnectionScreen) {
-            this.putString(this.message);
-        }
+        this.putString(this.message);
     }
 
 

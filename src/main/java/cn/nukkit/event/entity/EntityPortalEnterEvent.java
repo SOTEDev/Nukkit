@@ -7,23 +7,21 @@ import cn.nukkit.event.HandlerList;
 public class EntityPortalEnterEvent extends EntityEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
-    private final PortalType type;
+    public static final int TYPE_NETHER = 0;
+    public static final int TYPE_END = 1;
+
+    private final int type;
 
     public static HandlerList getHandlers() {
         return handlers;
     }
 
-    public EntityPortalEnterEvent(Entity entity, PortalType type) {
+    public EntityPortalEnterEvent(Entity entity, int type) {
         this.entity = entity;
         this.type = type;
     }
 
-    public PortalType getPortalType() {
+    public int getPortalType() {
         return type;
-    }
-
-    public enum PortalType {
-        NETHER,
-        END
     }
 }

@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemMelon;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -41,9 +40,9 @@ public class BlockMelon extends BlockSolid {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                new ItemMelon(0, new Random().nextInt(4) + 3)
+    public int[][] getDrops(Item item) {
+        return new int[][]{
+                {Item.MELON_SLICE, 0, new Random().nextInt(4) + 3}
         };
     }
 

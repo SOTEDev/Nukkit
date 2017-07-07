@@ -2,9 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemStick;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.Random;
@@ -33,9 +31,9 @@ public class BlockDeadBush extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = this.down();
-        if (down.getId() == SAND || down.getId() == TERRACOTTA || down.getId() == STAINED_TERRACOTTA || down.getId() == PODZOL) {
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+        Block down = this.getSide(0);
+        if (down.getId() == SAND || down.getId() == HARDENED_CLAY || down.getId() == STAINED_CLAY || down.getId() == PODZOL) {
             this.getLevel().setBlock(block, this, true, true);
             return true;
         }
@@ -46,7 +44,7 @@ public class BlockDeadBush extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().isTransparent()) {
+            if (this.getSide(0).isTransparent()) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;
@@ -56,14 +54,14 @@ public class BlockDeadBush extends BlockFlowable {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         if (item.isShears()) {
-            return new Item[]{
-                    toItem()
+            return new int[][]{
+                    {Item.DEAD_BUSH, 0, 1}
             };
         } else {
-            return new Item[]{
-                    new ItemStick(0, new Random().nextInt(3))
+            return new int[][]{
+                    {Item.STICK, 0, new Random().nextInt(3)}
             };
         }
     }

@@ -1,17 +1,17 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBeacon;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
  * author: Angelic47 Nukkit Project
  */
-public class BlockBeacon extends BlockTransparent {
+public class BlockBeacon extends BlockSolid {
 
     public BlockBeacon() {
         this(0);
@@ -33,11 +33,6 @@ public class BlockBeacon extends BlockTransparent {
 
     @Override
     public double getResistance() {
-        return 15;
-    }
-
-    @Override
-    public int getLightLevel() {
         return 15;
     }
 
@@ -64,10 +59,16 @@ public class BlockBeacon extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public int[][] getDrops(Item item) {
+        return new int[][]{{Item.BEACON, 0, 1}};
+    }
+
+
+    @Override
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         boolean blockSuccess = super.place(item, block, target, face, fx, fy, fz, player);
 
-        if (blockSuccess) {
+        if(blockSuccess) {
             CompoundTag nbt = new CompoundTag("")
                     .putString("id", BlockEntity.BEACON)
                     .putInt("x", (int) this.x)
@@ -77,10 +78,5 @@ public class BlockBeacon extends BlockTransparent {
         }
 
         return blockSuccess;
-    }
-
-    @Override
-    public boolean canBePushed() {
-        return false;
     }
 }

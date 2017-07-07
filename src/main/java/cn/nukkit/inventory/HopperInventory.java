@@ -3,7 +3,8 @@ package cn.nukkit.inventory;
 import cn.nukkit.blockentity.BlockEntityHopper;
 
 /**
- * Created by CreeperFace on 8.5.2017.
+ * author: MagicDroidX
+ * Nukkit Project
  */
 public class HopperInventory extends ContainerInventory {
 
@@ -13,6 +14,6 @@ public class HopperInventory extends ContainerInventory {
 
     @Override
     public BlockEntityHopper getHolder() {
-        return (BlockEntityHopper) super.getHolder();
+        return (BlockEntityHopper) this.holder;
     }
 }

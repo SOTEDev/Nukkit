@@ -1,18 +1,17 @@
 package cn.nukkit.blockentity;
 
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.Map;
+
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.timings.Timing;
+import cn.nukkit.timings.Timings;
 import cn.nukkit.utils.ChunkException;
-import co.aikar.timings.Timing;
-import co.aikar.timings.Timings;
-
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author MagicDroidX
@@ -33,11 +32,9 @@ public abstract class BlockEntity extends Position {
     public static final String ITEM_FRAME = "ItemFrame";
     public static final String CAULDRON = "Cauldron";
     public static final String BEACON = "Beacon";
-    public static final String PISTON_ARM = "PistonArm";
-    public static final String MOVING_BLOCK = "MovingBlock";
-    public static final String COMPARATOR = "Comparator";
     public static final String HOPPER = "Hopper";
-    public static final String BED = "Bed";
+    public static final String DROPPER = "Dropper";
+    public static final String DISPENSER = "Dispenser";
 
 
     public static long count = 1;
@@ -50,6 +47,7 @@ public abstract class BlockEntity extends Position {
     public long id;
 
     public boolean closed = false;
+    public boolean using = false;
     public CompoundTag namedTag;
     protected long lastUpdate;
     protected Server server;
@@ -143,22 +141,15 @@ public abstract class BlockEntity extends Position {
         this.namedTag.putInt("z", (int) this.getZ());
     }
 
-    public CompoundTag getCleanedNBT(){
-        this.saveNBT();
-        CompoundTag tag = this.namedTag.clone();
-        tag.remove("x").remove("y").remove("z").remove("id");
-        if(tag.getTags().size() > 0){
-            return tag;
-        }else{
-            return null;
-        }
-    }
-
     public Block getBlock() {
         return this.level.getBlock(this);
     }
 
     public abstract boolean isBlockEntityValid();
+
+    public boolean isUsing(){
+        return this.using;
+    }
 
     public boolean onUpdate() {
         return false;
@@ -186,11 +177,4 @@ public abstract class BlockEntity extends Position {
         return name;
     }
 
-    public static CompoundTag getDefaultCompound(Vector3 pos, String id) {
-        return new CompoundTag("")
-                .putString("id", id)
-                .putInt("x", pos.getFloorX())
-                .putInt("y", pos.getFloorY())
-                .putInt("z", pos.getFloorZ());
-    }
 }

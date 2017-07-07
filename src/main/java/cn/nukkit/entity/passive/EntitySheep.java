@@ -1,44 +1,51 @@
 package cn.nukkit.entity.passive;
 
+import java.util.Random;
+
 import cn.nukkit.Player;
+import cn.nukkit.block.BlockAir;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDye;
+import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.sound.PlaySound;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.utils.DyeColor;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 /**
- * Author: BeYkeRYkt 
+ * Author: BeYkeRYkt
  * Nukkit Project
  */
 public class EntitySheep extends EntityAnimal {
 
     public static final int NETWORK_ID = 13;
 
-    public boolean sheared = false;
-    public int color = 0;
+    public static final int DATA_COLOR_INFO = 16;
+
+    public Random rand = new Random();
 
     public EntitySheep(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+        if(!nbt.contains("Color")){
+            nbt.putByte("Color", getRandomSheepColor(new Random()).getWoolData());
+        }
+        this.setDataProperty(new ByteEntityData(DATA_COLOR_INFO, getFleeceColor().getWoolData()));
     }
 
     @Override
     public float getWidth() {
-        if (this.isBaby()) {
-            return 0.45f;
-        }
         return 0.9f;
     }
 
     @Override
     public float getHeight() {
         if (isBaby()) {
-            return 0.65f;
+            return 0.9f; // No have information
         }
         return 1.3f;
     }
@@ -46,14 +53,87 @@ public class EntitySheep extends EntityAnimal {
     @Override
     public float getEyeHeight() {
         if (isBaby()) {
-            return 0.65f;
+            return 0.95f * 0.9f; // No have information
         }
-        return 1.1f;
+        return 0.95f * getHeight();
+    }
+
+    public boolean interact(Player player){
+        Item item = player.getInventory().getItemInHand();
+        if (item != null && item.getId() == Item.SHEARS && !this.getSheared()/* && !this.isChild()*/){
+            this.setSheared(true);
+            int i = 1 + this.rand.nextInt(3);
+
+            for (int j = 0; j < i; ++j){
+                Vector3 motion = new Vector3();
+                motion.y += (double)(this.rand.nextFloat() * 0.05F);
+                motion.x += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
+                motion.z += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
+                this.level.dropItem(this, Item.get(Item.WOOL, this.getFleeceColor().getWoolData()), motion);
+            }
+
+            if (player.isSurvival()) {
+                item.useOn((Entity) null);
+                if (item.getDamage() >= item.getMaxDurability()) {
+                    player.getInventory().setItemInHand(new ItemBlock(new BlockAir()));
+                } else {
+                    player.getInventory().setItemInHand(item);
+                }
+            }
+
+            this.level.addSound(new PlaySound(this, "mob.sheep.shear", 1.0F, 1.0F));
+
+        }
+
+
+
+        return super.interact(player);
+
+    }
+
+    public static DyeColor getRandomSheepColor(Random random){
+        int i = random.nextInt(100);
+        return i < 5 ? DyeColor.BLACK : (i < 10 ? DyeColor.GRAY : (i < 15 ? DyeColor.LIGHT_GRAY : (i < 18 ? DyeColor.BROWN : (random.nextInt(500) == 0 ? DyeColor.PINK : DyeColor.WHITE))));
+    }
+
+    public DyeColor getFleeceColor(){
+        return DyeColor.getByWoolData(this.getDataPropertyByte(DATA_COLOR_INFO));
+    }
+
+    public void setFleeceColor(DyeColor dyeColor){
+        this.setDataProperty(new ByteEntityData(DATA_COLOR_INFO, dyeColor.getWoolData()));
+    }
+
+    public boolean getSheared(){
+        return this.getDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_SHEARED);
+    }
+
+    public void setSheared(boolean sheared){
+        this.setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_SHEARED, sheared);
     }
 
     @Override
     public String getName() {
         return this.getNameTag();
+    }
+
+    @Override
+    public Item[] getDrops() {
+        EntityDamageEvent ev = this.getLastDamageCause();
+        int looting = ev instanceof EntityDamageByEntityEvent ? ((EntityDamageByEntityEvent) ev).getDamager() instanceof Player ? ((Player)((EntityDamageByEntityEvent) ev).getDamager()).getInventory().getItemInHand().getEnchantmentLevel(Enchantment.ID_LOOTING) : 0 : 0;
+
+        int i = this.rand.nextInt(2) + 1 + this.rand.nextInt(1 + looting);
+
+        Item mutton;
+        if (this.isOnFire()){
+            mutton = Item.get(Item.COOKED_MUTTON, 0, 1);
+        }else{
+            mutton = Item.get(Item.RAW_MUTTON, 0, 1);
+        }
+        if(!this.getSheared()){
+            return new Item[]{mutton, Item.get(Item.WOOL, this.getFleeceColor().getWoolData(), i)};
+        }
+        return new Item[]{mutton};
     }
 
     @Override
@@ -64,100 +144,5 @@ public class EntitySheep extends EntityAnimal {
     @Override
     public void initEntity() {
         this.setMaxHealth(8);
-
-        if (!this.namedTag.contains("Color")) {
-            this.setColor(randomColor());
-        } else {
-            this.setColor(this.namedTag.getByte("Color"));
-        }
-
-        if (!this.namedTag.contains("Sheared")) {
-            this.namedTag.putByte("Sheared", 0);
-        } else {
-            this.sheared = this.namedTag.getBoolean("Sheared");
-        }
-
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SHEARED, this.sheared);
-    }
-
-    @Override
-    public void saveNBT() {
-        super.saveNBT();
-
-        this.namedTag.putByte("Color", this.color);
-        this.namedTag.putBoolean("Sheared", this.sheared);
-    }
-
-    @Override
-    public boolean onInteract(Player player, Item item) {
-        if (item.getId() == Item.DYE) {
-            this.setColor(((ItemDye) item).getDyeColor().getWoolData());
-            return true;
-        }
-
-        return item.getId() == Item.SHEARS && shear();
-    }
-
-    public boolean shear() {
-        if (sheared) {
-            return false;
-        }
-
-        this.sheared = true;
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SHEARED, true);
-
-        this.level.dropItem(this, Item.get(Item.WOOL, getColor(), this.level.rand.nextInt(2) + 1));
-        return true;
-    }
-
-    @Override
-    public Item[] getDrops() {
-        if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
-            return new Item[]{Item.get(Item.WOOL, getColor(), 1)};
-        }
-        return new Item[0];
-    }
-
-    public void setColor(int color) {
-        this.color = color;
-        this.setDataProperty(new ByteEntityData(DATA_COLOUR, color));
-        this.namedTag.putByte("Color", this.color);
-    }
-
-    public int getColor() {
-        return namedTag.getByte("Color");
-    }
-
-    private int randomColor() {
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-        double rand = random.nextDouble(1, 100);
-
-        if (rand <= 0.164) {
-            return DyeColor.PINK.getWoolData();
-        }
-
-        if (rand <= 15) {
-            return random.nextBoolean() ? DyeColor.BLACK.getWoolData() : random.nextBoolean() ? DyeColor.GRAY.getWoolData() : DyeColor.LIGHT_GRAY.getWoolData();
-        }
-
-        return DyeColor.WHITE.getWoolData();
-    }
-
-    @Override
-    public void spawnTo(Player player) {
-        AddEntityPacket pk = new AddEntityPacket();
-        pk.type = this.getNetworkId();
-        pk.entityUniqueId = this.getId();
-        pk.entityRuntimeId = this.getId();
-        pk.x = (float) this.x;
-        pk.y = (float) this.y;
-        pk.z = (float) this.z;
-        pk.speedX = (float) this.motionX;
-        pk.speedY = (float) this.motionY;
-        pk.speedZ = (float) this.motionZ;
-        pk.metadata = this.dataProperties;
-        player.dataPacket(pk);
-
-        super.spawnTo(player);
     }
 }

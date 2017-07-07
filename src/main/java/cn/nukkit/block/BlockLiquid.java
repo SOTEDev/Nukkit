@@ -7,7 +7,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.level.sound.FizzSound;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 
 import java.util.Random;
@@ -49,18 +48,8 @@ public abstract class BlockLiquid extends BlockTransparent {
     }
 
     @Override
-    public boolean canHarvestWithHand() {
-        return false;
-    }
-
-    @Override
     public AxisAlignedBB getBoundingBox() {
         return null;
-    }
-
-    @Override
-    protected AxisAlignedBB recalculateCollisionBoundingBox() {
-        return new AxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 1 - getFluidHeightPercent(), this.z + 1);
     }
 
     public float getFluidHeightPercent() {
@@ -471,10 +460,8 @@ public abstract class BlockLiquid extends BlockTransparent {
     private void checkForHarden() {
         if (this instanceof BlockLava) {
             boolean colliding = false;
-            for (BlockFace face : BlockFace.values()) {
-                if (colliding = this.getSide(face) instanceof BlockWater) {
-                    break;
-                }
+            for (int side = 0; side <= 5 && !colliding; ++side) {
+                colliding = this.getSide(side) instanceof BlockWater;
             }
 
             if (colliding) {

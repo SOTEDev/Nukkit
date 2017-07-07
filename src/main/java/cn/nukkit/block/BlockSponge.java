@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -41,6 +42,11 @@ public class BlockSponge extends BlockSolid {
                 "Wet sponge"
         };
         return names[this.meta & 0x07];
+    }
+
+    @Override
+    public int[][] getDrops(Item item) {
+        return new int[][]{{Item.SPONGE, this.getDamage(), 1}};
     }
 
     @Override

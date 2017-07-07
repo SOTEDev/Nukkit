@@ -1,14 +1,14 @@
 package cn.nukkit.network.protocol;
 
+/**
+ * author: MagicDroidX
+ * Nukkit Project
+ */
 public class ShowCreditsPacket extends DataPacket {
-
     public static final byte NETWORK_ID = ProtocolInfo.SHOW_CREDITS_PACKET;
 
-    public static final int STATUS_START_CREDITS = 0;
-    public static final int STATUS_END_CREDITS = 1;
-
     public long eid;
-    public int status;
+    public int credit;
 
     @Override
     public byte pid() {
@@ -22,7 +22,9 @@ public class ShowCreditsPacket extends DataPacket {
 
     @Override
     public void encode() {
+        this.reset();
         this.putVarLong(this.eid);
-        this.putVarInt(this.status);
+        this.putVarInt(this.credit);
     }
+
 }

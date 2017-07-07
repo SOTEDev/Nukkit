@@ -1,17 +1,10 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityBed;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBed;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.TextFormat;
 
 /**
@@ -50,7 +43,7 @@ public class BlockBed extends BlockTransparent {
 
     @Override
     public String getName() {
-        return this.getDyeColor().getName() + " Bed Block";
+        return "Bed Block";
     }
 
     @Override
@@ -81,10 +74,10 @@ public class BlockBed extends BlockTransparent {
             return true;
         }
 
-        Block blockNorth = this.north();
-        Block blockSouth = this.south();
-        Block blockEast = this.east();
-        Block blockWest = this.west();
+        Block blockNorth = this.getSide(2);
+        Block blockSouth = this.getSide(3);
+        Block blockEast = this.getSide(5);
+        Block blockWest = this.getSide(4);
 
         Block b;
         if ((this.meta & 0x08) == 0x08) {
@@ -116,25 +109,24 @@ public class BlockBed extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = this.down();
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+        Block down = this.getSide(0);
         if (!down.isTransparent()) {
-            Block next = this.getSide(player.getDirection());
-            Block downNext = next.down();
+            int[] faces = {3, 4, 2, 5};
+            int d = player != null ? player.getDirection() : 0;
+            Block next = this.getSide(faces[((d + 3) % 4)]);
+            Block downNext = this.getSide(0);
 
             if (next.canBeReplaced() && !downNext.isTransparent()) {
-                int meta = player.getDirection().getHorizontalIndex();
+                int meta = ((d + 3) % 4) & 0x03;
+                this.getLevel().setBlock(block, Block.get(this.getId(), meta), true, true);
+                this.getLevel().setBlock(next, Block.get(this.getId(), meta | 0x08), true, true);
 
-                this.getLevel().setBlock(block, Block.get(this.getId(), meta), false, true);
-                this.getLevel().setBlock(next, Block.get(this.getId(), meta | 0x08), false, true);
-
-                createBlockEntity(this, item.getDamage());
-                createBlockEntity(next, item.getDamage());
                 return true;
             }
         }
@@ -144,10 +136,10 @@ public class BlockBed extends BlockTransparent {
 
     @Override
     public boolean onBreak(Item item) {
-        Block blockNorth = this.north(); //Gets the blocks around them
-        Block blockSouth = this.south();
-        Block blockEast = this.east();
-        Block blockWest = this.west();
+        Block blockNorth = this.getSide(2); //Gets the blocks around them
+        Block blockSouth = this.getSide(3);
+        Block blockEast = this.getSide(5);
+        Block blockWest = this.getSide(4);
 
         if ((this.meta & 0x08) == 0x08) { //This is the Top part of bed
             if (blockNorth.getId() == this.getId() && blockNorth.meta != 0x08) { //Checks if the block ID&&meta are right
@@ -175,29 +167,15 @@ public class BlockBed extends BlockTransparent {
         return true;
     }
 
-    private void createBlockEntity(Vector3 pos, int color) {
-        CompoundTag nbt = BlockEntity.getDefaultCompound(pos, BlockEntity.BED);
-        nbt.putByte("color", color);
-
-        new BlockEntityBed(this.level.getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt);
-    }
-
     @Override
-    public Item toItem() {
-        return new ItemBed(this.getDyeColor().getWoolData());
+    public int[][] getDrops(Item item) {
+        return new int[][]{
+                {Item.BED, 0, 1}
+        };
     }
 
     @Override
     public BlockColor getColor() {
-        return this.getDyeColor().getColor();
-    }
-
-    public DyeColor getDyeColor() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
-
-        if (blockEntity instanceof BlockEntityBed) {
-            return ((BlockEntityBed) blockEntity).getDyeColor();
-        }
-        return DyeColor.WHITE;
+        return BlockColor.CLOTH_BLOCK_COLOR;
     }
 }

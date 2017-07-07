@@ -71,9 +71,4 @@ public class BlockAir extends BlockTransparent {
     public double getResistance() {
         return 0;
     }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
-    }
 }

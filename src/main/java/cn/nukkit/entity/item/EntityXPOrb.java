@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
@@ -80,12 +79,14 @@ public class EntityXPOrb extends Entity {
     }
 
     @Override
-    public boolean attack(EntityDamageEvent source) {
-        return (source.getCause() == DamageCause.VOID ||
-                source.getCause() == DamageCause.FIRE_TICK ||
-                source.getCause() == DamageCause.ENTITY_EXPLOSION ||
-                source.getCause() == DamageCause.BLOCK_EXPLOSION)
-                && super.attack(source);
+    public void attack(EntityDamageEvent source) {
+        switch (source.getCause()) {
+            case EntityDamageEvent.CAUSE_VOID:
+            case EntityDamageEvent.CAUSE_FIRE_TICK:
+            case EntityDamageEvent.CAUSE_ENTITY_EXPLOSION:
+            case EntityDamageEvent.CAUSE_BLOCK_EXPLOSION:
+                super.attack(source);
+        }
     }
 
     @Override
@@ -175,7 +176,7 @@ public class EntityXPOrb extends Entity {
     @Override
     public void saveNBT() {
         super.saveNBT();
-        this.namedTag.putShort("Health", (int) getHealth());
+        this.namedTag.putShort("Health", getHealth());
         this.namedTag.putShort("Age", age);
         this.namedTag.putShort("PickupDelay", pickupDelay);
     }

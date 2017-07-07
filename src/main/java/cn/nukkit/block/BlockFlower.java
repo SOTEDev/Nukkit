@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -58,8 +58,8 @@ public class BlockFlower extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = this.down();
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+        Block down = this.getSide(0);
         if (down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.FARMLAND || down.getId() == Block.PODZOL) {
             this.getLevel().setBlock(block, this, true);
 
@@ -71,7 +71,7 @@ public class BlockFlower extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().isTransparent()) {
+            if (this.getSide(Vector3.SIDE_DOWN).isTransparent()) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;
@@ -82,9 +82,9 @@ public class BlockFlower extends BlockFlowable {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                toItem()
+    public int[][] getDrops(Item item) {
+        return new int[][]{
+                {this.getId(), this.meta, 1}
         };
     }
 

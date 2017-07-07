@@ -20,9 +20,9 @@ public class MobEffectPacket extends DataPacket {
     public long eid;
     public int eventId;
     public int effectId;
-    public int amplifier = 0;
+    public int amplifier;
     public boolean particles = true;
-    public int duration = 0;
+    public int duration;
 
     @Override
     public void decode() {

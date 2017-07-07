@@ -3,7 +3,6 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -30,8 +29,8 @@ public class BlockDandelion extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = this.down();
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+        Block down = this.getSide(0);
         if (down.getId() == 2 || down.getId() == 3 || down.getId() == 60) {
             this.getLevel().setBlock(block, this, true, true);
 
@@ -43,7 +42,7 @@ public class BlockDandelion extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().isTransparent()) {
+            if (this.getSide(0).isTransparent()) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;

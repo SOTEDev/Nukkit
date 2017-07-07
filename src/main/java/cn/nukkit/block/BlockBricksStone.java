@@ -50,23 +50,18 @@ public class BlockBricksStone extends BlockSolid {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    Item.get(Item.STONE_BRICKS, this.meta & 0x03, 1)
+            return new int[][]{
+                    {Item.STONE_BRICKS, this.meta & 0x03, 1}
             };
         } else {
-            return new Item[0];
+            return new int[0][0];
         }
     }
 
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
     }
 }

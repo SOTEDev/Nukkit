@@ -30,8 +30,6 @@ public class AdventureSettings implements Cloneable {
 
     private boolean noMvp = false;
 
-    private boolean muted = false;
-
     private Player player;
 
     private AdventureSettings() {
@@ -79,10 +77,6 @@ public class AdventureSettings implements Cloneable {
         this.noMvp = noMvp;
     }
 
-    public void setMuted(boolean muted) {
-        this.muted = muted;
-    }
-
     public boolean canDestroyBlock() {
         return canDestroyBlock;
     }
@@ -115,10 +109,6 @@ public class AdventureSettings implements Cloneable {
         return noMvp;
     }
 
-    public boolean isMuted() {
-        return muted;
-    }
-
     public void update() {
         AdventureSettingsPacket pk = new AdventureSettingsPacket();
         pk.flags = 0;
@@ -130,7 +120,6 @@ public class AdventureSettings implements Cloneable {
         pk.noPvp = noPvp;
         pk.noPvm = noPvm;
         pk.noMvp = noMvp;
-        pk.muted = muted;
         pk.userPermission = (this.player.isOp() ? PERMISSION_OPERATOR : PERMISSION_NORMAL);
         player.dataPacket(pk);
 

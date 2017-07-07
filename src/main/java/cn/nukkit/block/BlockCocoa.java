@@ -4,12 +4,9 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDye;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.BlockFace;
 
 import java.util.Random;
 
@@ -86,16 +83,16 @@ public class BlockCocoa extends BlockTransparent {
 
         return bbs[this.meta / 4].getOffsetBoundingBox(x, y, z);
     }
-
+    
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz){
         return this.place(item, block, target, face, fx, fy, fz, null);
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         if (target.getId() == Block.WOOD && target.getDamage() == BlockWood.JUNGLE) {
-            if (face != BlockFace.DOWN && face != BlockFace.UP) {
+            if (face != 0 && face != 1) {
                 int[] faces = new int[]{
                         0,
                         0,
@@ -105,7 +102,7 @@ public class BlockCocoa extends BlockTransparent {
                         1,
                 };
 
-                this.meta = faces[face.getIndex()];
+                this.meta = faces[face];
                 this.level.setBlock(block, this, true, true);
                 return true;
             }
@@ -120,7 +117,7 @@ public class BlockCocoa extends BlockTransparent {
                     3, 4, 2, 5, 3, 4, 2, 5, 3, 4, 2, 5
             };
 
-            Block side = this.getSide(BlockFace.fromIndex(faces[this.meta]));
+            Block side = this.getSide(faces[this.meta]);
 
             if (side.getId() != Block.WOOD && side.getDamage() != BlockWood.JUNGLE) {
                 this.getLevel().useBreakOn(this);
@@ -128,7 +125,7 @@ public class BlockCocoa extends BlockTransparent {
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (new Random().nextInt(2) == 1) {
-                if (this.meta / 4 < 2) {
+                if (this.meta <= 7) {
                     BlockCocoa block = (BlockCocoa) this.clone();
                     block.meta += 4;
                     BlockGrowEvent ev = new BlockGrowEvent(this, block);
@@ -149,34 +146,6 @@ public class BlockCocoa extends BlockTransparent {
     }
 
     @Override
-    public boolean canBeActivated() {
-        return true;
-    }
-
-    @Override
-    public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
-            Block block = this.clone();
-            if (this.meta / 4 < 2) {
-                block.meta += 4;
-                BlockGrowEvent ev = new BlockGrowEvent(this, block);
-                Server.getInstance().getPluginManager().callEvent(ev);
-
-                if (ev.isCancelled()) {
-                    return false;
-                }
-                this.getLevel().setBlock(this, ev.getNewState(), true, true);
-            }
-
-            this.level.addParticle(new BoneMealParticle(this.add(0.5, 0.5, 0.5)));
-            item.count--;
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
     public double getResistance() {
         return 15;
     }
@@ -189,18 +158,5 @@ public class BlockCocoa extends BlockTransparent {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_AXE;
-    }
-
-    @Override
-    public Item[] getDrops(Item item) {
-        if (this.meta >= 8) {
-            return new Item[]{
-                    new ItemDye(3, 3)
-            };
-        } else {
-            return new Item[]{
-                    new ItemDye(3, 1)
-            };
-        }
     }
 }

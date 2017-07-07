@@ -3,10 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSeedsPumpkin;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.math.NukkitRandom;
 
 /**
@@ -35,7 +32,7 @@ public class BlockStemPumpkin extends BlockCrops {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().getId() != FARMLAND) {
+            if (this.getSide(0).getId() != FARMLAND) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -52,14 +49,14 @@ public class BlockStemPumpkin extends BlockCrops {
                     }
                     return Level.BLOCK_UPDATE_RANDOM;
                 } else {
-                    for (BlockFace face : Plane.HORIZONTAL) {
-                        Block b = this.getSide(face);
+                    for (int side = 2; side <= 5; ++side) {
+                        Block b = this.getSide(side);
                         if (b.getId() == PUMPKIN) {
                             return Level.BLOCK_UPDATE_RANDOM;
                         }
                     }
-                    Block side = this.getSide(Plane.HORIZONTAL.random(random));
-                    Block d = side.down();
+                    Block side = this.getSide(random.nextRange(2, 5));
+                    Block d = side.getSide(0);
                     if (side.getId() == AIR && (d.getId() == FARMLAND || d.getId() == GRASS || d.getId() == DIRT)) {
                         BlockGrowEvent ev = new BlockGrowEvent(side, new BlockPumpkin());
                         Server.getInstance().getPluginManager().callEvent(ev);
@@ -75,10 +72,10 @@ public class BlockStemPumpkin extends BlockCrops {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         NukkitRandom random = new NukkitRandom();
-        return new Item[]{
-                new ItemSeedsPumpkin(0, random.nextRange(0, 3))
+        return new int[][]{
+                {Item.PUMPKIN_SEEDS, 0, random.nextRange(0, 2)}
         };
     }
 }

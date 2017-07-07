@@ -1,5 +1,14 @@
 package cn.nukkit.inventory;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.BlockAir;
@@ -10,8 +19,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.network.protocol.ContainerSetContentPacket;
 import cn.nukkit.network.protocol.ContainerSetSlotPacket;
-
-import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -29,7 +36,7 @@ public abstract class BaseInventory implements Inventory {
 
     protected final String title;
 
-    public final Map<Integer, Item> slots = new HashMap<>();
+    protected final Map<Integer, Item> slots = new HashMap<>();
 
     protected final Set<Player> viewers = new HashSet<>();
 
@@ -445,7 +452,6 @@ public abstract class BaseInventory implements Inventory {
         }
 
         for (Player player : players) {
-            pk.eid = player.getId();
             int id = player.getWindowId(this);
             if (id == -1 || !player.spawned) {
                 this.close(player);
@@ -454,54 +460,6 @@ public abstract class BaseInventory implements Inventory {
             pk.windowid = (byte) id;
             player.dataPacket(pk);
         }
-    }
-
-    @Override
-    public boolean isFull() {
-        if (this.slots.size() < this.getSize()) {
-            return false;
-        }
-
-        for (Item item : this.slots.values()) {
-            if (item == null || item.getId() == 0 || item.getCount() < item.getMaxStackSize() || item.getCount() < this.getMaxStackSize()) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        if (this.getMaxStackSize() <= 0) {
-            return false;
-        }
-
-        for (Item item : this.slots.values()) {
-            if (item != null && item.getId() != 0 && item.getCount() > 0) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public int getFreeSpace(Item item) {
-        int maxStackSize = Math.min(item.getMaxStackSize(), this.getMaxStackSize());
-        int space = (this.getSize() - this.slots.size()) * maxStackSize;
-
-        for (Item slot : this.getContents().values()) {
-            if (slot == null || slot.getId() == 0) {
-                space += maxStackSize;
-                continue;
-            }
-
-            if (slot.equals(item, true, true)) {
-                space += maxStackSize - slot.getCount();
-            }
-        }
-
-        return space;
     }
 
     @Override

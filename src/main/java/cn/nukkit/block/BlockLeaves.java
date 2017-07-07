@@ -1,17 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
-import cn.nukkit.event.block.LeavesDecayEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemApple;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.Level;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-
-import java.util.ArrayList;
 
 /**
  * author: Angelic47
@@ -70,130 +62,35 @@ public class BlockLeaves extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
         this.meta |= 0x04;
         this.getLevel().setBlock(this, this, true);
         return true;
     }
 
     @Override
-    public Item toItem() {
-        return new ItemBlock(this, 0, 1);
-    }
-
-    @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         if (item.isShears()) {
-            return new Item[]{
-                    toItem()
+            return new int[][]{
+                    {Item.LEAVES, this.meta & 0x03, 1}
             };
         } else {
             if ((int) ((Math.random()) * 200) == 0 && (this.meta & 0x03) == OAK) {
-                return new Item[]{
-                        new ItemApple()
+                return new int[][]{
+                        {Item.APPLE, 0, 1}
                 };
             }
             if ((int) ((Math.random()) * 20) == 0) {
-                return new Item[]{
-                        new ItemBlock(new BlockSapling(), this.meta & 0x03, 1)
+                return new int[][]{
+                        {Item.SAPLING, this.meta & 0x03, 1}
                 };
             }
         }
-        return new Item[0];
+        return new int[0][0];
     }
 
-    @Override
-    public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_RANDOM && (meta & 0b00001100) == 0x00) {
-            meta |= 0x08;
-            getLevel().setBlock(this, this, false, false);
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if ((meta & 0b00001100) == 0x08) {
-                meta &= 0x03;
-                ArrayList<String> visited = new ArrayList<>();
-                int check = 0;
+    //todo:LeavesOnUpdate
 
-                LeavesDecayEvent ev = new LeavesDecayEvent(this);
-
-                Server.getInstance().getPluginManager().callEvent(ev);
-                if (ev.isCancelled() || findLog(this, visited, 0, check)) {
-                    getLevel().setBlock(this, this, false, false);
-                } else {
-                    getLevel().useBreakOn(this);
-                    return Level.BLOCK_UPDATE_NORMAL;
-                }
-            }
-        }
-        return 0;
-    }
-
-    private Boolean findLog(Block pos, ArrayList<String> visited, Integer distance, Integer check) {
-        return findLog(pos, visited, distance, check, null);
-    }
-
-    private Boolean findLog(Block pos, ArrayList<String> visited, Integer distance, Integer check, BlockFace fromSide) {
-        ++check;
-        String index = pos.x + "." + pos.y + "." + pos.z;
-        if (visited.contains(index)) return false;
-        if (pos.getId() == Block.WOOD) return true;
-        if (pos.getId() == Block.LEAVES && distance < 4) {
-            visited.add(index);
-            Integer down = pos.down().getId();
-            if (down == Item.WOOD) {
-                return true;
-            }
-            if (fromSide == null) {
-                //North, East, South, West
-                for (Integer side = 2; side <= 5; ++side) {
-                    if (this.findLog(pos.getSide(BlockFace.fromIndex(side)), visited, distance + 1, check, BlockFace.fromIndex(side)))
-                        return true;
-                }
-            } else { //No more loops
-                switch (fromSide) {
-                    case NORTH:
-                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
-                            return true;
-                        break;
-                    case SOUTH:
-                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
-                            return true;
-                        break;
-                    case WEST:
-                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
-                            return true;
-                    case EAST:
-                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
-                            return true;
-                        break;
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean isChechDecay() {
-        return (this.meta & 0x08) > 0;
-    }
-
-    public boolean isDecayable() {
-        return (this.meta & 0x04) == 0;
-    }
 
     @Override
     public BlockColor getColor() {

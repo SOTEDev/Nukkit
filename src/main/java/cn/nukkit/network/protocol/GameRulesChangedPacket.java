@@ -25,7 +25,9 @@ public class GameRulesChangedPacket extends DataPacket {
         this.reset();
         this.putInt(this.ruleDatas.length);
         for (RuleData rule : this.ruleDatas) {
-            this.putRuleData(rule);
+            this.putString(rule.name);
+            this.putBoolean(rule.unknown1);
+            this.putBoolean(rule.unknown2);
         }
     }
 }

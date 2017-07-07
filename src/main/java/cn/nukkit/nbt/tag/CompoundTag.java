@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CompoundTag extends Tag implements Cloneable {
+public class CompoundTag extends Tag {
     private final Map<String, Tag> tags = new HashMap<>();
 
     public CompoundTag() {
@@ -244,12 +244,5 @@ public class CompoundTag extends Tag implements Cloneable {
      */
     public boolean exist(String name) {
         return tags.containsKey(name);
-    }
-
-    @Override
-    public CompoundTag clone() {
-        CompoundTag nbt = new CompoundTag();
-        this.getTags().forEach((key, value) -> nbt.put(key, value.copy()));
-        return nbt;
     }
 }

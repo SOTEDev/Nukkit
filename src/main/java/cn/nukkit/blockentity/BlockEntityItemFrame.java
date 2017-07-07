@@ -24,8 +24,6 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
         if (!nbt.contains("ItemDropChance")) {
             nbt.putFloat("ItemDropChance", 1.0f);
         }
-
-        this.level.updateComparatorOutputLevel(this);
     }
 
     @Override
@@ -44,7 +42,6 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
 
     public void setItemRotation(int itemRotation) {
         this.namedTag.putByte("ItemRotation", itemRotation);
-        this.level.updateComparatorOutputLevel(this);
         this.setChanged();
     }
 
@@ -62,8 +59,6 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
         if (setChanged) {
             this.setChanged();
         }
-
-        this.level.updateComparatorOutputLevel(this);
     }
 
     public float getItemDropChance() {
@@ -96,11 +91,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
                 .putInt("z", (int) this.z)
                 .putCompound("Item", item ? NBTIO.putItemHelper(new ItemBlock(new BlockAir())) : NBTItem)
                 .putByte("ItemRotation", item ? 0 : this.getItemRotation());
-                // TODO: This crashes the client, why?
-                // .putFloat("ItemDropChance", this.getItemDropChance());
-    }
+                //.putFloat("ItemDropChance", this.getItemDropChance());
 
-    public int getAnalogOutput() {
-        return this.getItem() == null || this.getItem().getId() == 0 ? 0 : this.getItemRotation() % 8 + 1;
     }
 }

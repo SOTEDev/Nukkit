@@ -44,18 +44,13 @@ public class BlockOreIron extends BlockSolid {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_STONE) {
-            return new Item[]{
-                    toItem()
+            return new int[][]{
+                    {Item.IRON_ORE, 0, 1}
             };
         } else {
-            return new Item[0];
+            return new int[0][0];
         }
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
     }
 }

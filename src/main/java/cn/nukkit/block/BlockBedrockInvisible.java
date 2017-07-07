@@ -46,8 +46,4 @@ public class BlockBedrockInvisible extends BlockSolid {
         return BlockColor.TRANSPARENT_BLOCK_COLOR;
     }
 
-    @Override
-    public boolean canBePushed() {
-        return false;
-    }
 }

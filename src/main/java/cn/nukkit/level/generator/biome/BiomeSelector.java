@@ -32,22 +32,25 @@ public class BiomeSelector {
             if (temperature < 0.25) {
                 return Biome.ICE_PLAINS;
             } else if (temperature < 0.75) {
-                return Biome.DESERT;
+                return Biome.PLAINS;
             } else {
-                return Biome.SAVANNA;
+                return Biome.DESERT;
             }
         } else if (rainfall < 0.80) {
             if (temperature < 0.25) {
                 return Biome.TAIGA;
-            } else {
+            } else if (temperature < 0.75) {
                 return Biome.FOREST;
+            } else {
+                return Biome.BIRCH_FOREST;
             }
         } else {
-            if (rainfall < 1.0) {
-                return Biome.JUNGLE;
+            if (temperature < 0.25) {
+                return Biome.MOUNTAINS;
+            } else {
+                return Biome.SMALL_MOUNTAINS;
             }
         }
-        return Biome.PLAINS;
     }
 
     public void recalculate() {
@@ -60,7 +63,7 @@ public class BiomeSelector {
     }
 
     public void addBiome(Biome biome) {
-        this.biomes.put(Integer.valueOf(biome.getId()), biome);
+        this.biomes.put(biome.getId(), biome);
     }
 
     public double getTemperature(double x, double z) {

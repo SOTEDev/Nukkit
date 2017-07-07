@@ -46,8 +46,4 @@ public class BlockStairsBrick extends BlockStairs {
         return BlockColor.STONE_BLOCK_COLOR;
     }
 
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
-    }
 }

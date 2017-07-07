@@ -38,16 +38,14 @@ public abstract class Zlib {
         byte[] buffer = new byte[1024];
         int length;
 
-        try {
-            while ((length = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, length);
-            }
-        } finally {
-            buffer = outputStream.toByteArray();
-            outputStream.flush();
-            outputStream.close();
-            inputStream.close();
+        while ((length = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, length);
         }
+
+        buffer = outputStream.toByteArray();
+        outputStream.flush();
+        outputStream.close();
+        inputStream.close();
 
         return buffer;
     }

@@ -4,12 +4,10 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.BlockFace;
 
 /**
- * http://minecraft.gamepedia.com/End_Rod
- *
- * @author PikyCZ
+ * Created on 2015/12/7 by xtypr.
+ * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockEndRod extends BlockTransparent {
 
@@ -22,38 +20,33 @@ public class BlockEndRod extends BlockTransparent {
     }
 
     @Override
-    public String getName() {
-        return "End Rod";
-    }
-
-    @Override
     public int getId() {
         return END_ROD;
     }
 
     @Override
     public double getHardness() {
-        return 0;
+        return 2;
     }
 
     @Override
     public double getResistance() {
-        return 0;
+        return 15;
     }
 
     @Override
     public int getLightLevel() {
-        return 14;
-    }
-
-    @Override
-    public boolean canBePushed() {
-        return true;
+        return 15;
     }
 
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
+    }
+
+    @Override
+    public String getName() {
+        return "End Rod";
     }
 
     protected AxisAlignedBB recalculateBoundingBox() {
@@ -68,12 +61,11 @@ public class BlockEndRod extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        int[] faces = {0, 1, 3, 2, 5, 4};
-        this.meta = faces[player != null ? face.getIndex() : 0];
+    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+        int[] faces = {0,1,3,2,5,4};
+        this.meta = faces[face];
         this.getLevel().setBlock(block, this, true, true);
 
         return true;
     }
-
 }

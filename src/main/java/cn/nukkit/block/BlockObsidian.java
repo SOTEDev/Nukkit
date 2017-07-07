@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -44,13 +45,13 @@ public class BlockObsidian extends BlockSolid {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_DIAMOND) {
-            return new Item[]{
-                    toItem()
+            return new int[][]{
+                    {Item.OBSIDIAN, 0, 1}
             };
         } else {
-            return new Item[0];
+            return new int[0][0];
         }
     }
 
@@ -58,9 +59,9 @@ public class BlockObsidian extends BlockSolid {
     public boolean onBreak(Item item) {
         //destroy the nether portal
         Block[] nearby = new Block[]{
-                this.up(), this.down(),
-                this.north(), south(),
-                this.west(), this.east(),
+                this.getSide(Vector3.SIDE_UP), this.getSide(Vector3.SIDE_DOWN),
+                this.getSide(Vector3.SIDE_NORTH), this.getSide(Vector3.SIDE_SOUTH),
+                this.getSide(Vector3.SIDE_WEST), this.getSide(Vector3.SIDE_EAST),
         };
         for (Block aNearby : nearby) {
             if (aNearby != null) if (aNearby.getId() == NETHER_PORTAL) {
@@ -73,15 +74,5 @@ public class BlockObsidian extends BlockSolid {
     @Override
     public BlockColor getColor() {
         return BlockColor.OBSIDIAN_BLOCK_COLOR;
-    }
-
-    @Override
-    public boolean canBePushed() {
-        return false;
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
     }
 }

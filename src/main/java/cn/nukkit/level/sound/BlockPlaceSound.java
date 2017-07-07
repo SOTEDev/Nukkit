@@ -1,6 +1,7 @@
 package cn.nukkit.level.sound;
 
 import cn.nukkit.math.Vector3;
+import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 /**

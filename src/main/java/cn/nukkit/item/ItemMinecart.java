@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.item.EntityMinecartEmpty;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -34,7 +33,7 @@ public class ItemMinecart extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
         Block secret = level.getBlock(block.add(0, -1, 0));
         // TODO: 2016/1/30 check if blockId of secret is a rail
 
@@ -57,10 +56,5 @@ public class ItemMinecart extends Item {
         // TODO: 2016/1/30 if player is survival, item in hand count--
 
         return true;
-    }
-
-    @Override
-    public int getMaxStackSize() {
-        return 1;
     }
 }

@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.item.EntityBoat;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -33,8 +32,8 @@ public class ItemBoat extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        if (face != BlockFace.UP) return false;
+    public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
+        if (face != 1) return false;
         EntityBoat boat = new EntityBoat(
                 level.getChunk(block.getFloorX() >> 4, block.getFloorZ() >> 4), new CompoundTag("")
                 .putList(new ListTag<DoubleTag>("Pos")
@@ -59,10 +58,5 @@ public class ItemBoat extends Item {
 
         boat.spawnToAll();
         return true;
-    }
-
-    @Override
-    public int getMaxStackSize() {
-        return 1;
     }
 }

@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDoorSpruce;
 
 public class BlockDoorSpruce extends BlockDoorWood {
 
@@ -24,7 +23,9 @@ public class BlockDoorSpruce extends BlockDoorWood {
     }
 
     @Override
-    public Item toItem() {
-        return new ItemDoorSpruce();
+    public int[][] getDrops(Item item) {
+        return new int[][]{
+                {Item.SPRUCE_DOOR, 0, 1}
+        };
     }
 }

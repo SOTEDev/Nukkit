@@ -1,7 +1,5 @@
 package cn.nukkit.item.enchantment.damage;
 
-import cn.nukkit.entity.Entity;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -20,14 +18,5 @@ public class EnchantmentDamageSmite extends EnchantmentDamage {
     @Override
     public int getMaxEnchantAbility(int level) {
         return this.getMinEnchantAbility(level) + 20;
-    }
-
-    @Override
-    public double getDamageBonus(Entity entity) {
-        /*if(entity instanceof EntityZombie) {
-            return getLevel() * 2.5;
-        }*/
-
-        return 0;
     }
 }

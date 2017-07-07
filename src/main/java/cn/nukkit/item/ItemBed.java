@@ -1,7 +1,6 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.BlockBed;
-import cn.nukkit.utils.DyeColor;
 
 /**
  * author: MagicDroidX
@@ -18,7 +17,7 @@ public class ItemBed extends Item {
     }
 
     public ItemBed(Integer meta, int count) {
-        super(BED, meta, count, DyeColor.getByWoolData(meta).getName() + " Bed");
+        super(BED, 0, count, "BlockBed");
         this.block = new BlockBed();
     }
 

@@ -3,7 +3,6 @@ package cn.nukkit.block;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
@@ -49,9 +48,9 @@ public class BlockMycelium extends BlockSolid {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                new ItemBlock(new BlockDirt())
+    public int[][] getDrops(Item item) {
+        return new int[][]{
+                {Item.DIRT, 0, 1}
         };
     }
 
@@ -65,7 +64,7 @@ public class BlockMycelium extends BlockSolid {
             z = random.nextRange((int) z - 1, (int) z + 1);
             Block block = this.getLevel().getBlock(new Vector3(x, y, z));
             if (block.getId() == Block.DIRT) {
-                if (block.up() instanceof BlockTransparent) {
+                if (block.getSide(1) instanceof BlockTransparent) {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new BlockMycelium());
                     Server.getInstance().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {

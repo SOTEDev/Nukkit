@@ -1,7 +1,6 @@
 package cn.nukkit.entity;
 
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -39,15 +38,15 @@ public abstract class EntityHanging extends Entity {
     public void saveNBT() {
         super.saveNBT();
 
-        this.namedTag.putByte("Direction", this.getDirection().getHorizontalIndex());
+        this.namedTag.putByte("Direction", this.getDirection());
         this.namedTag.putInt("TileX", (int) this.x);
         this.namedTag.putInt("TileY", (int) this.y);
         this.namedTag.putInt("TileZ", (int) this.z);
     }
 
     @Override
-    public BlockFace getDirection() {
-        return BlockFace.fromIndex(this.direction);
+    public Integer getDirection() {
+        return this.direction;
     }
 
     @Override

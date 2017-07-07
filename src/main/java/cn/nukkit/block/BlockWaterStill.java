@@ -31,4 +31,11 @@ public class BlockWaterStill extends BlockWater {
         return new BlockWaterStill(meta);
     }
 
+    @Override
+    public int onUpdate(int type) {
+        if (type != Level.BLOCK_UPDATE_SCHEDULED) {
+            return super.onUpdate(type);
+        }
+        return 0;
+    }
 }

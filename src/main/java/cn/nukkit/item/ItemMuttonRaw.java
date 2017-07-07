@@ -13,4 +13,9 @@ public class ItemMuttonRaw extends ItemEdible {
     public ItemMuttonRaw(Integer meta, int count) {
         super(RAW_MUTTON, meta, count, "Raw Mutton");
     }
+
+    @Override
+    public boolean isWolfsFavoriteMeat(){
+        return true;
+    }
 }

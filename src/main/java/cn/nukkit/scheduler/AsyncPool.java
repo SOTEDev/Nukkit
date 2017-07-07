@@ -10,26 +10,36 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author Nukkit Project Team
  */
-public class AsyncPool extends ThreadPoolExecutor {
+public class AsyncPool {
+
+    private final ThreadPoolExecutor pool;
     private final Server server;
+    private final int size;
+    private final AtomicInteger currentThread;
 
     public AsyncPool(Server server, int size) {
-        super(size, Integer.MAX_VALUE, 60, TimeUnit.MILLISECONDS, new SynchronousQueue<>());
-        this.setThreadFactory(runnable -> new Thread(runnable) {{
-            setDaemon(true);
-            setName(String.format("Nukkit Asynchronous Task Handler #%s", getPoolSize()));
-        }});
+        this.currentThread = new AtomicInteger();
+        this.size = size;
+        this.pool = new ThreadPoolExecutor(size, Integer.MAX_VALUE,
+                60, TimeUnit.MILLISECONDS, new SynchronousQueue<>(),
+                runnable -> new Thread(runnable) {{
+                    setDaemon(true);
+                    setName(String.format("Nukkit Asynchronous Task Handler #%s", currentThread.incrementAndGet()));
+                }}
+        );
         this.server = server;
     }
 
-    @Override
-    protected void afterExecute(Runnable runnable, Throwable throwable) {
-        if (throwable != null) {
-            server.getLogger().critical("Exception in asynchronous task", throwable);
-        }
+    public void submitTask(Runnable runnable) {
+        pool.execute(runnable);
     }
 
     public Server getServer() {
         return server;
     }
+
+    public int getSize() {
+        return size;
+    }
+
 }

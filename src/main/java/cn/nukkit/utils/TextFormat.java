@@ -76,6 +76,8 @@ public enum TextFormat {
     WHITE('f', 0xF),
     /**
      * Makes the text obfuscated.
+     * Not present in the game yet, it's here for future versions and for
+     * compatibility with previous TextFormat version (ex-PM).
      */
     OBFUSCATED('k', 0x10, true),
     /**

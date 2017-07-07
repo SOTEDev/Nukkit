@@ -43,9 +43,4 @@ public class BlockOreRedstoneGlowing extends BlockOreRedstone {
 
         return 0;
     }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
-    }
 }

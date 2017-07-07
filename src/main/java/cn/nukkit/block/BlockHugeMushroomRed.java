@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.NukkitRandom;
 
@@ -44,13 +43,13 @@ public class BlockHugeMushroomRed extends BlockSolid {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public int[][] getDrops(Item item) {
         if (new NukkitRandom().nextRange(1, 20) == 0) {
-            return new Item[]{
-                    new ItemBlock(new BlockMushroomRed())
+            return new int[][]{
+                    {Item.RED_MUSHROOM, this.meta & 0x03, 1}
             };
         } else {
-            return new Item[0];
+            return new int[0][0];
         }
     }
 }

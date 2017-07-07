@@ -9,15 +9,11 @@ public class AnimatePacket extends DataPacket {
 
     public long eid;
     public int action;
-    public float unknown;
 
     @Override
     public void decode() {
         this.action = (int) this.getUnsignedVarInt();
         this.eid = getVarLong();
-        if ((this.action & 0x80) != 0) {
-            this.unknown = this.getLFloat();
-        }
     }
 
     @Override
@@ -25,9 +21,6 @@ public class AnimatePacket extends DataPacket {
         this.reset();
         this.putUnsignedVarInt(this.action);
         this.putVarLong(this.eid);
-        if ((this.action & 0x80) != 0) {
-            this.putLFloat(this.unknown);
-        }
     }
 
     @Override

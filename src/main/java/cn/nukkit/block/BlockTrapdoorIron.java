@@ -1,7 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
-import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -46,15 +44,5 @@ public class BlockTrapdoorIron extends BlockTrapdoor {
     @Override
     public BlockColor getColor() {
         return BlockColor.IRON_BLOCK_COLOR;
-    }
-
-    @Override
-    public boolean onActivate(Item item, Player player) {
-        return false;
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
     }
 }

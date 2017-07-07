@@ -8,11 +8,9 @@ import cn.nukkit.event.block.BlockBurnEvent;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
@@ -66,7 +64,8 @@ public class BlockFire extends BlockFlowable {
     @Override
     public void onEntityCollide(Entity entity) {
         if (!entity.hasEffect(Effect.FIRE_RESISTANCE)) {
-            entity.attack(new EntityDamageByBlockEvent(this, entity, DamageCause.FIRE, 1));
+            EntityDamageByBlockEvent ev = new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.CAUSE_FIRE, 1);
+            entity.attack(ev);
         }
 
         EntityCombustByBlockEvent ev = new EntityCombustByBlockEvent(this, entity, 8);
@@ -80,35 +79,35 @@ public class BlockFire extends BlockFlowable {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        return new Item[0];
+    public int[][] getDrops(Item item) {
+        return new int[0][0];
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_RANDOM) {
-            if (!this.isBlockTopFacingSurfaceSolid(this.down()) && !this.canNeighborBurn()) {
+            if (!this.isBlockTopFacingSurfaceSolid(this.getSide(Vector3.SIDE_DOWN)) && !this.canNeighborBurn()) {
                 this.getLevel().setBlock(this, new BlockAir(), true);
             }
 
             return Level.BLOCK_UPDATE_NORMAL;
-        } else if (type == Level.BLOCK_UPDATE_SCHEDULED && this.level.gameRules.getBoolean("doFireTick")) {
-            boolean forever = this.down().getId() == Block.NETHERRACK;
+        } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+            boolean forever = this.getSide(Vector3.SIDE_DOWN).getId() == Block.NETHERRACK;
 
             Random random = this.getLevel().rand;
 
             //TODO: END
 
-            if (!this.isBlockTopFacingSurfaceSolid(this.down()) && !this.canNeighborBurn()) {
+            if (!this.isBlockTopFacingSurfaceSolid(this.getSide(Vector3.SIDE_DOWN)) && !this.canNeighborBurn()) {
                 this.getLevel().setBlock(this, new BlockAir(), true);
             }
 
-            if (!forever && this.getLevel().isRaining() &&
+            if (!forever &&
                     (this.getLevel().canBlockSeeSky(this) ||
-                            this.getLevel().canBlockSeeSky(this.east()) ||
-                            this.getLevel().canBlockSeeSky(this.west()) ||
-                            this.getLevel().canBlockSeeSky(this.south()) ||
-                            this.getLevel().canBlockSeeSky(this.north()))
+                            this.getLevel().canBlockSeeSky(this.getSide(SIDE_EAST)) ||
+                            this.getLevel().canBlockSeeSky(this.getSide(SIDE_WEST)) ||
+                            this.getLevel().canBlockSeeSky(this.getSide(SIDE_SOUTH)) ||
+                            this.getLevel().canBlockSeeSky(this.getSide(SIDE_NORTH)))
                     ) {
                 this.getLevel().setBlock(this, new BlockAir(), true);
             } else {
@@ -122,22 +121,22 @@ public class BlockFire extends BlockFlowable {
                 this.getLevel().scheduleUpdate(this, this.tickRate() + random.nextInt(10));
 
                 if (!forever && !this.canNeighborBurn()) {
-                    if (!this.isBlockTopFacingSurfaceSolid(this.down()) || meta > 3) {
+                    if (!this.isBlockTopFacingSurfaceSolid(this.getSide(Vector3.SIDE_DOWN)) || meta > 3) {
                         this.getLevel().setBlock(this, new BlockAir(), true);
                     }
-                } else if (!forever && !(this.down().getBurnAbility() > 0) && meta == 15 && random.nextInt(4) == 0) {
+                } else if (!forever && !(this.getSide(Vector3.SIDE_DOWN).getBurnAbility() > 0) && meta == 15 && random.nextInt(4) == 0) {
                     this.getLevel().setBlock(this, new BlockAir(), true);
                 } else {
                     int o = 0;
 
                     //TODO: decrease the o if the rainfall values are high
 
-                    this.tryToCatchBlockOnFire(this.east(), 300 + o, meta);
-                    this.tryToCatchBlockOnFire(this.west(), 300 + o, meta);
-                    this.tryToCatchBlockOnFire(this.down(), 250 + o, meta);
-                    this.tryToCatchBlockOnFire(this.up(), 250 + o, meta);
-                    this.tryToCatchBlockOnFire(this.south(), 300 + o, meta);
-                    this.tryToCatchBlockOnFire(this.north(), 300 + o, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_EAST), 300 + o, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_WEST), 300 + o, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_DOWN), 250 + o, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_UP), 250 + o, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_SOUTH), 300 + o, meta);
+                    this.tryToCatchBlockOnFire(this.getSide(SIDE_NORTH), 300 + o, meta);
 
                     for (int x = (int) (this.x - 1); x <= (int) (this.x + 1); ++x) {
                         for (int z = (int) (this.z - 1); z <= (int) (this.z + 1); ++z) {
@@ -225,18 +224,18 @@ public class BlockFire extends BlockFlowable {
             return 0;
         } else {
             int chance = 0;
-            chance = Math.max(chance, block.east().getBurnChance());
-            chance = Math.max(chance, block.west().getBurnChance());
-            chance = Math.max(chance, block.down().getBurnChance());
-            chance = Math.max(chance, block.up().getBurnChance());
-            chance = Math.max(chance, block.south().getBurnChance());
-            chance = Math.max(chance, block.north().getBurnChance());
+            chance = Math.max(chance, block.getSide(SIDE_EAST).getBurnChance());
+            chance = Math.max(chance, block.getSide(SIDE_WEST).getBurnChance());
+            chance = Math.max(chance, block.getSide(SIDE_DOWN).getBurnChance());
+            chance = Math.max(chance, block.getSide(SIDE_UP).getBurnChance());
+            chance = Math.max(chance, block.getSide(SIDE_SOUTH).getBurnChance());
+            chance = Math.max(chance, block.getSide(SIDE_NORTH).getBurnChance());
             return chance;
         }
     }
 
     public boolean canNeighborBurn() {
-        for (BlockFace face : BlockFace.values()) {
+        for (int face = 0; face <= 5; face++) {
             if (this.getSide(face).getBurnChance() > 0) {
                 return true;
             }
@@ -277,17 +276,5 @@ public class BlockFire extends BlockFlowable {
     @Override
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
-    }
-
-    @Override
-    protected AxisAlignedBB recalculateCollisionBoundingBox() {
-        return new AxisAlignedBB(
-                this.x,
-                this.y,
-                this.z,
-                this.x + 1,
-                this.y + 1,
-                this.z + 1
-        );
     }
 }
