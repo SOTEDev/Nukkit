@@ -1,20 +1,14 @@
 package cn.nukkit.entity.projectile;
 
-import java.util.Random;
-
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
-import cn.nukkit.entity.item.EntityPotion;
-import cn.nukkit.event.entity.EntityCombustByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.ProjectileHitEvent;
+import cn.nukkit.event.entity.*;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -29,10 +23,12 @@ public abstract class EntityProjectile extends Entity {
     public Entity shootingEntity = null;
 
     protected double getDamage() {
-        return 0;
+        return namedTag.contains("damage") ? namedTag.getDouble("damage") : 2;
     }
 
     public boolean hadCollision = false;
+
+    protected double damage = 0;
 
     public EntityProjectile(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
@@ -46,10 +42,35 @@ public abstract class EntityProjectile extends Entity {
         }
     }
 
-    public void attack(EntityDamageEvent source) {
-        if (source.getCause() == EntityDamageEvent.CAUSE_VOID) {
-            super.attack(source);
+    public int getResultDamage() {
+        return NukkitMath.ceilDouble(Math.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ) * getDamage());
+    }
+
+    public boolean attack(EntityDamageEvent source) {
+        return source.getCause() == DamageCause.VOID && super.attack(source);
+    }
+
+    public void onCollideWithEntity(Entity entity) {
+        this.server.getPluginManager().callEvent(new ProjectileHitEvent(this));
+        float damage = this.getResultDamage();
+
+        EntityDamageEvent ev;
+        if (this.shootingEntity == null) {
+            ev = new EntityDamageByEntityEvent(this, entity, DamageCause.PROJECTILE, damage);
+        } else {
+            ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, entity, DamageCause.PROJECTILE, damage);
         }
+        entity.attack(ev);
+        this.hadCollision = true;
+
+        if (this.fireTicks > 0) {
+            EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(this, entity, 5);
+            this.server.getPluginManager().callEvent(ev);
+            if (!event.isCancelled()) {
+                entity.setOnFire(event.getDuration());
+            }
+        }
+        this.close();
     }
 
     @Override
@@ -79,7 +100,6 @@ public abstract class EntityProjectile extends Entity {
         if (this.closed) {
             return false;
         }
-
 
         int tickDiff = currentTick - this.lastUpdate;
         if (tickDiff <= 0 && !this.justCreated) {
@@ -111,7 +131,7 @@ public abstract class EntityProjectile extends Entity {
                     continue;
                 }
 
-                AxisAlignedBB axisalignedbb = entity.boundingBox.grow(0.2, 0.2, 0.2);
+                AxisAlignedBB axisalignedbb = entity.boundingBox.grow(0.3, 0.3, 0.3);
                 MovingObjectPosition ob = axisalignedbb.calculateIntercept(this, moveVector);
 
                 if (ob == null) {
@@ -121,9 +141,6 @@ public abstract class EntityProjectile extends Entity {
                 double distance = this.distanceSquared(ob.hitVector);
 
                 if (distance < nearDistance) {
-                    if(shootingEntity instanceof Player && entity instanceof Player){
-                        if(!((Player)shootingEntity).canSee((Player) entity)) continue;
-                    }
                     nearDistance = distance;
                     nearEntity = entity;
                 }
@@ -133,70 +150,16 @@ public abstract class EntityProjectile extends Entity {
                 movingObjectPosition = MovingObjectPosition.fromEntity(nearEntity);
             }
 
-            boolean noDamage = false;
-
-            if (this instanceof EntityFishingHook) {
-                EntityFishingHook hook = (EntityFishingHook) this;
-                if(hook.isCatched) noDamage = true;
-            }
-
-            if (movingObjectPosition != null && !noDamage) {
+            if (movingObjectPosition != null) {
                 if (movingObjectPosition.entityHit != null) {
-
-                    ProjectileHitEvent hitEvent;
-                    this.server.getPluginManager().callEvent(hitEvent = new ProjectileHitEvent(this, movingObjectPosition));
-
-                    if (!hitEvent.isCancelled()) {
-                        boolean notDissappear = false;
-                        movingObjectPosition = hitEvent.getMovingObjectPosition();
-                        double motion = Math.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
-                        double damage = Math.ceil(motion * this.getDamage());
-
-                        if (this instanceof EntityArrow && ((EntityArrow) this).isCritical) {
-                            damage += new Random().nextInt((int) (damage / 2) + 1);
-                        }
-
-                        if (this instanceof EntityPotion) {
-                            EntityPotion potion = (EntityPotion) this;
-                            potion.onSplash();
-                        }
-
-                        if (this instanceof EntityFishingHook) {
-                            EntityFishingHook hook = (EntityFishingHook) this;
-                            hook.onCatch(movingObjectPosition.entityHit);
-                            notDissappear = true;
-                        }
-
-                        EntityDamageEvent ev;
-                        if (this.shootingEntity == null) {
-                            ev = new EntityDamageByEntityEvent(this, movingObjectPosition.entityHit, EntityDamageEvent.CAUSE_PROJECTILE, (float) damage);
-                        } else {
-                            ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, movingObjectPosition.entityHit, EntityDamageEvent.CAUSE_PROJECTILE, (float) damage);
-                        }
-
-                        movingObjectPosition.entityHit.attack(ev);
-
-                        this.hadCollision = true;
-
-                        if (this.fireTicks > 0) {
-                            EntityCombustByEntityEvent ev2 = new EntityCombustByEntityEvent(this, movingObjectPosition.entityHit, 5);
-                            this.server.getPluginManager().callEvent(ev2);
-                            if (!ev2.isCancelled()) {
-                                movingObjectPosition.entityHit.setOnFire(ev2.getDuration());
-                            }
-                        }
-
-                        if(!notDissappear){
-                            this.kill();
-                            return true;
-                        }
-                    }
+                    onCollideWithEntity(movingObjectPosition.entityHit);
+                    return true;
                 }
             }
 
             this.move(this.motionX, this.motionY, this.motionZ);
 
-            if (this.isCollided && !this.hadCollision) {
+            if (this.isCollided && !this.hadCollision) { //collide with block
                 this.hadCollision = true;
 
                 this.motionX = 0;
@@ -204,11 +167,12 @@ public abstract class EntityProjectile extends Entity {
                 this.motionZ = 0;
 
                 this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromBlock(this.getFloorX(), this.getFloorY(), this.getFloorZ(), -1, this)));
+                return false;
             } else if (!this.isCollided && this.hadCollision) {
                 this.hadCollision = false;
             }
 
-            if (!this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001) {
+            if (!this.hadCollision || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001) {
                 double f = Math.sqrt((this.motionX * this.motionX) + (this.motionZ * this.motionZ));
                 this.yaw = Math.atan2(this.motionX, this.motionZ) * 180 / Math.PI;
                 this.pitch = Math.atan2(this.motionY, f) * 180 / Math.PI;

@@ -4,18 +4,24 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * author: MagicDroidX
@@ -188,6 +194,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int DRAGON_EGG = 122;
     public static final int REDSTONE_LAMP = 123;
     public static final int LIT_REDSTONE_LAMP = 124;
+    //Note: dropper CAN NOT BE HARVESTED WITH HAND -- canHarvestWithHand method should be overridden FALSE.
     public static final int DROPPER = 125;
     public static final int ACTIVATOR_RAIL = 126;
     public static final int COCOA = 127;
@@ -234,7 +241,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int WOODEN_SLAB = 158;
     public static final int WOOD_SLABS = 158;
     public static final int WOODEN_SLABS = 158;
-    public static final int STAINED_CLAY = 159;
+    public static final int STAINED_TERRACOTTA = 159;
     public static final int STAINED_HARDENED_CLAY = 159;
     public static final int STAINED_GLASS_PANE = 160;
     public static final int LEAVES2 = 161;
@@ -253,7 +260,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int SEA_LANTERN = 169;
     public static final int HAY_BALE = 170;
     public static final int CARPET = 171;
-    public static final int HARDENED_CLAY = 172;
+    public static final int TERRACOTTA = 172;
     public static final int COAL_BLOCK = 173;
     public static final int PACKED_ICE = 174;
     public static final int DOUBLE_PLANT = 175;
@@ -278,15 +285,35 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static final int ITEM_FRAME_BLOCK = 199;
     public static final int CHORUS_FLOWER = 200;
     public static final int PURPUR_BLOCK = 201;
-    public static final int PURPUR_PILLAR = 202;
 
     public static final int PURPUR_STAIRS = 203;
     public static final int DOUBLE_PURPUR_SLAB = 204;
     public static final int PURPUR_SLAB = 205;
     public static final int END_BRICKS = 206;
-
+    //Note: frosted ice CAN NOT BE HARVESTED WITH HAND -- canHarvestWithHand method should be overridden FALSE.
+    public static final int ICE_FROSTED = 207;
     public static final int END_ROD = 208;
     public static final int END_GATEWAY = 209;
+
+    public static final int SHULKER_BOX = 218;
+    public static final int PURPLE_GLAZED_TERRACOTTA = 219;
+    public static final int WHITE_GLAZED_TERRACOTTA = 220;
+    public static final int ORANGE_GLAZED_TERRACOTTA = 221;
+    public static final int MAGENTA_GLAZED_TERRACOTTA = 222;
+    public static final int LIGHT_BLUE_GLAZED_TERRACOTTA = 223;
+    public static final int YELLOW_GLAZED_TERRACOTTA = 224;
+    public static final int LIME_GLAZED_TERRACOTTA = 225;
+    public static final int PINK_GLAZED_TERRACOTTA = 226;
+    public static final int GRAY_GLAZED_TERRACOTTA = 227;
+    public static final int SILVER_GLAZED_TERRACOTTA = 228;
+    public static final int CYAN_GLAZED_TERRACOTTA = 229;
+    public static final int BLUE_GLAZED_TERRACOTTA = 231;
+    public static final int BROWN_GLAZED_TERRACOTTA = 232;
+    public static final int GREEN_GLAZED_TERRACOTTA = 233;
+    public static final int RED_GLAZED_TERRACOTTA = 234;
+    public static final int BLACK_GLAZED_TERRACOTTA = 235;
+    public static final int CONCRETE = 236;
+    public static final int CONCRETE_POWDER = 237;
 
     public static final int CHORUS_PLANT = 240;
     public static final int STAINED_GLASS = 241;
@@ -308,9 +335,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     public static double[] hardness = null;
     public static boolean[] transparent = null;
     public AxisAlignedBB boundingBox = null;
+    public AxisAlignedBB collisionBoundingBox = null;
     protected int meta = 0;
-    protected int powerLevel = 0;
-    protected boolean powerSource = false;
 
     protected Block(Integer meta) {
         this.meta = (meta != null ? meta : 0);
@@ -356,12 +382,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[BED_BLOCK] = BlockBed.class; //26
             list[POWERED_RAIL] = BlockRailPowered.class; //27
             list[DETECTOR_RAIL] = BlockRailDetector.class; //28
-            //TODO: list[STICKY_PISTON] = BlockPistonSticky.class; //29
+            list[STICKY_PISTON] = BlockPistonSticky.class; //29
             list[COBWEB] = BlockCobweb.class; //30
             list[TALL_GRASS] = BlockTallGrass.class; //31
             list[DEAD_BUSH] = BlockDeadBush.class; //32
-            //TODO: list[PISTON] = BlockPiston.class; //33
-            //TODO: list[PISTON_HEAD] = BlockPistonHead.class; //34
+            list[PISTON] = BlockPiston.class; //33
+            list[PISTON_HEAD] = BlockPistonHead.class; //34
             list[WOOL] = BlockWool.class; //35
             list[DANDELION] = BlockDandelion.class; //37
             list[FLOWER] = BlockFlower.class; //38
@@ -401,7 +427,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[WOODEN_PRESSURE_PLATE] = BlockPressurePlateWood.class; //72
             list[REDSTONE_ORE] = BlockOreRedstone.class; //73
             list[GLOWING_REDSTONE_ORE] = BlockOreRedstoneGlowing.class; //74
-            //TODO: list[UNLIT_REDSTONE_TORCH] = BlockRedstoneTorchUnlit.class; //75
+            list[UNLIT_REDSTONE_TORCH] = BlockRedstoneTorchUnlit.class;
             list[REDSTONE_TORCH] = BlockRedstoneTorch.class; //76
             list[STONE_BUTTON] = BlockButtonStone.class; //77
             list[SNOW_LAYER] = BlockSnowLayer.class; //78
@@ -419,8 +445,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[NETHER_PORTAL] = BlockNetherPortal.class; //90
             list[LIT_PUMPKIN] = BlockPumpkinLit.class; //91
             list[CAKE_BLOCK] = BlockCake.class; //92
-            //TODO: list[UNPOWERED_REPEATER] = BlockRepeaterUnpowered.class; //93
-            //TODO: list[POWERED_REPEATER] = BlockRepeaterPowered.class; //94
+            list[UNPOWERED_REPEATER] = BlockRedstoneRepeaterUnpowered.class; //93
+            list[POWERED_REPEATER] = BlockRedstoneRepeaterPowered.class; //94
             list[INVISIBLE_BEDROCK] = BlockBedrockInvisible.class; //95
             list[TRAPDOOR] = BlockTrapdoor.class; //96
             list[MONSTER_EGG] = BlockMonsterEgg.class; //97
@@ -441,7 +467,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[NETHER_BRICKS] = BlockBricksNether.class; //112
             list[NETHER_BRICK_FENCE] = BlockFenceNetherBrick.class; //113
             list[NETHER_BRICKS_STAIRS] = BlockStairsNetherBrick.class; //114
-            //TODO: list[NETHER_WART_BLOCK] = BlockNetherWart.class; //115
+            list[NETHER_WART_BLOCK] = BlockNetherWart.class; //115
             list[ENCHANTING_TABLE] = BlockEnchantingTable.class; //116
             list[BREWING_STAND_BLOCK] = BlockBrewingStand.class; //117
             list[CAULDRON_BLOCK] = BlockCauldron.class; //118
@@ -451,14 +477,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[DRAGON_EGG] = BlockDragonEgg.class; //122
             list[REDSTONE_LAMP] = BlockRedstoneLamp.class; //123
             list[LIT_REDSTONE_LAMP] = BlockRedstoneLampLit.class; //124
-            list[DROPPER] = BlockDropper.class; //125
+            //TODO: list[DROPPER] = BlockDropper.class; //125
             list[ACTIVATOR_RAIL] = BlockRailActivator.class; //126
             list[COCOA] = BlockCocoa.class; //127
             list[SANDSTONE_STAIRS] = BlockStairsSandstone.class; //128
             list[EMERALD_ORE] = BlockOreEmerald.class; //129
             list[ENDER_CHEST] = BlockEnderChest.class; //130
-            //TODO: list[TRIPWIRE_HOOK] = BlockTripwireHook.class; //131
-            //TODO: list[TRIPWIRE] = BlockTripwire.class; //132
+            list[TRIPWIRE_HOOK] = BlockTripWireHook.class;
+            list[TRIPWIRE] = BlockTripWire.class; //132
             list[EMERALD_BLOCK] = BlockEmerald.class; //133
             list[SPRUCE_WOOD_STAIRS] = BlockStairsSpruce.class; //134
             list[BIRCH_WOOD_STAIRS] = BlockStairsBirch.class; //135
@@ -475,17 +501,17 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[TRAPPED_CHEST] = BlockTrappedChest.class; //146
             list[LIGHT_WEIGHTED_PRESSURE_PLATE] = BlockWeightedPressurePlateLight.class; //147
             list[HEAVY_WEIGHTED_PRESSURE_PLATE] = BlockWeightedPressurePlateHeavy.class; //148
-            //TODO: list[UNPOWERED_COMPARATOR] = BlockComparatorUnpowered.class; //149
-            //TODO: list[POWERED_COMPARATOR] = BlockComparatorPowered.class; //149
+            list[UNPOWERED_COMPARATOR] = BlockRedstoneComparatorUnpowered.class; //149
+            list[POWERED_COMPARATOR] = BlockRedstoneComparatorPowered.class; //149
             list[DAYLIGHT_DETECTOR] = BlockDaylightDetector.class; //151
             list[REDSTONE_BLOCK] = BlockRedstone.class; //152
             list[QUARTZ_ORE] = BlockOreQuartz.class; //153
-            //TODO: list[HOPPER_BLOCK] = BlockHopper.class; //154
+            list[HOPPER_BLOCK] = BlockHopper.class; //154
             list[QUARTZ_BLOCK] = BlockQuartz.class; //155
             list[QUARTZ_STAIRS] = BlockStairsQuartz.class; //156
             list[DOUBLE_WOOD_SLAB] = BlockDoubleSlabWood.class; //157
             list[WOOD_SLAB] = BlockSlabWood.class; //158
-            list[STAINED_CLAY] = BlockClayStained.class; //159
+            list[STAINED_TERRACOTTA] = BlockTerracottaStained.class; //159
             //TODO: list[STAINED_GLASS_PANE] = BlockGlassPaneStained.class; //160
 
             list[LEAVES2] = BlockLeaves2.class; //161
@@ -499,7 +525,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[SEA_LANTERN] = BlockSeaLantern.class; //169
             list[HAY_BALE] = BlockHayBale.class; //170
             list[CARPET] = BlockCarpet.class; //171
-            list[HARDENED_CLAY] = BlockClayHardened.class; //172
+            list[TERRACOTTA] = BlockTerracotta.class; //172
             list[COAL_BLOCK] = BlockCoal.class; //173
             list[PACKED_ICE] = BlockIcePacked.class; //174
             list[DOUBLE_PLANT] = BlockDoublePlant.class; //175
@@ -524,7 +550,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[ITEM_FRAME_BLOCK] = BlockItemFrame.class; //199
             //TODO: list[CHORUS_FLOWER] = BlockChorusFlower.class; //200
             list[PURPUR_BLOCK] = BlockPurpur.class; //201
-            //list[PURPUR_PILLAR] = BlockPurpurPillar.class; //201
 
             list[PURPUR_STAIRS] = BlockStairsPurpur.class; //203
 
@@ -533,10 +558,30 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
             list[END_ROD] = BlockEndRod.class; //208
             list[END_GATEWAY] = BlockEndGateway.class; //209
 
+            //TODO: list[SHULKER_BOX] = BlockShulkerBox.class; //218
+            list[PURPLE_GLAZED_TERRACOTTA] = BlockTerracottaGlazedPurple.class; //219
+            list[WHITE_GLAZED_TERRACOTTA] = BlockTerracottaGlazedWhite.class; //220
+            list[ORANGE_GLAZED_TERRACOTTA] = BlockTerracottaGlazedOrange.class; //221
+            list[MAGENTA_GLAZED_TERRACOTTA] = BlockTerracottaGlazedMagenta.class; //222
+            list[LIGHT_BLUE_GLAZED_TERRACOTTA] = BlockTerracottaGlazedLightBlue.class; //223
+            list[YELLOW_GLAZED_TERRACOTTA] = BlockTerracottaGlazedYellow.class; //224
+            list[LIME_GLAZED_TERRACOTTA] = BlockTerracottaGlazedLime.class; //225
+            list[PINK_GLAZED_TERRACOTTA] = BlockTerracottaGlazedPink.class; //226
+            list[GRAY_GLAZED_TERRACOTTA] = BlockTerracottaGlazedGray.class; //227
+            list[SILVER_GLAZED_TERRACOTTA] = BlockTerracottaGlazedSilver.class; //228
+            list[CYAN_GLAZED_TERRACOTTA] = BlockTerracottaGlazedCyan.class; //229
+
+            list[BLUE_GLAZED_TERRACOTTA] = BlockTerracottaGlazedBlue.class; //231
+            list[BROWN_GLAZED_TERRACOTTA] = BlockTerracottaGlazedBrown.class; //232
+            list[GREEN_GLAZED_TERRACOTTA] = BlockTerracottaGlazedGreen.class; //233
+            list[RED_GLAZED_TERRACOTTA] = BlockTerracottaGlazedRed.class; //234
+            list[BLACK_GLAZED_TERRACOTTA] = BlockTerracottaGlazedBlack.class; //235
+            list[CONCRETE] = BlockConcrete.class; //236
+            list[CONCRETE_POWDER] = BlockConcretePowder.class; //237
+
             //TODO: list[CHORUS_PLANT] = BlockChorusPlant.class; //240
             list[PODZOL] = BlockPodzol.class; //243
             list[BEETROOT_BLOCK] = BlockBeetroot.class; //244
-            list[STONECUTTER] = BlockStonecutter.class; //245
             list[GLOWING_OBSIDIAN] = BlockObsidianGlowing.class; //246
             //TODO: list[NETHER_REACTOR] = BlockNetherReactor.class; //247 Should not be removed
 
@@ -624,12 +669,17 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return block;
     }
 
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);
     }
 
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         return this.getLevel().setBlock(this, this, true, true);
+    }
+
+    //http://minecraft.gamepedia.com/Breaking
+    public boolean canHarvestWithHand() {  //used for calculating breaking time
+        return true;
     }
 
     public boolean isBreakable(Item item) {
@@ -716,6 +766,22 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return false;
     }
 
+    public boolean canBePushed() {
+        return true;
+    }
+
+    public boolean hasComparatorInputOverride() {
+        return false;
+    }
+
+    public int getComparatorInputOverride() {
+        return 0;
+    }
+
+    public boolean canBeClimbed() {
+        return false;
+    }
+
     public BlockColor getColor() {
         return BlockColor.VOID_BLOCK_COLOR;
     }
@@ -744,16 +810,98 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         this.boundingBox = null;
     }
 
-    public int[][] getDrops(Item item) {
+    public Item[] getDrops(Item item) {
         if (this.getId() < 0 || this.getId() > list.length) { //Unknown blocks
-            return new int[0][0];
+            return new Item[0];
         } else {
-            return new int[][]{
-                    {this.getId(), this.getDamage(), 1}
+            return new Item[]{
+                    this.toItem()
             };
         }
     }
 
+    private static double toolBreakTimeBonus0(
+            int toolType, int toolTier, boolean isWoolBlock, boolean isCobweb) {
+        if(toolType == ItemTool.TYPE_SWORD) return isCobweb ? 15.0: 1.0;
+        if(toolType == ItemTool.TYPE_SHEARS) return isWoolBlock ? 5.0: 15.0;
+        if(toolType == ItemTool.TYPE_NONE) return 1.0;
+        switch (toolTier) {
+            case ItemTool.TIER_WOODEN: return 2.0;
+            case ItemTool.TIER_STONE: return 4.0;
+            case ItemTool.TIER_IRON: return 6.0;
+            case ItemTool.TIER_DIAMOND: return 8.0;
+            case ItemTool.TIER_GOLD: return 12.0;
+            default: return 1.0;
+        }
+    }
+
+    private static double speedBonusByEfficiencyLore0(int efficiencyLoreLevel) {
+        if(efficiencyLoreLevel == 0) return 0;
+        return efficiencyLoreLevel * efficiencyLoreLevel + 1;
+    }
+
+    private static double speedRateByHasteLore0(int hasteLoreLevel) {
+        return 1.0 + (0.2 * hasteLoreLevel);
+    }
+
+    private static int toolType0(Item item) {
+        if(item.isSword())      return ItemTool.TYPE_SWORD      ;
+        if(item.isShovel())     return ItemTool.TYPE_SHOVEL     ;
+        if(item.isPickaxe())    return ItemTool.TYPE_PICKAXE    ;
+        if(item.isAxe())        return ItemTool.TYPE_AXE        ;
+        if(item.isShears())     return ItemTool.TYPE_SHEARS     ;
+        return ItemTool.TYPE_NONE;
+    }
+
+    private static boolean correctTool0(int blockToolType, Item item) {
+        return (blockToolType == ItemTool.TYPE_SWORD    && item.isSword()   ) ||
+                (blockToolType == ItemTool.TYPE_SHOVEL  && item.isShovel()  ) ||
+                (blockToolType == ItemTool.TYPE_PICKAXE && item.isPickaxe() ) ||
+                (blockToolType == ItemTool.TYPE_AXE     && item.isAxe()     ) ||
+                (blockToolType == ItemTool.TYPE_SHEARS  && item.isShears()  ) ||
+                blockToolType == ItemTool.TYPE_NONE;
+    }
+
+    //http://minecraft.gamepedia.com/Breaking
+    private static double breakTime0(double blockHardness, boolean correctTool, boolean canHarvestWithHand,
+                                     int blockId, int toolType, int toolTier, int efficiencyLoreLevel, int hasteEffectLevel,
+                                     boolean insideOfWaterWithoutAquaAffinity, boolean outOfWaterButNotOnGround) {
+        double baseTime = ((correctTool || canHarvestWithHand) ? 1.5 : 5.0) * blockHardness;
+        double speed = 1.0 / baseTime;
+        boolean isWoolBlock = blockId == Block.WOOL, isCobweb = blockId == Block.COBWEB;
+        if(correctTool) speed *= toolBreakTimeBonus0(toolType, toolTier, isWoolBlock, isCobweb);
+        speed += speedBonusByEfficiencyLore0(efficiencyLoreLevel);
+        speed *= speedRateByHasteLore0(hasteEffectLevel);
+        if(insideOfWaterWithoutAquaAffinity) speed *= 0.2;
+        if(outOfWaterButNotOnGround) speed *= 0.2;
+        return 1.0 / speed;
+    }
+
+    public double getBreakTime(Item item, Player player) {
+        Objects.requireNonNull(item, "getBreakTime: Item can not be null");
+        Objects.requireNonNull(player, "getBreakTime: Player can not be null");
+        double blockHardness = getHardness();
+        boolean correctTool = correctTool0(getToolType(), item);
+        boolean canHarvestWithHand = canHarvestWithHand();
+        int blockId = getId();
+        int itemToolType = toolType0(item);
+        int itemTier = item.getTier();
+        int efficiencyLoreLevel = Optional.ofNullable(item.getEnchantment(Enchantment.ID_EFFICIENCY))
+                .map(Enchantment::getLevel).orElse(0);
+        int hasteEffectLevel = Optional.ofNullable(player.getEffect(Effect.HASTE))
+                .map(Effect::getAmplifier).orElse(0);
+        boolean insideOfWaterWithoutAquaAffinity = player.isInsideOfWater() &&
+                Optional.ofNullable(player.getInventory().getHelmet().getEnchantment(Enchantment.ID_WATER_WORKER))
+                        .map(Enchantment::getLevel).map(l -> l >= 1).orElse(false);
+        boolean outOfWaterButNotOnGround = (!player.isInsideOfWater()) && (!player.isOnGround());
+        return breakTime0(blockHardness, correctTool, canHarvestWithHand, blockId, itemToolType, itemTier,
+                efficiencyLoreLevel, hasteEffectLevel, insideOfWaterWithoutAquaAffinity, outOfWaterButNotOnGround);
+    }
+
+    /**
+     * @deprecated This function is lack of Player class and is not accurate enough, use #getBreakTime(Item, Player)
+     */
+    @Deprecated
     public double getBreakTime(Item item) {
         double base = this.getHardness() * 1.5;
         if (this.canBeBrokenWith(item)) {
@@ -798,15 +946,63 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return this.getHardness() != -1;
     }
 
-    public Block getSide(int side) {
-        return this.getSide(side, 1);
+    public Block getSide(BlockFace face) {
+        return this.getSide(face, 1);
     }
 
-    public Block getSide(int side, int step) {
+    public Block getSide(BlockFace face, int step) {
         if (this.isValid()) {
-            return this.getLevel().getBlock(super.getSide(side, step));
+            return this.getLevel().getBlock(super.getSide(face, step));
         }
-        return Block.get(Item.AIR, 0, Position.fromObject(new Vector3(this.x, this.y, this.z).getSide(side, step)));
+        return Block.get(Item.AIR, 0, Position.fromObject(new Vector3(this.x, this.y, this.z).getSide(face, step)));
+    }
+
+    public Block up() {
+        return up(1);
+    }
+
+    public Block up(int step) {
+        return getSide(BlockFace.UP, step);
+    }
+
+    public Block down() {
+        return down(1);
+    }
+
+    public Block down(int step) {
+        return getSide(BlockFace.DOWN, step);
+    }
+
+    public Block north() {
+        return north(1);
+    }
+
+    public Block north(int step) {
+        return getSide(BlockFace.NORTH, step);
+    }
+
+    public Block south() {
+        return south(1);
+    }
+
+    public Block south(int step) {
+        return getSide(BlockFace.SOUTH, step);
+    }
+
+    public Block east() {
+        return east(1);
+    }
+
+    public Block east(int step) {
+        return getSide(BlockFace.EAST, step);
+    }
+
+    public Block west() {
+        return west(1);
+    }
+
+    public Block west(int step) {
+        return getSide(BlockFace.WEST, step);
     }
 
     @Override
@@ -815,7 +1011,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
     }
 
     public boolean collidesWithBB(AxisAlignedBB bb) {
-        AxisAlignedBB bb1 = this.getBoundingBox();
+        return collidesWithBB(bb, false);
+    }
+
+    public boolean collidesWithBB(AxisAlignedBB bb, boolean collisionBB) {
+        AxisAlignedBB bb1 = collisionBB ? this.getCollisionBoundingBox() : this.getBoundingBox();
         return bb1 != null && bb.intersectsWith(bb1);
     }
 
@@ -830,6 +1030,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return this.boundingBox;
     }
 
+    public AxisAlignedBB getCollisionBoundingBox() {
+        if (this.collisionBoundingBox == null) {
+            this.collisionBoundingBox = this.recalculateCollisionBoundingBox();
+        }
+        return this.collisionBoundingBox;
+    }
+
     protected AxisAlignedBB recalculateBoundingBox() {
         return new AxisAlignedBB(
                 this.x,
@@ -839,6 +1046,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
                 this.y + 1,
                 this.z + 1
         );
+    }
+
+    protected AxisAlignedBB recalculateCollisionBoundingBox() {
+        return getBoundingBox();
     }
 
     public MovingObjectPosition calculateIntercept(Vector3 pos1, Vector3 pos2) {
@@ -956,46 +1167,16 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return (Block) super.clone();
     }
 
-    public int getPowerLevel() {
-        return powerLevel;
+    public int getWeakPower(BlockFace face) {
+        return 0;
     }
 
-    public void setPowerLevel(int powerLevel) {
-        this.powerLevel = powerLevel;
-    }
-
-    public int getPowerLevel(int side) {
-        return this.getSide(side).getPowerLevel();
-    }
-
-    public boolean isNeighborPowered() {
-        return this.getNeighborPowerLevel() > 0;
-    }
-
-    public int getNeighborPowerLevel() {
-        int energy = 0;
-        int tempLevel;
-        tempLevel = this.getSide(SIDE_DOWN).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        tempLevel = this.getSide(SIDE_UP).getPowerLevel();
-        energy = tempLevel > energy ? tempLevel : energy;
-        for (int side : new int[]{Vector3.SIDE_NORTH, Vector3.SIDE_SOUTH, Vector3.SIDE_WEST, Vector3.SIDE_EAST}) {
-            tempLevel = this.getSide(side).getPowerLevel();
-            energy = tempLevel > energy ? tempLevel : energy;
-        }
-        return energy;
-    }
-
-    public boolean isPowered() {
-        return this.powerLevel > 0;
+    public int getStrongPower(BlockFace side) {
+        return 0;
     }
 
     public boolean isPowerSource() {
-        return this.powerSource;
-    }
-
-    public void setPowerSource(boolean isSource) {
-        this.powerSource = isSource;
+        return false;
     }
 
     public String getLocationHash() {
@@ -1006,4 +1187,19 @@ public abstract class Block extends Position implements Metadatable, Cloneable {
         return 0;
     }
 
+    public boolean isNormalBlock() {
+        return !isTransparent() && isSolid() && !isPowerSource();
+    }
+
+    public static boolean equals(Block b1, Block b2) {
+        return equals(b1, b2, true);
+    }
+
+    public static boolean equals(Block b1, Block b2, boolean checkDamage) {
+        return b1 != null && b2 != null && b1.getId() == b2.getId() && (!checkDamage || b1.getDamage() == b2.getDamage());
+    }
+
+    public Item toItem() {
+        return new ItemBlock(this, this.meta, 1);
+    }
 }

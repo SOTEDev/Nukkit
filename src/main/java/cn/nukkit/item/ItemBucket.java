@@ -4,9 +4,12 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockLiquid;
+import cn.nukkit.block.BlockWater;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.BlockFace.Plane;
 
 /**
  * author: MagicDroidX
@@ -63,7 +66,7 @@ public class ItemBucket extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, int face, double fx, double fy, double fz) {
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         Block targetBlock = Block.get(this.meta);
 
         if (targetBlock instanceof BlockAir) {
@@ -73,9 +76,20 @@ public class ItemBucket extends Item {
                 player.getServer().getPluginManager().callEvent(ev = new PlayerBucketFillEvent(player, block, face, this, result));
                 if (!ev.isCancelled()) {
                     player.getLevel().setBlock(target, new BlockAir(), true, true);
+
+                    // When water is removed ensure any adjacent still water is
+                    // replaced with water that can flow.
+                    for (BlockFace side : Plane.HORIZONTAL) {
+                        Block b = target.getSide(side);
+                        if (b.getId() == STILL_WATER) {
+                            level.setBlock(b, new BlockWater());
+                        }
+                    }
+
                     if (player.isSurvival()) {
-                        this.setCount(this.getCount() - 1);
-                        player.getInventory().setItemInHand(this);
+                        Item clone = this.clone();
+                        clone.setCount(this.getCount() - 1);
+                        player.getInventory().setItemInHand(clone);
                         player.getInventory().addItem(ev.getItem());
                     }
                     return true;
@@ -90,8 +104,9 @@ public class ItemBucket extends Item {
             if (!ev.isCancelled()) {
                 player.getLevel().setBlock(block, targetBlock, true, true);
                 if (player.isSurvival()) {
-                    this.setCount(this.getCount() - 1);
-                    player.getInventory().setItemInHand(this);
+                    Item clone = this.clone();
+                    clone.setCount(this.getCount() - 1);
+                    player.getInventory().setItemInHand(clone);
                     player.getInventory().addItem(ev.getItem());
                 }
                 return true;

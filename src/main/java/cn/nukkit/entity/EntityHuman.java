@@ -27,6 +27,7 @@ public class EntityHuman extends EntityHumanType {
 
     protected UUID uuid;
     protected byte[] rawUUID;
+    public int xpCooldown = 0;
 
     @Override
     public float getWidth() {
@@ -46,6 +47,11 @@ public class EntityHuman extends EntityHumanType {
     @Override
     public float getEyeHeight() {
         return 1.62f;
+    }
+
+    @Override
+    protected float getBaseOffset() {
+        return this.getEyeHeight();
     }
 
     protected Skin skin;

@@ -17,9 +17,4 @@ public class ItemSteak extends ItemEdible {
     public ItemSteak(Integer meta, int count) {
         super(STEAK, meta, count, "Steak");
     }
-
-    @Override
-    public boolean isWolfsFavoriteMeat(){
-        return true;
-    }
 }

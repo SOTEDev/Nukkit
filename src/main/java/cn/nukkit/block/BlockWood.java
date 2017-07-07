@@ -2,7 +2,9 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -62,12 +64,12 @@ public class BlockWood extends BlockSolid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         return this.place(item, block, target, face, fx, fy, fz, null);
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, int face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         short[] faces = new short[]{
                 0,
                 0,
@@ -77,15 +79,15 @@ public class BlockWood extends BlockSolid {
                 0b0100
         };
 
-        this.meta = ((this.meta & 0x03) | faces[face]);
+        this.meta = ((this.meta & 0x03) | faces[face.getIndex()]);
         this.getLevel().setBlock(block, this, true, true);
 
         return true;
     }
 
     @Override
-    public int[][] getDrops(Item item) {
-        return new int[][]{new int[]{this.getId(), this.meta & 0x03, 1}};
+    public Item toItem() {
+        return new ItemBlock(this, this.meta & 0x03);
     }
 
     @Override

@@ -1,10 +1,12 @@
 package cn.nukkit.block;
 
-import cn.nukkit.entity.Entity;
-import cn.nukkit.event.entity.EntityPortalEnterEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
 
+/**
+ *
+ * @author PikyCZ
+ */
 public class BlockEndGateway extends BlockSolid {
 
     public BlockEndGateway() {
@@ -54,7 +56,6 @@ public class BlockEndGateway extends BlockSolid {
     public boolean hasEntityCollision() {
         return true;
     }
-
 
     @Override
     public BlockColor getColor() {

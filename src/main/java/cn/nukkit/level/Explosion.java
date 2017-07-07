@@ -1,32 +1,26 @@
 package cn.nukkit.level;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockTNT;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
 import cn.nukkit.level.sound.ExplodeSound;
-import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.BlockVector3;
-import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.tag.ByteTag;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.math.*;
+import cn.nukkit.network.protocol.ExplodePacket;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: Angelic47
@@ -157,14 +151,11 @@ public class Explosion {
                 int damage = (int) (((impact * impact + impact) / 2) * 8 * explosionSize + 1);
 
                 if (this.what instanceof Entity) {
-                    EntityDamageByEntityEvent ev = new EntityDamageByEntityEvent((Entity) this.what, entity, EntityDamageEvent.CAUSE_ENTITY_EXPLOSION, damage);
-                    entity.attack(ev);
+                    entity.attack(new EntityDamageByEntityEvent((Entity) this.what, entity, DamageCause.ENTITY_EXPLOSION, damage));
                 } else if (this.what instanceof Block) {
-                    EntityDamageByBlockEvent ev = new EntityDamageByBlockEvent((Block) this.what, entity, EntityDamageEvent.CAUSE_BLOCK_EXPLOSION, damage);
-                    entity.attack(ev);
+                    entity.attack(new EntityDamageByBlockEvent((Block) this.what, entity, DamageCause.BLOCK_EXPLOSION, damage));
                 } else {
-                    EntityDamageEvent ev = new EntityDamageEvent(entity, EntityDamageEvent.CAUSE_BLOCK_EXPLOSION, damage);
-                    entity.attack(ev);
+                    entity.attack(new EntityDamageEvent(entity, DamageCause.BLOCK_EXPLOSION, damage));
                 }
 
                 entity.setMotion(motion.multiply(impact));
@@ -177,26 +168,10 @@ public class Explosion {
         for (Block block : this.affectedBlocks) {
             //Block block = (Block) ((HashMap.Entry) iter.next()).getValue();
             if (block.getId() == Block.TNT) {
-                double mot = Math.random() * Math.PI * 2;
-                EntityPrimedTNT tnt = new EntityPrimedTNT(this.level.getChunk((int) block.x >> 4, (int) block.z >> 4),
-                        new CompoundTag()
-                                .putList(new ListTag<DoubleTag>("Pos")
-                                        .add(new DoubleTag("", block.x + 0.5))
-                                        .add(new DoubleTag("", block.y))
-                                        .add(new DoubleTag("", block.z + 0.5)))
-                                .putList(new ListTag<DoubleTag>("Motion")
-                                        .add(new DoubleTag("", -Math.sin(mot) * 0.02))
-                                        .add(new DoubleTag("", 0.2))
-                                        .add(new DoubleTag("", -Math.cos(mot) * 0.02)))
-                                .putList(new ListTag<FloatTag>("Rotation")
-                                        .add(new FloatTag("", 0))
-                                        .add(new FloatTag("", 0)))
-                                .put("Fuse", new ByteTag("", (byte) (10 + (Math.random() * 30) + 1))
-                                ));
-                tnt.spawnToAll();
+                ((BlockTNT) block).prime(new NukkitRandom().nextRange(10, 30));
             } else if (Math.random() * 100 < yield) {
-                for (int[] drop : block.getDrops(air)) {
-                    this.level.dropItem(block.add(0.5, 0.5, 0.5), Item.get(drop[0], drop[1], drop[2]));
+                for (Item drop : block.getDrops(air)) {
+                    this.level.dropItem(block.add(0.5, 0.5, 0.5), drop);
                 }
             }
 
@@ -204,7 +179,7 @@ public class Explosion {
 
             Vector3 pos = new Vector3(block.x, block.y, block.z);
 
-            for (int side = 0; side < 5; side++) {
+            for (BlockFace side : BlockFace.values()) {
                 Vector3 sideBlock = pos.getSide(side);
                 BlockVector3 index = Level.blockHash((int) sideBlock.x, (int) sideBlock.y, (int) sideBlock.z);
                 if (!this.affectedBlocks.contains(sideBlock) && !updateBlocks.containsKey(index)) {
@@ -219,16 +194,16 @@ public class Explosion {
             send.add(new Vector3(block.x - source.x, block.y - source.y, block.z - source.z));
         }
 
-        /*ExplodePacket pk = new ExplodePacket();
+        ExplodePacket pk = new ExplodePacket();
         pk.x = (float) this.source.x;
         pk.y = (float) this.source.y;
         pk.z = (float) this.source.z;
         pk.radius = (float) this.size;
         pk.records = send.stream().toArray(Vector3[]::new);
 
-        this.level.addChunkPacket((int) source.x >> 4, (int) source.z >> 4, pk);*/
-        this.level.addSound(new ExplodeSound(this.source));
+        this.level.addChunkPacket((int) source.x >> 4, (int) source.z >> 4, pk);
         this.level.addParticle(new HugeExplodeSeedParticle(this.source));
+        this.level.addSound(new ExplodeSound(new Vector3(this.source.x, this.source.y, this.source.z)));
 
         return true;
     }
