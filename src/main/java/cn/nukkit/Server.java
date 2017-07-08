@@ -214,7 +214,7 @@ public class Server {
         this.pluginPath = new File(pluginPath).getAbsolutePath() + "/";
 
         this.console = new CommandReader();
-        //todo: VersionString 现在不必要
+        //todo: VersionString ?在不必要
 
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
             this.getLogger().info(TextFormat.GREEN + "Welcome! Please choose a language first!");
@@ -1380,7 +1380,7 @@ public class Server {
         String path = this.getDataPath() + "players/";
         File file = new File(path + name + ".dat");
 
-        if (this.shouldSavePlayerData() && file.exists()) {
+        /*if (this.shouldSavePlayerData() && file.exists()) {
             try {
                 return NBTIO.readCompressed(new FileInputStream(file));
             } catch (Exception e) {
@@ -1389,7 +1389,7 @@ public class Server {
             }
         } else {
             this.logger.notice(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
-        }
+        }*/
 
         Position spawn = this.getDefaultLevel().getSafeSpawn();
         CompoundTag nbt = new CompoundTag()
@@ -1426,7 +1426,7 @@ public class Server {
     }
 
     public void saveOfflinePlayerData(String name, CompoundTag tag, boolean async) {
-        if (this.shouldSavePlayerData()) {
+        /*if (this.shouldSavePlayerData()) {
             try {
                 if (async) {
                     this.getScheduler().scheduleAsyncTask(new FileWriteTask(this.getDataPath() + "players/" + name.toLowerCase() + ".dat", NBTIO.writeGZIPCompressed(tag, ByteOrder.BIG_ENDIAN)));
@@ -1439,7 +1439,7 @@ public class Server {
                     this.logger.logException(e);
                 }
             }
-        }
+        }*/
     }
 
     public Player getPlayer(String name) {

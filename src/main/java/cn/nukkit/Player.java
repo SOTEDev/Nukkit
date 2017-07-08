@@ -1181,7 +1181,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             containerSetContentPacket.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
             containerSetContentPacket.eid = this.id;
             this.dataPacket(containerSetContentPacket);
-        } else {
+        } else if(this.isCreative()) {
             if (this.isSurvival()) {
                 this.getAdventureSettings().setFlying(false);
             }
@@ -1197,6 +1197,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.inventory.sendContents(this);
         this.inventory.sendContents(this.getViewers().values());
         this.inventory.sendHeldItem(this.hasSpawned.values());
+        //if(this.isCreative()){
+        //    this.inventory.sendCreativeContents();
+        //}
 
         return true;
     }
@@ -1881,8 +1884,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (this.isCreative()) {
             this.inventory.setHeldItemSlot(0);
-        } else {
-            this.inventory.setHeldItemSlot(this.inventory.getHotbarSlotIndex(0));
+        //} else {
+        //    this.inventory.setHeldItemSlot(this.inventory.getHotbarSlotIndex(0));
         }
 
         if (this.isSpectator()) this.keepMovement = true;
@@ -1948,13 +1951,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             containerSetContentPacket.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
             containerSetContentPacket.eid = this.id;
             this.dataPacket(containerSetContentPacket);
-        } else {
+        } else if(this.gamemode == Player.CREATIVE) {
             ContainerSetContentPacket containerSetContentPacket = new ContainerSetContentPacket();
             containerSetContentPacket.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
             containerSetContentPacket.eid = this.id;
             containerSetContentPacket.slots = Item.getCreativeItems().stream().toArray(Item[]::new);
             this.dataPacket(containerSetContentPacket);
         }
+
+        //if(this.gamemode == Player.CREATIVE) {
+        //    this.inventory.sendCreativeContents();
+        //}
 
         this.setEnableClientCommand(true);
 

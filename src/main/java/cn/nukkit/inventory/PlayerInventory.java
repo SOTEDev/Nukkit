@@ -425,6 +425,14 @@ public class PlayerInventory extends BaseInventory {
         }
     }
 
+    public void sendCreativeContents() {
+        ContainerSetContentPacket containerSetContentPacket = new ContainerSetContentPacket();
+        containerSetContentPacket.windowid = ContainerSetContentPacket.SPECIAL_CREATIVE;
+        containerSetContentPacket.eid = this.getHolder().getId();
+        containerSetContentPacket.slots = Item.getCreativeItems().stream().toArray(Item[]::new);
+        ((Player)this.getHolder()).dataPacket(containerSetContentPacket);
+    }
+
     @Override
     public void sendSlot(int index, Player player) {
         this.sendSlot(index, new Player[]{player});

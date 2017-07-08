@@ -1744,6 +1744,24 @@ public class Item implements Cloneable {
         return enchantments.stream().toArray(Enchantment[]::new);
     }
 
+    public int getEnchantmentLevel(int id) {
+        return getEnchantmentLevel((short) (id & 0xffff));
+    }
+
+    public int getEnchantmentLevel(short id) {
+        if (!this.hasEnchantments()) {
+            return 0;
+        }
+
+        for (CompoundTag entry : this.getNamedTag().getList("ench", CompoundTag.class).getAll()) {
+            if (entry.getShort("id") == id) {
+                return entry.getShort("lvl");
+            }
+        }
+
+        return 0;
+    }
+
     public boolean hasCustomName() {
         if (!this.hasCompoundTag()) {
             return false;
