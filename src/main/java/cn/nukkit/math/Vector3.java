@@ -196,6 +196,14 @@ public class Vector3 implements Cloneable {
         return Math.pow(this.x - pos.x, 2) + Math.pow(this.y - pos.y, 2) + Math.pow(this.z - pos.z, 2);
     }
 
+    public double distanceSq(Vector3 pos) {
+        return Math.pow(this.x - pos.x, 2) + Math.pow(this.y - pos.y, 2) + Math.pow(this.z - pos.z, 2);
+    }
+
+    public double distanceSq(double tx, double ty, double tz) {
+        return Math.pow(this.x - tx, 2) + Math.pow(this.y - ty, 2) + Math.pow(this.z - tz, 2);
+    }
+
     public double maxPlainDistance() {
         return this.maxPlainDistance(0, 0);
     }

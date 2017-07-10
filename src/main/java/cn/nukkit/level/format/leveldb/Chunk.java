@@ -1,5 +1,17 @@
 package cn.nukkit.level.format.leveldb;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.base.Predicate;
+
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.blockentity.BlockEntity;
@@ -9,18 +21,13 @@ import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.leveldb.key.EntitiesKey;
 import cn.nukkit.level.format.leveldb.key.ExtraDataKey;
 import cn.nukkit.level.format.leveldb.key.TilesKey;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.*;
 
 /**
  * author: MagicDroidX
@@ -527,6 +534,10 @@ public class Chunk extends BaseFullChunk {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public <T extends Entity> void getEntitiesOfTypeWithinAAAB(Class<? extends T> entityClass, AxisAlignedBB aabb, List<T> listToFill, Predicate<? super T> p_177430_4_) {
     }
 
 }

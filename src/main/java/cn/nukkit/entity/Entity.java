@@ -1,15 +1,40 @@
 package cn.nukkit.entity;
 
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockDirt;
 import cn.nukkit.block.BlockFire;
+import cn.nukkit.block.BlockLava;
 import cn.nukkit.block.BlockWater;
-import cn.nukkit.entity.data.*;
-import cn.nukkit.event.entity.*;
+import cn.nukkit.entity.data.ByteEntityData;
+import cn.nukkit.entity.data.EntityData;
+import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.entity.data.FloatEntityData;
+import cn.nukkit.entity.data.IntEntityData;
+import cn.nukkit.entity.data.LongEntityData;
+import cn.nukkit.entity.data.ShortEntityData;
+import cn.nukkit.entity.data.StringEntityData;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.event.entity.EntityDespawnEvent;
+import cn.nukkit.event.entity.EntityLevelChangeEvent;
+import cn.nukkit.event.entity.EntityMotionEvent;
+import cn.nukkit.event.entity.EntityPortalEnterEvent;
 import cn.nukkit.event.entity.EntityPortalEnterEvent.PortalType;
+import cn.nukkit.event.entity.EntityRegainHealthEvent;
+import cn.nukkit.event.entity.EntitySpawnEvent;
+import cn.nukkit.event.entity.EntityTeleportEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent;
@@ -18,7 +43,11 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.*;
+import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.Vector2;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -36,10 +65,6 @@ import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
-
-import java.lang.reflect.Constructor;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author MagicDroidX
@@ -223,7 +248,13 @@ public abstract class Entity extends Location implements Metadatable {
     public double lastMotionZ;
 
     public double lastYaw;
+    public double lastHeadYaw;
     public double lastPitch;
+
+    public float renderYawOffset;
+    public float lastRenderYawOffset;
+
+    public double headYaw;
 
     public AxisAlignedBB boundingBox;
     public boolean onGround;
@@ -271,6 +302,8 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected boolean isPlayer = false;
 
+    protected Random rand;
+
     public float getHeight() {
         return 0;
     }
@@ -311,6 +344,7 @@ public abstract class Entity extends Location implements Metadatable {
         if (this instanceof Player) {
             return;
         }
+        this.rand = new Random();
 
         this.init(chunk, nbt);
     }
@@ -1099,16 +1133,17 @@ public abstract class Entity extends Location implements Metadatable {
 
         double diffMotion = (this.motionX - this.lastMotionX) * (this.motionX - this.lastMotionX) + (this.motionY - this.lastMotionY) * (this.motionY - this.lastMotionY) + (this.motionZ - this.lastMotionZ) * (this.motionZ - this.lastMotionZ);
 
-        if (diffPosition > 0.0001 || diffRotation > 1.0) { //0.2 ** 2, 1.5 ** 2
+        //if (diffPosition > 0.0001 || diffRotation > 1.0) { //0.2 ** 2, 1.5 ** 2
             this.lastX = this.x;
             this.lastY = this.y;
             this.lastZ = this.z;
 
             this.lastYaw = this.yaw;
             this.lastPitch = this.pitch;
+            this.lastHeadYaw = this.headYaw;
 
-            this.addMovement(this.x, this.y + this.getBaseOffset(), this.z, this.yaw, this.pitch, this.yaw);
-        }
+            this.addMovement(this.x, this.y + this.getBaseOffset(), this.z, this.yaw, this.pitch, this.headYaw);
+        //}
 
         if (diffMotion > 0.0025 || (diffMotion > 0.0001 && this.getMotion().lengthSquared() <= 0.0001)) { //0.05 ** 2
             this.lastMotionX = this.motionX;
@@ -1328,6 +1363,18 @@ public abstract class Entity extends Location implements Metadatable {
 
         if (block instanceof BlockWater) {
             double f = (block.y + 1) - (((BlockWater) block).getFluidHeightPercent() - 0.1111111);
+            return y < f;
+        }
+
+        return false;
+    }
+
+    public boolean isInsideOfLava() {
+        double y = this.y + this.getEyeHeight();
+        Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(y), NukkitMath.floorDouble(this.z)));
+
+        if (block instanceof BlockLava) {
+            double f = (block.y + 1) - (((BlockLava) block).getFluidHeightPercent() - 0.1111111);
             return y < f;
         }
 

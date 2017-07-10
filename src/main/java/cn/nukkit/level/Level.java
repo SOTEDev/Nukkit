@@ -1,8 +1,55 @@
 package cn.nukkit.level;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.ref.SoftReference;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Random;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.base.Predicate;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.Lists;
+
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockBeetroot;
+import cn.nukkit.block.BlockCactus;
+import cn.nukkit.block.BlockCarrot;
+import cn.nukkit.block.BlockCocoa;
+import cn.nukkit.block.BlockFarmland;
+import cn.nukkit.block.BlockFire;
+import cn.nukkit.block.BlockGrass;
+import cn.nukkit.block.BlockIce;
+import cn.nukkit.block.BlockLava;
+import cn.nukkit.block.BlockLavaStill;
+import cn.nukkit.block.BlockLeaves;
+import cn.nukkit.block.BlockLeaves2;
+import cn.nukkit.block.BlockMushroomBrown;
+import cn.nukkit.block.BlockMushroomRed;
+import cn.nukkit.block.BlockMycelium;
+import cn.nukkit.block.BlockNetherWart;
+import cn.nukkit.block.BlockOreRedstoneGlowing;
+import cn.nukkit.block.BlockPotato;
+import cn.nukkit.block.BlockRedstoneDiode;
+import cn.nukkit.block.BlockSapling;
+import cn.nukkit.block.BlockSnowLayer;
+import cn.nukkit.block.BlockStemMelon;
+import cn.nukkit.block.BlockStemPumpkin;
+import cn.nukkit.block.BlockSugarcane;
+import cn.nukkit.block.BlockWheat;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.entity.Entity;
@@ -13,7 +60,14 @@ import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
-import cn.nukkit.event.level.*;
+import cn.nukkit.event.level.ChunkLoadEvent;
+import cn.nukkit.event.level.ChunkPopulateEvent;
+import cn.nukkit.event.level.ChunkUnloadEvent;
+import cn.nukkit.event.level.LevelSaveEvent;
+import cn.nukkit.event.level.LevelUnloadEvent;
+import cn.nukkit.event.level.SpawnChangeEvent;
+import cn.nukkit.event.level.ThunderChangeEvent;
+import cn.nukkit.event.level.WeatherChangeEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.weather.LightningStrikeEvent;
@@ -32,36 +86,55 @@ import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.level.format.leveldb.LevelDB;
 import cn.nukkit.level.format.mcregion.McRegion;
 import cn.nukkit.level.generator.Generator;
-import cn.nukkit.level.generator.task.*;
+import cn.nukkit.level.generator.task.GenerationTask;
+import cn.nukkit.level.generator.task.GeneratorRegisterTask;
+import cn.nukkit.level.generator.task.GeneratorUnregisterTask;
+import cn.nukkit.level.generator.task.LightPopulationTask;
+import cn.nukkit.level.generator.task.PopulationTask;
 import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.sound.BlockPlaceSound;
 import cn.nukkit.level.sound.Sound;
-import cn.nukkit.math.*;
+import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
+import cn.nukkit.math.BlockVector3;
+import cn.nukkit.math.MathHelper;
+import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.Vector2;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.BlockMetadataStore;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.*;
-import cn.nukkit.network.protocol.*;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.DoubleTag;
+import cn.nukkit.nbt.tag.FloatTag;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.StringTag;
+import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.MoveEntityPacket;
+import cn.nukkit.network.protocol.SetEntityMotionPacket;
+import cn.nukkit.network.protocol.SetSpawnPositionPacket;
+import cn.nukkit.network.protocol.SetTimePacket;
+import cn.nukkit.network.protocol.UpdateBlockPacket;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.timings.LevelTimings;
-import cn.nukkit.utils.*;
+import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.BlockUpdateEntry;
+import cn.nukkit.utils.EntitySelectors;
+import cn.nukkit.utils.LevelException;
+import cn.nukkit.utils.MainLogger;
+import cn.nukkit.utils.TextFormat;
+import cn.nukkit.utils.Utils;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
-import com.google.common.cache.CacheBuilder;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.ref.SoftReference;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * author: MagicDroidX Nukkit Project
@@ -2168,6 +2241,79 @@ public class Level implements ChunkManager, Metadatable {
         return nearby.stream().toArray(Entity[]::new);
     }
 
+    public <T extends Entity> List<T> getEntitiesWithinAABB(Class <? extends T > classEntity, AxisAlignedBB bb){
+        return this.<T>getEntitiesWithinAABB(classEntity, bb, EntitySelectors.NOT_SPECTATING);
+    }
+
+    public <T extends Entity> List<T> getEntitiesWithinAABB(Class <? extends T > clazz, AxisAlignedBB aabb, Predicate <? super T > filter){
+        List<T> list = Lists.<T>newArrayList();
+
+        int minX = NukkitMath.floorDouble((aabb.minX - 2) / 16);
+        int maxX = NukkitMath.ceilDouble((aabb.maxX + 2) / 16);
+        int minZ = NukkitMath.floorDouble((aabb.minZ - 2) / 16);
+        int maxZ = NukkitMath.ceilDouble((aabb.maxZ + 2) / 16);
+
+        for (int x = minX; x <= maxX; ++x) {
+            for (int z = minZ; z <= maxZ; ++z) {
+                for (Entity ent : this.getChunkEntities(x, z).values()) {
+                    if (ent.boundingBox.intersectsWith(aabb) && ent.getClass().equals(clazz) && filter.apply((T)ent)) {
+                    	System.out.println("add");
+                        list.add((T)ent);
+                    }
+                }
+            }
+        }
+
+        return list;
+    }
+
+    public <T extends Entity> T findNearestEntityWithinAABB(Class <? extends T > entityType, AxisAlignedBB aabb, T closestTo){
+        List<T> list = this.<T>getEntitiesWithinAABB(entityType, aabb);
+        T t = null;
+        double d0 = Double.MAX_VALUE;
+
+        for (int i = 0; i < list.size(); ++i){
+            T t1 = list.get(i);
+
+            if (t1 != closestTo && EntitySelectors.NOT_SPECTATING.apply(t1)){
+                double d1 = closestTo.distanceSq(t1);
+
+                if (d1 <= d0){
+                    t = t1;
+                    d0 = d1;
+                }
+            }
+        }
+
+        return t;
+    }
+
+    public Player getClosestPlayerToEntity(Entity entityIn, double distance){
+        return this.getClosestPlayer(entityIn.x, entityIn.y, entityIn.z, distance);
+    }
+
+    public Player getClosestPlayer(double x, double y, double z, double distance){
+        double d0 = -1.0D;
+        Player entityplayer = null;
+        Vector3 vec = new Vector3(x, y, z);
+
+        for (Entity e : this.getEntities()){
+            if(e instanceof Player){
+                Player player = (Player)e;
+                if (EntitySelectors.NOT_SPECTATING.apply(player)){
+                    double d1 = player.distanceSq(vec);
+
+                    if ((distance < 0.0D || d1 < distance * distance) && (d0 == -1.0D || d1 < d0)){
+                        d0 = d1;
+                        entityplayer = player;
+                    }
+                }
+            }
+        }
+
+        return entityplayer;
+    }
+
     public Map<Long, BlockEntity> getBlockEntities() {
         return blockEntities;
     }
@@ -2990,7 +3136,7 @@ public class Level implements ChunkManager, Metadatable {
         pk.y = (float) y;
         pk.z = (float) z;
         pk.yaw = (float) yaw;
-        pk.headYaw = (float) yaw;
+        pk.headYaw = (float) headYaw;
         pk.pitch = (float) pitch;
 
         this.addChunkPacket(chunkX, chunkZ, pk);

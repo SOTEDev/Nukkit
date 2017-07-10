@@ -185,6 +185,14 @@ public class BlockVector3 implements Cloneable {
         return Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2) + Math.pow(this.z - z, 2);
     }
 
+    public double distanceSq(BlockVector3 pos) {
+        return Math.pow(this.x - pos.x, 2) + Math.pow(this.y - pos.y, 2) + Math.pow(this.z - pos.z, 2);
+    }
+
+    public double distanceSq(double x, double y, double z) {
+        return Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2) + Math.pow(this.z - z, 2);
+    }
+
     @Override
     public boolean equals(Object ob) {
         if (ob == null) return false;

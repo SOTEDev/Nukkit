@@ -1,5 +1,19 @@
 package cn.nukkit.level.format.anvil;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.base.Predicate;
+
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
@@ -8,19 +22,21 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseChunk;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
-import cn.nukkit.nbt.tag.*;
-import cn.nukkit.utils.*;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.nio.ByteOrder;
-import java.util.*;
+import cn.nukkit.nbt.tag.ByteArrayTag;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.IntArrayTag;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.StringTag;
+import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.BinaryStream;
+import cn.nukkit.utils.BlockUpdateEntry;
+import cn.nukkit.utils.ChunkException;
+import cn.nukkit.utils.Zlib;
 
 /**
  * author: MagicDroidX
@@ -482,5 +498,9 @@ public class Chunk extends BaseChunk {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public <T extends Entity> void getEntitiesOfTypeWithinAAAB(Class<? extends T> entityClass, AxisAlignedBB aabb, List<T> listToFill, Predicate<? super T> p_177430_4_) {
     }
 }

@@ -1,10 +1,21 @@
 package cn.nukkit.level.format.mcregion;
 
+import java.io.ByteArrayInputStream;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.base.Predicate;
+
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.ByteArrayTag;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -13,13 +24,6 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Zlib;
-
-import java.io.ByteArrayInputStream;
-import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -348,6 +352,17 @@ public class Chunk extends BaseFullChunk {
     public void setGenerated(boolean value) {
         this.nbt.putBoolean("TerrainGenerated", value);
         this.hasChanged = true;
+    }
+
+    public <T extends Entity> void getEntitiesOfTypeWithinAAAB(Class <? extends T > entityClass, AxisAlignedBB aabb, List<T> listToFill, Predicate <? super T > p_177430_4_){
+
+        for (Entity e : this.getEntities().values()){
+            //if(e.getClass().equals(entityClass)){
+                if (e.getBoundingBox().intersectsWith(aabb) && (p_177430_4_ == null || p_177430_4_.apply((T)e))){
+                    listToFill.add((T)e);
+                }
+            //}
+        }
     }
 
     public static Chunk fromBinary(byte[] data) {

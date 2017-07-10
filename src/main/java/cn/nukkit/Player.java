@@ -1884,8 +1884,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (this.isCreative()) {
             this.inventory.setHeldItemSlot(0);
-        //} else {
-        //    this.inventory.setHeldItemSlot(this.inventory.getHotbarSlotIndex(0));
+        } else {
+            this.inventory.setHeldItemSlot(this.inventory.getHotbarSlotIndex(0));
         }
 
         if (this.isSpectator()) this.keepMovement = true;
@@ -1965,7 +1965,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.setEnableClientCommand(true);
 
-        this.server.sendFullPlayerListData(this);
+        //this.server.sendFullPlayerListData(this);
 
         this.forceMovement = this.teleportPosition = this.getPosition();
 
@@ -4420,7 +4420,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 ((Player) damager).getFoodData().updateFoodExpLevel(0.3);
             }
             //Critical hit
-            boolean add = false;
+            /*boolean add = false;
             if (!damager.onGround) {
                 NukkitRandom random = new NukkitRandom();
                 for (int i = 0; i < 5; i++) {
@@ -4430,7 +4430,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 add = true;
             }
-            if (add) source.setDamage((float) (source.getDamage() * 1.5));
+            if (add) source.setDamage((float) (source.getDamage() * 1.5));*/
         }
 
         if (super.attack(source)) { //!source.isCancelled()

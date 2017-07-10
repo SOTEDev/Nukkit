@@ -10,6 +10,7 @@ public class EntityEventPacket extends DataPacket {
 
     public static final byte HURT_ANIMATION = 2;
     public static final byte DEATH_ANIMATION = 3;
+    public static final byte ATTACK_ANIMATION = 4;
 
     public static final byte TAME_FAIL = 6;
     public static final byte TAME_SUCCESS = 7;

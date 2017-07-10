@@ -1,5 +1,12 @@
 package cn.nukkit.item;
 
+import java.io.IOException;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
@@ -16,13 +23,6 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.Binary;
-
-import java.io.IOException;
-import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * author: MagicDroidX
@@ -1155,7 +1155,7 @@ public class Item implements Cloneable {
         addCreativeItem(Item.get(Item.SPAWN_EGG, 16)); //Mooshroom
         addCreativeItem(Item.get(Item.SPAWN_EGG, 17)); //Squid
         addCreativeItem(Item.get(Item.SPAWN_EGG, 19)); //Bat 
-		//addCreativeItem(Item.get(Item.SPAWN_EGG, 20)); //Iron Golem
+        addCreativeItem(Item.get(Item.SPAWN_EGG, 20)); //Iron Golem
         //addCreativeItem(Item.get(Item.SPAWN_EGG, 21)); //Snow Golem
         addCreativeItem(Item.get(Item.SPAWN_EGG, 22)); //Ocelot
         addCreativeItem(Item.get(Item.SPAWN_EGG, 23)); //Horse

@@ -1,10 +1,14 @@
 package cn.nukkit.level.format;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.base.Predicate;
+
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
-
-import java.io.IOException;
-import java.util.Map;
+import cn.nukkit.math.AxisAlignedBB;
 
 /**
  * author: MagicDroidX
@@ -151,5 +155,7 @@ public interface FullChunk extends Cloneable {
     void setChanged();
 
     void setChanged(boolean changed);
+
+    <T extends Entity> void getEntitiesOfTypeWithinAAAB(Class <? extends T > entityClass, AxisAlignedBB aabb, List<T> listToFill, Predicate <? super T > p_177430_4_);
 
 }
