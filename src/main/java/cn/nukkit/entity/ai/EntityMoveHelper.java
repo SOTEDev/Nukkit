@@ -2,9 +2,7 @@ package cn.nukkit.entity.ai;
 
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.EntityLiving;
-import cn.nukkit.level.particle.LavaDripParticle;
 import cn.nukkit.math.MathHelper;
-import cn.nukkit.math.Vector3;
 
 public class EntityMoveHelper{
 
@@ -47,7 +45,6 @@ public class EntityMoveHelper{
             double d0 = this.posX - this.entity.x;
             double d1 = this.posZ - this.entity.z;
             double d2 = this.posY - (double)i;
-            this.entity.level.addParticle(new LavaDripParticle(new Vector3(this.posX, this.posY+5, this.posZ)));
             double d3 = d0 * d0 + d2 * d2 + d1 * d1;
 
             if (d3 >= 2.500000277905201E-7D){

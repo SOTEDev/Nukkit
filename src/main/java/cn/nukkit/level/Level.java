@@ -2257,7 +2257,6 @@ public class Level implements ChunkManager, Metadatable {
             for (int z = minZ; z <= maxZ; ++z) {
                 for (Entity ent : this.getChunkEntities(x, z).values()) {
                     if (ent.boundingBox.intersectsWith(aabb) && ent.getClass().equals(clazz) && filter.apply((T)ent)) {
-                    	System.out.println("add");
                         list.add((T)ent);
                     }
                 }

@@ -868,6 +868,14 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean attack(EntityDamageEvent source) {
+        return attack(source, (Vector3)null);
+    }
+
+    public boolean attack(float damage) {
+        return this.attack(new EntityDamageEvent(this, DamageCause.CUSTOM, damage));
+    }
+
+    public boolean attack(EntityDamageEvent source, Vector3 bonusKockBack) {
         if (hasEffect(Effect.FIRE_RESISTANCE)
                 && (source.getCause() == DamageCause.FIRE
                 || source.getCause() == DamageCause.FIRE_TICK
@@ -882,10 +890,6 @@ public abstract class Entity extends Location implements Metadatable {
         setLastDamageCause(source);
         setHealth(getHealth() - source.getFinalDamage());
         return true;
-    }
-
-    public boolean attack(float damage) {
-        return this.attack(new EntityDamageEvent(this, DamageCause.CUSTOM, damage));
     }
 
     public void heal(EntityRegainHealthEvent source) {

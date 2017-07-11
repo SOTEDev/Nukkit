@@ -40,6 +40,6 @@ public class AddItemEntityPacket extends DataPacket {
         this.putSlot(this.item);
         this.putVector3f(this.x, this.y, this.z);
         this.putVector3f(this.speedX, this.speedY, this.speedZ);
-        this.put(Binary.writeMetadata(metadata));
+        //this.put(Binary.writeMetadata(metadata));
     }
 }

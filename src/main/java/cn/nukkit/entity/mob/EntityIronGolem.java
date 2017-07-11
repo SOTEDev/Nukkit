@@ -2,7 +2,6 @@ package cn.nukkit.entity.mob;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Attribute;
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.ai.EntityAIAttackOnCollide;
 import cn.nukkit.entity.ai.EntityAIHurtByTarget;
 import cn.nukkit.entity.ai.EntityAILookIdle;
@@ -14,6 +13,7 @@ import cn.nukkit.entity.ai.EntityAIWatchClosest;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.MathHelper;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.pathfinding.PathNavigateGround;
@@ -28,6 +28,8 @@ public class EntityIronGolem extends EntityMob {
     private int homeCheckTimer;
     private int attackTimer;
     private int holdRoseTick;
+
+    private Vector3 bonus = new Vector3(0.0D, 0.4000000059604645D, 0.0D);
 
     @Override
     public int getNetworkId() {
@@ -85,12 +87,9 @@ public class EntityIronGolem extends EntityMob {
         super.updateAITasks();
     }
 
-    public boolean attackEntityAsMob(Entity entityIn){
-        super.attackEntityAsMob(entityIn);
-        this.attackTimer = 10;
-        entityIn.motionY += 0.4000000059604645D;
-        //this.playSound("mob.irongolem.throw", 1.0F, 1.0F);
-        return true;
+    @Override
+    public Vector3 getBonusKnockBack(){
+        return bonus;
     }
 
     public void onLivingUpdate(){

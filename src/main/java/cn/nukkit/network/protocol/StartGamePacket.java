@@ -20,8 +20,8 @@ public class StartGamePacket extends DataPacket {
     public float x;
     public float y;
     public float z;
-    public float yaw;
     public float pitch;
+    public float yaw;
     public int seed;
     public byte dimension;
     public int generator = 1;
@@ -37,10 +37,10 @@ public class StartGamePacket extends DataPacket {
     public float lightningLevel;
     public boolean commandsEnabled;
     public boolean isTexturePacksRequired = false;
-    public RuleData[] ruleDatas = new RuleData[0];
     public String levelId = ""; //base64 string, usually the same as world folder name in vanilla
     public String worldName;
     public String premiumWorldTemplateId = "";
+    public RuleData[] ruleDatas = new RuleData[0];
     public boolean unknown = false;
     public long currentTick;
 
@@ -56,8 +56,8 @@ public class StartGamePacket extends DataPacket {
         this.putVarLong(this.entityRuntimeId);
         this.putVarInt(this.playerGamemode);
         this.putVector3f(this.x, this.y, this.z);
-        this.putLFloat(this.yaw);
         this.putLFloat(this.pitch);
+        this.putLFloat(this.yaw);
         this.putVarInt(this.seed);
         this.putVarInt(this.dimension);
         this.putVarInt(this.generator);
@@ -71,15 +71,16 @@ public class StartGamePacket extends DataPacket {
         this.putLFloat(this.lightningLevel);
         this.putBoolean(this.commandsEnabled);
         this.putBoolean(this.isTexturePacksRequired);
-        this.putUnsignedVarInt(this.ruleDatas.length);
+        /*this.putUnsignedVarInt(this.ruleDatas.length);
         for (RuleData rule : this.ruleDatas) {
             this.putRuleData(rule);
-        }
+        }*/
+        this.putUnsignedVarInt(0);
         this.putString(this.levelId);
         this.putString(this.worldName);
         this.putString(this.premiumWorldTemplateId);
-        this.putBoolean(this.unknown);
-        this.putLLong(this.currentTick);
+        //this.putBoolean(this.unknown);
+        //this.putLLong(this.currentTick);
     }
 
 }

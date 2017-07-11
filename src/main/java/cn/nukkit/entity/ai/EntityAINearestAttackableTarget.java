@@ -80,7 +80,6 @@ public class EntityAINearestAttackableTarget<T extends EntityLiving> extends Ent
                 return false;
             }else{
                 this.targetEntity = (EntityLiving)list.get(0);
-                System.out.println(this.targetEntity.getName());
                 return true;
             }
         }
@@ -88,7 +87,6 @@ public class EntityAINearestAttackableTarget<T extends EntityLiving> extends Ent
 
     public void startExecuting(){
         this.taskOwner.setAttackTarget(this.targetEntity);
-        System.out.println(this.targetEntity.getName());
         super.startExecuting();
     }
 

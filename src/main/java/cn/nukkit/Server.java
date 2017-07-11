@@ -93,6 +93,8 @@ import cn.nukkit.entity.passive.EntityVillager;
 import cn.nukkit.entity.passive.EntityWolf;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityEnderPearl;
+import cn.nukkit.entity.projectile.EntityLargeFireball;
+import cn.nukkit.entity.projectile.EntitySmallFireball;
 import cn.nukkit.entity.projectile.EntitySnowball;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
@@ -2007,6 +2009,8 @@ public class Server {
         Entity.registerEntity("FallingSand", EntityFallingBlock.class);
         Entity.registerEntity("PrimedTnt", EntityPrimedTNT.class);
         Entity.registerEntity("Snowball", EntitySnowball.class);
+        Entity.registerEntity("SmallFireball", EntitySmallFireball.class);
+        Entity.registerEntity("LargeFireball", EntityLargeFireball.class);
         Entity.registerEntity("EnderPearl", EntityEnderPearl.class);
         Entity.registerEntity("Painting", EntityPainting.class);
         //todo mobs

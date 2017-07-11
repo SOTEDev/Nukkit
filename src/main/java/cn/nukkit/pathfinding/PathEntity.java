@@ -1,8 +1,6 @@
 package cn.nukkit.pathfinding;
 
-import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.level.particle.LavaDripParticle;
 import cn.nukkit.math.Vector3;
 
 public class PathEntity{
@@ -13,10 +11,6 @@ public class PathEntity{
 
     public PathEntity(PathPoint[] pathpoints){
         this.points = pathpoints;
-        for(PathPoint point : pathpoints){
-
-            Server.getInstance().getDefaultLevel().addParticle(new LavaDripParticle(new Vector3(point.xCoord, point.yCoord+5, point.zCoord)));
-        }
         this.pathLength = pathpoints.length;
     }
 

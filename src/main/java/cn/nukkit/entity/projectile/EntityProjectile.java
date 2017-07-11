@@ -3,8 +3,12 @@ package cn.nukkit.entity.projectile;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
-import cn.nukkit.event.entity.*;
+import cn.nukkit.event.entity.EntityCombustByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
@@ -95,6 +99,10 @@ public abstract class EntityProjectile extends Entity {
         this.namedTag.putShort("Age", this.age);
     }
 
+    public void onHit(){
+        
+    }
+
     @Override
     public boolean onUpdate(int currentTick) {
         if (this.closed) {
@@ -152,6 +160,7 @@ public abstract class EntityProjectile extends Entity {
 
             if (movingObjectPosition != null) {
                 if (movingObjectPosition.entityHit != null) {
+                    this.onHit();
                     onCollideWithEntity(movingObjectPosition.entityHit);
                     return true;
                 }
@@ -166,6 +175,7 @@ public abstract class EntityProjectile extends Entity {
                 this.motionY = 0;
                 this.motionZ = 0;
 
+                this.onHit();
                 this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromBlock(this.getFloorX(), this.getFloorY(), this.getFloorZ(), -1, this)));
                 return false;
             } else if (!this.isCollided && this.hadCollision) {

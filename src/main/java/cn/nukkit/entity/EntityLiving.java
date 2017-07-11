@@ -69,7 +69,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     private EntityLookHelper lookHelper = new EntityLookHelper(this);
     protected EntityMoveHelper moveHelper = new EntityMoveHelper(this);
     protected EntityJumpHelper jumpHelper = new EntityJumpHelper(this);
-    //private EntityBodyHelper bodyHelper;
+    private EntityBodyHelper bodyHelper = new EntityBodyHelper(this);
 
     protected PathNavigate navigator;
     public final EntityAITasks tasks = new EntityAITasks();
@@ -158,6 +158,11 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
     @Override
     public boolean attack(EntityDamageEvent source) {
+        return attack(source, (Vector3)null);
+    }
+
+    @Override
+    public boolean attack(EntityDamageEvent source, Vector3 bonusKnockBack) {
         if (this.attackTime > 0 || this.noDamageTicks > 0) {
             EntityDamageEvent lastCause = this.getLastDamageCause();
             if (lastCause != null && lastCause.getDamage() >= source.getDamage()) {
@@ -165,7 +170,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             }
         }
 
-        if (super.attack(source)) {
+        if (super.attack(source, bonusKnockBack)) {
             if (source instanceof EntityDamageByEntityEvent) {
                 Entity e = ((EntityDamageByEntityEvent) source).getDamager();
                 if (source instanceof EntityDamageByChildEntityEvent) {
@@ -178,7 +183,11 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
                 double deltaX = this.x - e.x;
                 double deltaZ = this.z - e.z;
-                this.knockBack(e, source.getDamage(), deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack());
+                if(bonusKnockBack == null){
+                    this.knockBack(e, source.getDamage(), deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack());
+                }else{
+                	this.knockBack(e, source.getDamage(), deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack(), bonusKnockBack);
+                }
             }
 
             EntityEventPacket pk = new EntityEventPacket();
@@ -218,6 +227,34 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         if (motion.y > base) {
             motion.y = base;
         }
+
+        this.setMotion(motion);
+    }
+
+    public void knockBack(Entity attacker, double damage, double x, double z, double base, Vector3 bonus) {
+        double f = Math.sqrt(x * x + z * z);
+        if (f <= 0) {
+            return;
+        }
+
+        f = 1 / f;
+
+        Vector3 motion = new Vector3(this.motionX, this.motionY, this.motionZ);
+
+        motion.x /= 2d;
+        motion.y /= 2d;
+        motion.z /= 2d;
+        motion.x += x * f * base;
+        motion.y += base;
+        motion.z += z * f * base;
+
+        if (motion.y > base) {
+            motion.y = base;
+        }
+
+        motion.x += bonus.x;
+        motion.y += bonus.y;
+        motion.z += bonus.z;
 
         this.setMotion(motion);
     }
@@ -396,6 +433,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         if (flag){
             p_110146_2_ *= -1.0F;
         }
+        this.bodyHelper.updateRenderAngles();
 
         return p_110146_2_;
     }
@@ -875,7 +913,12 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         Attribute attribute = this.getAttributeMap().getAttribute(Attribute.ATTACK_DAMAGE);
         float damage = attribute == null ? 1.0F : attribute.getValue();
         EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(this, entityIn, EntityDamageEvent.DamageCause.ENTITY_ATTACK, damage);
-        entityIn.attack(event);
+        Vector3 bonus = getBonusKnockBack();
+        if(bonus == null){
+            entityIn.attack(event);
+        }else{
+            entityIn.attack(event, bonus);
+        }
         return true;
     }
 
@@ -895,4 +938,8 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     //public boolean isOnTeam(Team p_142012_1_){
     //    return this.getTeam() != null ? this.getTeam().isSameTeam(p_142012_1_) : false;
     //}
+
+    public Vector3 getBonusKnockBack(){
+        return null;
+    }
 }
