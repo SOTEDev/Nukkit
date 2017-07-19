@@ -1,5 +1,8 @@
 package cn.nukkit.entity;
 
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.IntPositionEntityData;
 import cn.nukkit.entity.data.Skin;
@@ -8,9 +11,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddPlayerPacket;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.utils.Utils;
-
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 /**
  * author: MagicDroidX

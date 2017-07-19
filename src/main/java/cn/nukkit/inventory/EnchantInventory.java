@@ -1,5 +1,10 @@
 package cn.nukkit.inventory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
@@ -11,11 +16,6 @@ import cn.nukkit.level.Position;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.utils.DyeColor;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX
@@ -69,8 +69,8 @@ public class EnchantInventory extends ContainerInventory {
     }
 
     @Override
-    public void onSlotChange(int index, Item before) {
-        super.onSlotChange(index, before);
+    public void onSlotChange(int index, Item before, boolean send) {
+        super.onSlotChange(index, before, send);
 
         if (index == 0) {
             Item item = this.getItem(0);

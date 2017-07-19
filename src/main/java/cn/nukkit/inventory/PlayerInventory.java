@@ -1,5 +1,7 @@
 package cn.nukkit.inventory;
 
+import java.util.Collection;
+
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.BlockAir;
@@ -14,8 +16,6 @@ import cn.nukkit.network.protocol.ContainerSetContentPacket;
 import cn.nukkit.network.protocol.ContainerSetSlotPacket;
 import cn.nukkit.network.protocol.MobArmorEquipmentPacket;
 import cn.nukkit.network.protocol.MobEquipmentPacket;
-
-import java.util.Collection;
 
 /**
  * author: MagicDroidX
@@ -60,12 +60,51 @@ public class PlayerInventory extends BaseInventory {
         return itemInHandIndex;
     }
 
-    public void setHeldItemIndex(int index) {
-        if (index >= 0 && index < this.getHotbarSize()) {
-            this.itemInHandIndex = index;
+    public void setHeldItemIndex(int hotbarSlotIndex) {
+        setHeldItemIndex(hotbarSlotIndex, true, -1);
+    }
 
-            this.sendHeldItem(this.getHolder().getViewers().values());
+    public void setHeldItemIndex(int hotbarSlotIndex, boolean sendToHolder) {
+        setHeldItemIndex(hotbarSlotIndex, sendToHolder, -1);
+    }
+
+    public void setHeldItemIndex(int hotbarSlotIndex, boolean sendToHolder, int slotMapping) {
+        if(slotMapping != -1){
+            slotMapping -= this.getHotbarSize();
         }
+        if(0 <= hotbarSlotIndex && hotbarSlotIndex < this.getHotbarSize()){
+            this.itemInHandIndex = hotbarSlotIndex;
+            if(slotMapping != -1){
+                if(slotMapping < 0 || slotMapping >= this.getSize()){
+                    slotMapping = -1;
+                }
+
+                Item item = this.getItem(slotMapping);
+                if(this.getHolder() instanceof Player){
+                    PlayerItemHeldEvent ev = new PlayerItemHeldEvent((Player)this.getHolder(), item, slotMapping, hotbarSlotIndex);
+                    Server.getInstance().getPluginManager().callEvent(ev);
+                    if(ev.isCancelled()){
+                        this.sendHeldItem((Player)this.getHolder());
+                        this.sendContents((Player)this.getHolder());
+                        return;
+                    }
+                }
+
+                if(slotMapping != -1){
+                    for(int slot : this.hotbar){
+                        if(slot == slotMapping){
+                            this.hotbar[slot] = this.hotbar[this.itemInHandIndex];
+                        }
+                    }
+                 }
+
+                 this.hotbar[this.itemInHandIndex] = slotMapping;
+             }
+             this.sendHeldItem(this.getHolder().getViewers().values());
+             if(sendToHolder){
+                 this.sendHeldItem((Player)this.getHolder());
+             }
+         }
     }
 
     public Item getItemInHand() {
@@ -126,6 +165,7 @@ public class PlayerInventory extends BaseInventory {
         pk.item = item;
         pk.slot = (byte) this.getHeldItemSlot();
         pk.selectedSlot = (byte) this.getHeldItemIndex();
+        pk.windowId = ContainerSetContentPacket.SPECIAL_INVENTORY;
 
         for (Player player : players) {
             pk.eid = this.getHolder().getId();
@@ -143,15 +183,21 @@ public class PlayerInventory extends BaseInventory {
     }
 
     @Override
-    public void onSlotChange(int index, Item before) {
-        EntityHuman holder = this.getHolder();
-        if (holder instanceof Player && !((Player) holder).spawned) {
-            return;
+    public void onSlotChange(int index, Item before, boolean send) {
+        if(send){
+            EntityHuman holder = this.getHolder();
+            if (holder instanceof Player && !((Player) holder).spawned) {
+                return;
+            }
+
+            super.onSlotChange(index, before, send);
         }
-
-        super.onSlotChange(index, before);
-
-        if (index >= this.getSize()) {
+        if(index == this.itemInHandIndex){
+            this.sendHeldItem(this.getHolder().getViewers().values());
+            if(send){
+                this.sendHeldItem((Player)this.getHolder());
+            }
+        }else if (index >= this.getSize()) {
             this.sendArmorSlot(index, this.getViewers());
             this.sendArmorSlot(index, this.getHolder().getViewers().values());
         }
@@ -210,7 +256,7 @@ public class PlayerInventory extends BaseInventory {
         return setItem(index, item, false);
     }
 
-    private boolean setItem(int index, Item item, boolean ignoreArmorEvents) {
+    public boolean setItem(int index, Item item, boolean send) {
         if (index < 0 || index >= this.size) {
             return false;
         } else if (item.getId() == 0 || item.getCount() <= 0) {
@@ -218,7 +264,7 @@ public class PlayerInventory extends BaseInventory {
         }
 
         //Armor change
-        if (!ignoreArmorEvents && index >= this.getSize()) {
+        if (index >= this.getSize()) {
             EntityArmorChangeEvent ev = new EntityArmorChangeEvent(this.getHolder(), this.getItem(index), item, index);
             Server.getInstance().getPluginManager().callEvent(ev);
             if (ev.isCancelled() && this.getHolder() != null) {
@@ -238,13 +284,17 @@ public class PlayerInventory extends BaseInventory {
 
         Item old = this.getItem(index);
         this.slots.put(index, item.clone());
-        this.onSlotChange(index, old);
+        this.onSlotChange(index, old, send);
 
         return true;
     }
 
     @Override
     public boolean clear(int index) {
+        return clear(index, true);
+    }
+    @Override
+    public boolean clear(int index, boolean send) {
         if (this.slots.containsKey(index)) {
             Item item = new ItemBlock(new BlockAir(), null, 0);
             Item old = this.slots.get(index);
@@ -280,7 +330,7 @@ public class PlayerInventory extends BaseInventory {
                 this.slots.remove(index);
             }
 
-            this.onSlotChange(index, old);
+            this.onSlotChange(index, old, send);
         }
 
         return true;

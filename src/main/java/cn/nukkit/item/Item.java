@@ -2066,11 +2066,15 @@ public class Item implements Cloneable {
     }
 
     public final boolean equals(Item item, boolean checkDamage) {
-        return equals(item, checkDamage, true);
+        return equals(item, checkDamage, true, false);
     }
 
     public final boolean equals(Item item, boolean checkDamage, boolean checkCompound) {
-        return this.getId() == item.getId() && (!checkDamage || this.getDamage() == item.getDamage()) && (!checkCompound || Arrays.equals(this.getCompoundTag(), item.getCompoundTag()));
+        return equals(item, checkDamage, checkCompound, false);
+    }
+
+    public final boolean equals(Item item, boolean checkDamage, boolean checkCompound, boolean checkCount) {
+        return this.getId() == item.getId() && (!checkDamage || this.getDamage() == item.getDamage()) && (!checkCompound || Arrays.equals(this.getCompoundTag(), item.getCompoundTag())) && (!checkCount || this.getCount() == item.getCount());
     }
 
     public final boolean deepEquals(Item item) {

@@ -1,14 +1,11 @@
 package cn.nukkit.inventory;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
-import cn.nukkit.item.Item;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * author: MagicDroidX
@@ -16,31 +13,30 @@ import java.util.Set;
  */
 public class SimpleTransactionGroup implements TransactionGroup {
 
-    private final long creationTime;
-    protected boolean hasExecuted = false;
+    protected Player player = null;
 
-    protected Player source = null;
+    protected SimpleTransactionGroup.Queue  transactionQueue = null;
+
+    protected SimpleTransactionGroup.Queue  transactionsToRetry = null;
 
     protected final Set<Inventory> inventories = new HashSet<>();
 
-    protected final Set<Transaction> transactions = new HashSet<>();
+    protected long lastUpdate = -1;
+
+    protected int transactionCount = 0;
 
     public SimpleTransactionGroup() {
         this(null);
     }
 
-    public SimpleTransactionGroup(Player source) {
-        this.creationTime = System.currentTimeMillis();
-        this.source = source;
+    public SimpleTransactionGroup(Player player) {
+        this.player = player;
+        this.transactionQueue = new SimpleTransactionGroup.Queue();
+        this.transactionsToRetry = new SimpleTransactionGroup.Queue();
     }
 
-    public Player getSource() {
-        return source;
-    }
-
-    @Override
-    public long getCreationTime() {
-        return creationTime;
+    public Player getPlayer() {
+        return player;
     }
 
     @Override
@@ -49,107 +45,99 @@ public class SimpleTransactionGroup implements TransactionGroup {
     }
 
     @Override
-    public Set<Transaction> getTransactions() {
-        return transactions;
+    public SimpleTransactionGroup.Queue getTransactions() {
+        return transactionQueue;
+    }
+
+    @Override
+    public int getTransactionCount(){
+        return this.transactionCount;
     }
 
     @Override
     public void addTransaction(Transaction transaction) {
-        if (this.transactions.contains(transaction)) {
-            return;
-        }
-
-        for (Transaction tx : new HashSet<>(this.transactions)) {
-            if (tx.getInventory().equals(transaction.getInventory()) && tx.getSlot() == transaction.getSlot()) {
-                if (transaction.getCreationTime() >= tx.getCreationTime()) {
-                    this.transactions.remove(tx);
-                } else {
-                    return;
-                }
-            }
-        }
-
-        this.transactions.add(transaction);
         this.inventories.add(transaction.getInventory());
-    }
-
-    protected boolean matchItems(List<Item> needItems, List<Item> haveItems) {
-        for (Transaction ts : this.transactions) {
-            if (ts.getTargetItem().getId() != Item.AIR) {
-                needItems.add(ts.getTargetItem());
-            }
-            Item checkSourceItem = ts.getInventory().getItem(ts.getSlot());
-            Item sourceItem = ts.getSourceItem();
-            if (!checkSourceItem.deepEquals(sourceItem) || sourceItem.getCount() != checkSourceItem.getCount()) {
-                return false;
-            }
-            if (sourceItem.getId() != Item.AIR) {
-                haveItems.add(sourceItem);
-            }
+        this.transactionQueue.enqueue(transaction);
+        if(transaction.getInventory() instanceof Inventory){
+            this.inventories.add(transaction.getInventory());
         }
-
-        for (Item needItem : new ArrayList<>(needItems)) {
-            for (Item haveItem : new ArrayList<>(haveItems)) {
-                if (needItem.deepEquals(haveItem)) {
-                    int amount = Math.min(haveItem.getCount(), needItem.getCount());
-                    needItem.setCount(needItem.getCount() - amount);
-                    haveItem.setCount(haveItem.getCount() - amount);
-                    if (haveItem.getCount() == 0) {
-                        haveItems.remove(haveItem);
-                    }
-                    if (needItem.getCount() == 0) {
-                        needItems.remove(needItem);
-                        break;
-                    }
-                }
-            }
-        }
-
-        return true;
+        this.lastUpdate = System.currentTimeMillis();
+        this.transactionCount += 1;
     }
 
     @Override
-    public boolean canExecute() {
-        List<Item> haveItems = new ArrayList<>();
-        List<Item> needItems = new ArrayList<>();
+    public void execute() {
+        Set<Transaction> failed = new HashSet<>();
 
-        return this.matchItems(needItems, haveItems) && haveItems.isEmpty() && needItems.isEmpty() && !this.transactions.isEmpty();
-    }
-
-    @Override
-    public boolean execute() {
-        return execute(false);
-    }
-
-    @Override
-    public boolean execute(boolean force) {
-        if (this.hasExecuted || (!force && !this.canExecute())) {
-            return false;
+        while(!this.transactionsToRetry.isEmpty()){
+            this.transactionQueue.enqueue(this.transactionsToRetry.dequeue());
         }
 
         InventoryTransactionEvent ev = new InventoryTransactionEvent(this);
-        Server.getInstance().getPluginManager().callEvent(ev);
-        if (ev.isCancelled()) {
-            for (Inventory inventory : this.inventories) {
-                if (inventory instanceof PlayerInventory) {
-                    ((PlayerInventory) inventory).sendArmorContents(this.getSource());
+        if(!this.transactionQueue.isEmpty()){
+            Server.getInstance().getPluginManager().callEvent(ev);
+        }else{
+            return;
+        }
+        while(!this.transactionQueue.isEmpty()){
+            Transaction transaction = this.transactionQueue.dequeue();
+
+            if(ev.isCancelled()){
+                this.transactionCount -= 1;
+                transaction.sendSlotUpdate(this.player);
+                this.inventories.remove(transaction);
+            }else if(!transaction.execute(this.player)){
+                transaction.addFailure();
+                if(transaction.getFailures() >= SimpleTransactionGroup.DEFAULT_ALLOWED_RETRIES){
+                    this.transactionCount -= 1;
+                    failed.add(transaction);
+                }else{
+                    this.transactionsToRetry.enqueue(transaction);
                 }
-                inventory.sendContents(this.getSource());
+                continue;
             }
-            return false;
+
+            this.transactionCount -= 1;
+            transaction.setSuccess();
+            transaction.sendSlotUpdate(this.player);
+            this.inventories.remove(transaction);
         }
 
-        for (Transaction transaction : this.transactions) {
-            transaction.getInventory().setItem(transaction.getSlot(), transaction.getTargetItem());
+        for(Transaction f : failed){
+            f.sendSlotUpdate(this.player);
+            this.inventories.remove(f);
+        }
+    }
+
+    static class Queue {
+
+        final int SIZE = 5;
+        private Transaction[] values = new Transaction[SIZE+1];
+        private int head = 0;
+        private int tail = 0;
+
+        boolean enqueue(Transaction data) {
+            if (((tail + 1) % values.length) == head) {
+                return false;
+            }
+            values[tail++] = data;
+            tail = tail % values.length;
+            return true;
         }
 
-        this.hasExecuted = true;
+        Transaction dequeue() {
+            Transaction data = null;
+            if (tail != head) {
+                data = values[head++];
+                head = head % values.length;
+            }
+            return data;
+        }
 
-        return true;
+        boolean isEmpty() {
+            return (tail == head);
+        }
     }
 
-    @Override
-    public boolean hasExecuted() {
-        return this.hasExecuted;
-    }
 }
+

@@ -16,7 +16,7 @@ public class BlockEntityBed extends BlockEntitySpawnable {
         super(chunk, nbt);
 
         if (!this.namedTag.contains("color")) {
-            this.namedTag.putByte("color", 0);
+            this.namedTag.putByte("color", 14);
         }
 
         this.color = this.namedTag.getByte("color");

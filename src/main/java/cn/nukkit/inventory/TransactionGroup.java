@@ -8,19 +8,15 @@ import java.util.Set;
  */
 public interface TransactionGroup {
 
-    long getCreationTime();
-
-    Set<Transaction> getTransactions();
+    public static final int DEFAULT_ALLOWED_RETRIES = 5;
 
     Set<Inventory> getInventories();
 
+    SimpleTransactionGroup.Queue getTransactions();
+
+    int getTransactionCount();
+
     void addTransaction(Transaction transaction);
 
-    boolean canExecute();
-
-    boolean execute();
-
-    boolean execute(boolean force);
-
-    boolean hasExecuted();
+    void execute();
 }

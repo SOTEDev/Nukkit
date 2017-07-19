@@ -1,11 +1,11 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.Player;
-import cn.nukkit.item.Item;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+
+import cn.nukkit.Player;
+import cn.nukkit.item.Item;
 
 /**
  * author: MagicDroidX
@@ -83,5 +83,21 @@ public interface Inventory {
 
     void onClose(Player who);
 
-    void onSlotChange(int index, Item before);
+	boolean processSlotChange(Transaction transaction);
+
+	boolean slotContains(int slot, Item item);
+
+	boolean slotContains(int slot, Item item, boolean matchCount);
+
+	boolean setItem(int index, Item item, boolean send);
+
+	boolean clear(int index, boolean send);
+
+	void clearAll(boolean send);
+
+	void remove(Item item, boolean send);
+
+	void setContents(Map<Integer, Item> items, boolean send);
+
+	void onSlotChange(int index, Item before, boolean send);
 }
