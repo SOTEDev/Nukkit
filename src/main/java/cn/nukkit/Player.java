@@ -2390,8 +2390,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     MobEquipmentPacket mobEquipmentPacket = (MobEquipmentPacket) packet;
+                    Item item;
+                    int slot;
 
-                    if (mobEquipmentPacket.slot == 0x28 || mobEquipmentPacket.slot == 0 || mobEquipmentPacket.slot == 255) {
+                    /*if (mobEquipmentPacket.slot == 0x28 || mobEquipmentPacket.slot == 0 || mobEquipmentPacket.slot == 255) {
                         mobEquipmentPacket.slot = -1;
                     } else {
                         mobEquipmentPacket.slot -= 9;
@@ -2448,7 +2450,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
 
-                    this.inventory.sendHeldItem(this.hasSpawned.values());
+                    this.inventory.sendHeldItem(this.hasSpawned.values());*/
+
+                    this.inventory.setHeldItemIndex(mobEquipmentPacket.selectedSlot, false, mobEquipmentPacket.slot);
 
                     this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, false);
                     break;
