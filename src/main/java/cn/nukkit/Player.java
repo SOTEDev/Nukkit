@@ -353,6 +353,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     private ClientChainData loginChainData;
 
+    public Block breakingBlock = null; 
+
     public BlockEnderChest getViewingEnderChest() {
         return viewingEnderChest;
     }
@@ -2756,7 +2758,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     switch (playerActionPacket.action) {
                         case PlayerActionPacket.ACTION_START_BREAK:
-                            if (this.lastBreak != Long.MAX_VALUE || pos.distanceSquared(this) > 10000) {
+                            if (this.lastBreak != Long.MAX_VALUE || pos.distanceSquared(this) > 100) {
                                 break;
                             }
                             Block target = this.level.getBlock(pos);
@@ -2789,12 +2791,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     this.getLevel().addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
                                 }
                             }
+                            this.breakingBlock = target;
                             this.lastBreak = System.currentTimeMillis();
                             break;
 
                         case PlayerActionPacket.ACTION_ABORT_BREAK:
                             this.lastBreak = Long.MAX_VALUE;
-
+                            this.breakingBlock = null;
                         case PlayerActionPacket.ACTION_STOP_BREAK:
                             LevelEventPacket pk = new LevelEventPacket();
                             pk.evid = LevelEventPacket.EVENT_BLOCK_STOP_BREAK;
@@ -2803,6 +2806,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             pk.z = (float)pos.z;
                             pk.data = 0;
                             this.getLevel().addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
+                            this.breakingBlock = null;
                             break;
 
                         case PlayerActionPacket.ACTION_RELEASE_ITEM:
@@ -2895,6 +2899,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 }
                             }
                             //milk removed here, see the section of food
+
+                            this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, false);
+                            break;
 
                         case PlayerActionPacket.ACTION_STOP_SLEEPING:
                             this.stopSleep();
@@ -3014,8 +3021,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         case PlayerActionPacket.ACTION_WORLD_IMMUTABLE:
                             break; //TODO
                         case PlayerActionPacket.ACTION_CONTINUE_BREAK:
-                            block = this.level.getBlock(pos);
-                            this.level.addParticle(new PunchBlockParticle(pos, block, face));
+                            if(this.isBreakingBlock()){
+                                block = this.level.getBlock(pos);
+                                this.level.addParticle(new PunchBlockParticle(pos, block, face));
+                            }
                             break;
                     }
 
@@ -3226,11 +3235,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     this.craftingType = CRAFTING_SMALL;
 
-                    this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, false); //TODO: check if this should be true
                     EntityEventPacket entityEventPacket = (EntityEventPacket) packet;
 
                     switch (entityEventPacket.event) {
                         case EntityEventPacket.USE_ITEM: //Eating
+                            this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, false);
                             Item itemInHand = this.inventory.getItemInHand();
                             PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(this, itemInHand);
                             this.server.getPluginManager().callEvent(consumeEvent);
@@ -3274,6 +3283,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.inventory.sendHeldItem(this);
 
                             break;
+ 
+                        case EntityEventPacket.CONSUME_ITEM:
+                            EntityEventPacket pk = new EntityEventPacket();
+                            pk.eid = this.getId();
+                            pk.event = EntityEventPacket.CONSUME_ITEM;
+                            pk.itemId = this.inventory.getItemInHand().getId();
+                            if (pk.itemId != Item.POTION) {
+                                Server.broadcastPacket(this.getViewers().values(), pk);
+                                this.dataPacket(pk);
+                            }
+                            break; 
                     }
                     break;
                 case ProtocolInfo.DROP_ITEM_PACKET:
@@ -3963,6 +3983,20 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
                     break;
+                case ProtocolInfo.LEVEL_SOUND_EVENT_PACKET:
+                    LevelSoundEventPacket levelSoundEventPacket = (LevelSoundEventPacket) packet;
+
+                    if (this.isBreakingBlock()) {
+                        LevelSoundEventPacket pk1 = new LevelSoundEventPacket();
+                        pk1.sound = LevelSoundEventPacket.SOUND_HIT;
+                        pk1.extraData = this.breakingBlock.getId();
+                        pk1.pitch = 1;
+                        pk1.x = (float) this.breakingBlock.x;
+                        pk1.y = (float) this.breakingBlock.y;
+                        pk1.z = (float) this.breakingBlock.z;
+
+                        this.level.addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk1);
+                    } 
                 default:
                     break;
             }
@@ -4802,6 +4836,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (super.teleport(to, null)) { // null to prevent fire of duplicate EntityTeleportEvent
 
+
             for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
                 if (window == this.inventory) {
                     continue;
@@ -4835,7 +4870,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     changeDimensionPacket1.x = (float) this.getX();
                     changeDimensionPacket1.y = (float) this.getY();
                     changeDimensionPacket1.z = (float) this.getZ();
-                    this.dataPacket(changeDimensionPacket1);
+                    //this.dataPacket(changeDimensionPacket1);
 
                     this.forceSendEmptyChunks();
                     this.getServer().getScheduler().scheduleDelayedTask(() -> {
@@ -4850,10 +4885,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         changeDimensionPacket.x = (float) this.getX();
                         changeDimensionPacket.y = (float) this.getY();
                         changeDimensionPacket.z = (float) this.getZ();
-                        dataPacket(changeDimensionPacket);
+                        //dataPacket(changeDimensionPacket);
                         nextChunkOrderRun = 0;
                     }, 9);
                 }
+            }else{
+                this.getLevel().clearChunkCache(this.getFloorX() >> 4, this.getFloorZ() >> 4);
+                this.getLevel().requestChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4, this);
             }
             return true;
         }
@@ -5145,6 +5183,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public PlayerFood getFoodData() {
         return this.foodData;
+    }
+
+ 
+    public boolean isBreakingBlock() {
+        return this.breakingBlock != null;
     }
 
     //todo a lot on dimension

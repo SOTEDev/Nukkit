@@ -34,7 +34,7 @@ public class BlockEndStone extends BlockSolid {
 
     @Override
     public double getResistance() {
-        return 45;
+        return 35;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class BlockEndStone extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() > ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
                     toItem()
             };

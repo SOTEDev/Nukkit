@@ -30,7 +30,7 @@ public class EntitySmallFireball extends EntityProjectile {
 
     @Override
     public void onHit(){
-        EntityExplosionPrimeEvent event = new EntityExplosionPrimeEvent(this, 3);
+        EntityExplosionPrimeEvent event = new EntityExplosionPrimeEvent(this, 4);
         server.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;

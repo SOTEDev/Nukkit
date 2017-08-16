@@ -1,5 +1,10 @@
 package cn.nukkit.level;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockTNT;
@@ -14,13 +19,13 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
 import cn.nukkit.level.sound.ExplodeSound;
-import cn.nukkit.math.*;
+import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.BlockVector3;
+import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.ExplodePacket;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: Angelic47
@@ -148,7 +153,7 @@ public class Explosion {
                 Vector3 motion = entity.subtract(this.source).normalize();
                 int exposure = 1;
                 double impact = (1 - distance) * exposure;
-                int damage = (int) (((impact * impact + impact) / 2) * 8 * explosionSize + 1);
+                int damage = (int) ((((impact * impact + impact) / 2) * 8 * explosionSize + 1) *0.2);
 
                 if (this.what instanceof Entity) {
                     entity.attack(new EntityDamageByEntityEvent((Entity) this.what, entity, DamageCause.ENTITY_EXPLOSION, damage));

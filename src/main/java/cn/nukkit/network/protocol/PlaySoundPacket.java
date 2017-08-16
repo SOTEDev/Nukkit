@@ -25,7 +25,7 @@ public class PlaySoundPacket extends DataPacket {
     public void encode() {
         this.putString(this.name);
         this.putBlockCoords(this.x, this.y, this.z);
-        this.putLFloat(this.volume);
-        this.putLFloat(this.pitch);
+        this.putFloat(this.volume);
+        this.putFloat(this.pitch);
     }
 }

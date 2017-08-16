@@ -171,8 +171,7 @@ public class WalkNodeProcessor extends NodeProcessor
                         }
 
                         if (entityIn.level.getBlock(blockpos$mutableblockpos) instanceof BlockRail){
-                            if (!(entityIn.level.getBlock(blockpos) instanceof BlockRail) && !(entityIn.level.getBlock(blockpos.down()) instanceof BlockRail))
-                            {
+                            if (!(entityIn.level.getBlock(blockpos) instanceof BlockRail) && !(entityIn.level.getBlock(blockpos.down()) instanceof BlockRail)){
                                 return -3;
                             }
                         }else if (!block.isTransparent() && (!breakDoors || !(block instanceof BlockDoor)/* || block.getMaterial() != Material.wood*/)){

@@ -163,13 +163,13 @@ public abstract class PathNavigate{
             }
         }
 
-        int j1 = MathHelper.ceiling_float_int(this.theEntity.getWidth());
+        int j1 = MathHelper.ceiling_float_int((float)(this.theEntity.getWidth() + 0.5));
         int k1 = (int)this.theEntity.getHeight() + 1;
         int l = j1;
 
         for (int i1 = i - 1; i1 >= this.currentPath.getCurrentPathIndex(); --i1){
             if (this.isDirectPathBetweenPoints(vec3, this.currentPath.getVectorFromIndex(this.theEntity, i1), j1, k1, l)){
-                //this.currentPath.setCurrentPathIndex(i1);
+                this.currentPath.setCurrentPathIndex(i1);
                 break;
             }
         }

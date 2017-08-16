@@ -5,6 +5,8 @@ import java.util.Iterator;
 import com.google.common.collect.AbstractIterator;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockSlab;
+import cn.nukkit.block.BlockStairs;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.pathfinder.WalkNodeProcessor;
@@ -183,6 +185,12 @@ public class PathNavigateGround extends PathNavigate{
                 Block block = this.worldObj.getBlock(new Vector3(blockpos.x, blockpos.y, blockpos.z));
 
                 if (!block.isTransparent()){
+                    return false;
+                }
+                if (block instanceof BlockSlab){
+                    return false;
+                }
+                if (block instanceof BlockStairs){
                     return false;
                 }
             }

@@ -36,13 +36,18 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
         return false;
     }
 
-    @Override
+    /*@Override
     protected AxisAlignedBB recalculateBoundingBox() {
         if (isActivated()) {
             return new AxisAlignedBB(this.x + 0.0625, this.y, this.z + 0.0625, this.x + 0.9375, this.y + 0.03125, this.z + 0.9375);
         } else {
             return new AxisAlignedBB(this.x + 0.0625, this.y, this.z + 0.0625, this.x + 0.9375, this.y + 0.0625, this.z + 0.9375);
         }
+    }*/
+
+    @Override
+    protected AxisAlignedBB recalculateBoundingBox() {
+        return new AxisAlignedBB(this.x, this.y, this.z, this.x, this.y, this.z);
     }
 
     @Override

@@ -55,7 +55,7 @@ public class BlockCarpet extends BlockFlowable {
         return false;
     }
 
-    @Override
+    /*@Override
     protected AxisAlignedBB recalculateBoundingBox() {
 
         return new AxisAlignedBB(
@@ -65,6 +65,19 @@ public class BlockCarpet extends BlockFlowable {
                 this.x + 1,
                 this.y + 0.0625,
                 this.z + 1
+        );
+    }*/
+
+    @Override
+    protected AxisAlignedBB recalculateBoundingBox() {
+
+        return new AxisAlignedBB(
+                this.x,
+                this.y,
+                this.z,
+                this.x + 0,
+                this.y + 0,
+                this.z + 0
         );
     }
 

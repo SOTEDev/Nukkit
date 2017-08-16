@@ -31,12 +31,9 @@ import cn.nukkit.block.BlockCarrot;
 import cn.nukkit.block.BlockCocoa;
 import cn.nukkit.block.BlockFarmland;
 import cn.nukkit.block.BlockFire;
-import cn.nukkit.block.BlockGrass;
 import cn.nukkit.block.BlockIce;
 import cn.nukkit.block.BlockLava;
 import cn.nukkit.block.BlockLavaStill;
-import cn.nukkit.block.BlockLeaves;
-import cn.nukkit.block.BlockLeaves2;
 import cn.nukkit.block.BlockMushroomBrown;
 import cn.nukkit.block.BlockMushroomRed;
 import cn.nukkit.block.BlockMycelium;
@@ -56,7 +53,6 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
 import cn.nukkit.entity.projectile.EntityArrow;
-import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
@@ -70,7 +66,6 @@ import cn.nukkit.event.level.ThunderChangeEvent;
 import cn.nukkit.event.level.WeatherChangeEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
-import cn.nukkit.event.weather.LightningStrikeEvent;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -262,14 +257,14 @@ public class Level implements ChunkManager, Metadatable {
     private boolean clearChunksOnTick;
     private final HashMap<Integer, Class<? extends Block>> randomTickBlocks = new HashMap<Integer, Class<? extends Block>>() {
         {
-            put(Block.GRASS, BlockGrass.class);
+            //put(Block.GRASS, BlockGrass.class);
             put(Block.FARMLAND, BlockFarmland.class);
             put(Block.MYCELIUM, BlockMycelium.class);
 
             put(Block.SAPLING, BlockSapling.class);
 
-            put(Block.LEAVES, BlockLeaves.class);
-            put(Block.LEAVES2, BlockLeaves2.class);
+            //put(Block.LEAVES, BlockLeaves.class);
+            //put(Block.LEAVES2, BlockLeaves2.class);
 
             put(Block.SNOW_LAYER, BlockSnowLayer.class);
             put(Block.ICE, BlockIce.class);
@@ -785,7 +780,7 @@ public class Level implements ChunkManager, Metadatable {
         this.checkTime();
 
         // Tick Weather
-        this.rainTime--;
+        /*this.rainTime--;
         if (this.rainTime <= 0) {
             if (!this.setRaining(!this.raining)) {
                 if (this.raining) {
@@ -847,7 +842,7 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
 
-        }
+        }*/
 
         this.skyLightSubtracted = this.calculateSkylightSubtracted(1);
 

@@ -70,7 +70,7 @@ public class BlockEnderChest extends BlockTransparent {
                 this.y,
                 this.z + 0.0625,
                 this.x + 0.9375,
-                this.y + 0.9475,
+                this.y + 0.9375,
                 this.z + 0.9375
         );
     }

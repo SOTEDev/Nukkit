@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -33,7 +32,7 @@ public class BlockGrassPath extends BlockGrass {
         return ItemTool.TYPE_SHOVEL;
     }
 
-    @Override
+    /*@Override
     protected AxisAlignedBB recalculateBoundingBox() {
         return new AxisAlignedBB(
                 this.x,
@@ -43,7 +42,7 @@ public class BlockGrassPath extends BlockGrass {
                 this.y + 0.9375,
                 this.z + 1
         );
-    }
+    }*/
 
     @Override
     public double getResistance() {

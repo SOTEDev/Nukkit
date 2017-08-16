@@ -25,6 +25,10 @@ public class EntityEventPacket extends DataPacket {
     public static final byte AMBIENT_SOUND = 16;
     public static final byte RESPAWN = 17;
 
+    public static final byte CONSUME_ITEM = 57;
+
+    public static final byte UNKNOWN1 = 66;
+
     @Override
     public byte pid() {
         return NETWORK_ID;
@@ -32,13 +36,13 @@ public class EntityEventPacket extends DataPacket {
 
     public long eid;
     public byte event;
-    public long unknown;
+    public long itemId;
 
     @Override
     public void decode() {
         this.eid = this.getVarLong();
         this.event = (byte) this.getByte();
-        this.unknown = this.getUnsignedVarInt();
+        this.itemId = this.getUnsignedVarInt();
     }
 
     @Override
@@ -46,6 +50,6 @@ public class EntityEventPacket extends DataPacket {
         this.reset();
         this.putVarLong(this.eid);
         this.putByte(this.event);
-        this.putUnsignedVarInt(this.unknown);
+        this.putUnsignedVarInt(this.itemId);
     }
 }
